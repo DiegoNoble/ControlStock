@@ -1,0 +1,19 @@
+CREATE DEFINER = `root`@`localhost` TRIGGER `compraArticulo` AFTER INSERT ON `articulos_compra` FOR EACH ROW update articulo
+set cantidad = cantidad + new.cantidad
+where id = new.id_articulo
+
+
+
+CREATE DEFINER = `root`@`localhost` TRIGGER `eliminaCompraArticulo` AFTER DELETE ON `articulos_compra` FOR EACH ROW update articulo
+set cantidad = cantidad - old.cantidad
+where id = old.id_articulo 
+
+
+CREATE DEFINER = `root`@`localhost` TRIGGER `baja_Stock` AFTER INSERT ON `articulos_venta` FOR EACH ROW update articulo
+set cantidad = cantidad - new.cantidad
+where id = new.id_articulo 
+
+
+CREATE DEFINER = `root`@`localhost` TRIGGER `elimina_Factura` AFTER DELETE ON `articulos_venta` FOR EACH ROW update articulo
+set cantidad = cantidad + old.cantidad
+where id = old.id_articulo 

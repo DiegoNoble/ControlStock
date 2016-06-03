@@ -80,7 +80,7 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
             case 2:
                 return String.class;
             case 3:
-                return Double.class;
+                return String.class;
             case 4:
                 return Double.class;
             case 5:
@@ -103,7 +103,7 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
         ArticulosPedido c = list.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                c.setPosicion(rowIndex+1);
+                c.setPosicion((Integer) aValue);
                 break;
             case 1:
                 c.setArticulo((Articulo) aValue);

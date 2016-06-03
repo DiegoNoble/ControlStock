@@ -31,7 +31,8 @@ public class ArticulosPedido implements Serializable {
     public ArticulosPedido() {
     }
 
-    public ArticulosPedido(Articulo articulo, Double cantPedida, Double importePedido) {
+    public ArticulosPedido(Integer posicion, Articulo articulo, Double cantPedida, Double importePedido) {
+        this.posicion = posicion;
         this.articulo = articulo;
         this.cantPedida = cantPedida;
         this.importePedido = importePedido;

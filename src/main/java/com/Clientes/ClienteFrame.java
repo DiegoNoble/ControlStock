@@ -914,7 +914,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             cliente.setId_cliente(Integer.parseInt(tblCliente.getValueAt(filaSeleccionada, 0).toString()));
             cliente.setNombre(tblCliente.getValueAt(filaSeleccionada, 1).toString());
             if (seteaClienteVenta == null) {
-                seteaClientePedido.setClie(cliente);
+                seteaClientePedido.agregarCliente(cliente);
                 this.dispose();
                 seteaClientePedido.toFront();
             } else if (seteaClientePedido == null) {

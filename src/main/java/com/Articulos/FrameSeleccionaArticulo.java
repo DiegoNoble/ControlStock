@@ -364,7 +364,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
             articulo.setValor_venta(listaArticulos.get(tblArticulos.getSelectedRow()).getValor_venta());
 
             if (registraVentaFrame == null) {
-                registraPedido.setArticulo(articulo);
+                registraPedido.agregarArticuloPedido(articulo);
             } else if (registraPedido == null) {
                 registraVentaFrame.setArticulo(articulo);
             }

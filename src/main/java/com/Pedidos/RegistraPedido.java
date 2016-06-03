@@ -12,22 +12,17 @@ import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;
 import com.DAO.ClienteDAO;
 import com.DAO.VendedorDAO;
-import com.Renderers.MyDefaultCellRenderer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.*;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class RegistraPedido extends javax.swing.JInternalFrame {
 
-    Articulo articulo;
     List<Cliente> listClientes;
     List<Vendedor> listVendedores;
-    Cliente Clie;
     ArticulosPedidoTableModel tableModel;
     List<ArticulosPedido> listArticulosPedido;
     Pedido pedido;
@@ -45,7 +40,6 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
         dpFecha.setDate(new Date());
 
-        listArticulosPedido = new ArrayList<ArticulosPedido>();
         defineModelo();
 
         AutoCompleteDecorator.decorate(cbCliente);
@@ -106,28 +100,9 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private void defineModelo() {
 
         ((DefaultTableCellRenderer) tblArticulosPedido.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
+        listArticulosPedido = new ArrayList<ArticulosPedido>();
         tableModel = new ArticulosPedidoTableModel(listArticulosPedido);
-
-        txtTotal.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                txtRedondeo.setEnabled(true);
-                txtRedondeo.setEditable(true);
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                txtRedondeo.setEnabled(true);
-                txtRedondeo.setEditable(true);
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                txtRedondeo.setEnabled(true);
-                txtRedondeo.setEditable(true);
-            }
-        });
+        tblArticulosPedido.setModel(tableModel);
 
     }
 
@@ -179,72 +154,27 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
     }
 
-    public void registraMovimiento() {
-        /*  try {
-         DateFormat formatoData = new SimpleDateFormat("yyyy/MM/dd");
-         Date fecha = dpFecha.getDate();
+    public void agregarArticuloPedido(Articulo articulo) {
+        tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articulo, 1.0, articulo.getValor_venta()
+        ));
+    }
 
-         String date = formatoData.format(fecha);
+    public void agregarVendedor(Vendedor vendedor) {
+        if (listVendedores.contains(vendedor)) {
+            cbVendedor.setSelectedItem(vendedor);
+        } else {
+            cbVendedor.addItem(vendedor);
+            cbVendedor.setSelectedItem(vendedor);
+        }
+    }
 
-         Date fechaBD = null;
-
-         fechaBD = formatoData.parse(date);
-
-         if (cbMoneda.getSelectedItem() == MonedaEnum.PESOS) {
-
-         Session seccion = HibernateUtil.getSeccion();
-         Transaction transaccion = seccion.beginTransaction();
-
-         String valor = (txtTotal.getText()).replace(",", ".");
-
-         Caja caja = new Caja();
-         caja.setConcepto("VENTA MERCADERÍA");
-         caja.setFecha(fechaBD);
-
-         caja.setRubro(new Rubros(8));
-         caja.setEntrada_pesos(Double.parseDouble(valor));
-         seccion.save(caja);
-         transaccion.commit();
-         seccion.close();
-
-         } else if (cbMoneda.getSelectedItem() == MonedaEnum.REALES) {
-
-         Session seccion = HibernateUtil.getSeccion();
-         Transaction transaccion = seccion.beginTransaction();
-
-         String valor = (txtTotal.getText()).replace(",", ".");
-
-         Caja caja = new Caja();
-         caja.setConcepto("VENTA MERCADERÍA");
-         caja.setFecha(fechaBD);
-
-         caja.setRubro(new Rubros(8));
-         caja.setEntrada_reales(Double.parseDouble(valor));
-         seccion.save(caja);
-         transaccion.commit();
-         seccion.close();
-         } else if (cbMoneda.getSelectedItem() == MonedaEnum.DOLARES) {
-
-         Session seccion = HibernateUtil.getSeccion();
-         Transaction transaccion = seccion.beginTransaction();
-
-         Caja caja = new Caja();
-         caja.setConcepto("VENTA MERCADERÍA");
-         caja.setFecha(fechaBD);
-
-         caja.setRubro(new Rubros(8));
-         String valor = (txtTotal.getText()).replace(",", ".");
-         caja.setEntrada_dolares(Double.parseDouble(valor));
-         seccion.save(caja);
-         transaccion.commit();
-         seccion.close();
-
-         }
-
-         } catch (Exception e) {
-         JOptionPane.showMessageDialog(null, "Error " + e);
-
-         }*/
+    public void agregarCliente(Cliente cliente) {
+        if (listClientes.contains(cliente)) {
+            cbCliente.setSelectedItem(cliente);
+        } else {
+            cbCliente.addItem(cliente);
+            cbCliente.setSelectedItem(cliente);
+        }
     }
 
     void calcularTotales() {
@@ -369,8 +299,9 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
+        setResizable(true);
         setTitle("Sistema de control comercial - D.N.Soft .-");
-        setPreferredSize(new java.awt.Dimension(900, 600));
+        setPreferredSize(new java.awt.Dimension(1024, 600));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
@@ -486,45 +417,16 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         tblArticulosPedido.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         tblArticulosPedido.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Código del Articulo", "Nombre", "Unidades", "P. Unitario", "Descuento %", "P. Uni. Dto", "Importe Neto"
+                "Title 1", "Title 2", "Title 3"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, true, true, true, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        ));
         tblArticulosPedido.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblArticulosPedido);
-        if (tblArticulosPedido.getColumnModel().getColumnCount() > 0) {
-            tblArticulosPedido.getColumnModel().getColumn(0).setPreferredWidth(25);
-            tblArticulosPedido.getColumnModel().getColumn(0).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosPedido.getColumnModel().getColumn(1).setPreferredWidth(120);
-            tblArticulosPedido.getColumnModel().getColumn(1).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosPedido.getColumnModel().getColumn(2).setPreferredWidth(5);
-            tblArticulosPedido.getColumnModel().getColumn(2).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosPedido.getColumnModel().getColumn(3).setPreferredWidth(5);
-            tblArticulosPedido.getColumnModel().getColumn(3).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosPedido.getColumnModel().getColumn(4).setPreferredWidth(5);
-            tblArticulosPedido.getColumnModel().getColumn(4).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosPedido.getColumnModel().getColumn(5).setPreferredWidth(20);
-            tblArticulosPedido.getColumnModel().getColumn(5).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosPedido.getColumnModel().getColumn(6).setPreferredWidth(20);
-            tblArticulosPedido.getColumnModel().getColumn(6).setCellRenderer(new MyDefaultCellRenderer());
-        }
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -744,7 +646,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
             articulosDAO = new ArticuloDAO();
             Articulo articuloPedido = (Articulo) articulosDAO.buscaArtUnicoPorIDStr(txtFiltroCodigo.getText());
 
-            tableModel.agregar(new ArticulosPedido(articuloPedido, 1.0, articuloPedido.getValor_venta()));
+            tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articuloPedido, 1.0, articuloPedido.getValor_venta()));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Articulo no encontrado!", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -830,7 +732,8 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnRegistraVentaActionPerformed
 
     private void btnSelecionaCliente1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaCliente1ActionPerformed
-        // TODO add your handling code here:
+
+
     }//GEN-LAST:event_btnSelecionaCliente1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -876,21 +779,4 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 
-    public Articulo getArticulo() {
-        return articulo;
-    }
-
-    public void setArticulo(Articulo articulo) {
-        this.articulo = articulo;
-
-        tableModel.agregar(new ArticulosPedido(articulo, 1.0, articulo.getValor_venta()));
-    }
-
-    public Cliente getClie() {
-        return Clie;
-    }
-
-    public void setClie(Cliente Clie) {
-        cbCliente.setSelectedItem(Clie);
-    }
 }

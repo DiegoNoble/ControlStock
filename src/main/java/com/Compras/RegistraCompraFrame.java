@@ -4,7 +4,7 @@ import com.Beans.FacturaCompra;
 import com.Beans.ArticulosCompra;
 import com.DAO.DAOGenerico;
 import Utilidades.Utilidades;
-import com.Beans.Articulos;
+import com.Beans.Articulo;
 import com.Articulos.FrameSeleccionaArticulo;
 import com.Beans.Cotizacion;
 import com.Beans.EstadoEnum;
@@ -29,7 +29,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class RegistraCompraFrame extends javax.swing.JInternalFrame {
 
-    private Articulos articulo;
+    private Articulo articulo;
     private ArticulosCompraDAO articulosCompraDao;
     private FacturaCompraDAO facturaCompraDAO;
     private ArticuloDAO articuloDAO;
@@ -53,11 +53,11 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
 
     }
 
-    public Articulos getArticulo() {
+    public Articulo getArticulo() {
         return articulo;
     }
 
-    public void setArticulo(Articulos articulo) {
+    public void setArticulo(Articulo articulo) {
         this.articulo = articulo;
 
         tableModel.addRow(new Object[]{articulo.getId(),
@@ -172,7 +172,7 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
 
                     ArticulosCompra articulosCompra = new ArticulosCompra();
 
-                    Articulos articulo = new Articulos();
+                    Articulo articulo = new Articulo();
                     articulo.setId(idArticulo);
                     articulosCompra.setArticulo(articulo);
                     articulosCompra.setDescuento(descuento);
@@ -196,7 +196,7 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
 
                     }
                     articuloDAO = new ArticuloDAO();
-                    Articulos oldArticulo = (Articulos) articuloDAO.buscaArtUnicoPorIDStr(articulosCompra.getArticulo().getId());
+                    Articulo oldArticulo = (Articulo) articuloDAO.buscaArtUnicoPorIDStr(articulosCompra.getArticulo().getId());
                     DAOGenerico dao = new DAOGenerico(articulosCompra);
                     dao.registra();
 
@@ -747,7 +747,7 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
 
         try {
             articuloDAO = new ArticuloDAO();
-            Articulos articuloCompra = (Articulos) articuloDAO.buscaArtUnicoPorIDStr(txtFiltroCodigo.getText());
+            Articulo articuloCompra = (Articulo) articuloDAO.buscaArtUnicoPorIDStr(txtFiltroCodigo.getText());
 
             tableModel.addRow(new Object[]{articuloCompra.getId(),
                         articuloCompra.getNombre()});

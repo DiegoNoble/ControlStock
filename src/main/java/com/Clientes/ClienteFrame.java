@@ -1,13 +1,11 @@
-
 package com.Clientes;
-
-
 
 import com.Beans.Cliente;
 import Utilidades.HibernateUtil;
 import javax.swing.JOptionPane;
 import org.hibernate.*;
 import Utilidades.Utilidades;
+import com.Pedidos.RegistraPedido;
 import com.Ventas.RegistraVentaFrame;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,30 +20,38 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.text.MaskFormatter;
 
-
 public class ClienteFrame extends javax.swing.JInternalFrame {
-    
+
     MaskFormatter formatoftxtFechaIngreso;
-    
-    private RegistraVentaFrame seteaCliente;
-    String Filtro = "from Clientes";
+
+    private RegistraVentaFrame seteaClienteVenta;
+    private RegistraPedido seteaClientePedido;
+    String Filtro = "from Cliente";
     private Cliente clie;
-   
+
     public ClienteFrame() {
         initComponents();
-        
+
         muestraContenidoTabla();
         btnSeleccionaCliente.setVisible(false);
-        
+
         btnExcluir.setVisible(false);
     }
 
     public ClienteFrame(RegistraVentaFrame seteaCliente) {
         initComponents();
-        
+
         btnExcluir.setVisible(false);
         muestraContenidoTabla();
-        this.seteaCliente = seteaCliente;
+        this.seteaClienteVenta = seteaCliente;
+    }
+
+    public ClienteFrame(RegistraPedido seteaClientePedido) {
+        initComponents();
+
+        btnExcluir.setVisible(false);
+        muestraContenidoTabla();
+        this.seteaClientePedido = seteaClientePedido;
     }
 
     public Cliente getClie() {
@@ -55,8 +61,6 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     public void setClie(Cliente clie) {
         this.clie = clie;
     }
-    
-
 
     class CenterRenderer extends DefaultTableCellRenderer { //----> Classe utilizada para centralizar el contenido de las columnas de las tablas
 
@@ -64,25 +68,23 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             setHorizontalAlignment(CENTER);
         }
     }
-    
-      private void muestraContenidoTabla() {
 
+    private void muestraContenidoTabla() {
 
         TableCellRenderer centerRenderer = new CenterRenderer();
         ((DefaultTableCellRenderer) tblCliente.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         TableColumn column = tblCliente.getColumnModel().getColumn(0); //----> LLamada de la funcion que centraliza el contenido en las columnas del Jtable
         TableColumn column1 = tblCliente.getColumnModel().getColumn(1);
         TableColumn column2 = tblCliente.getColumnModel().getColumn(2);
         TableColumn column3 = tblCliente.getColumnModel().getColumn(3);
         TableColumn column4 = tblCliente.getColumnModel().getColumn(4);
-        
+
         column.setCellRenderer(centerRenderer);
         column1.setCellRenderer(centerRenderer);
         column2.setCellRenderer(centerRenderer);
         column3.setCellRenderer(centerRenderer);
         column4.setCellRenderer(centerRenderer);
-        
 
         DefaultTableModel modelo = (DefaultTableModel) tblCliente.getModel();
         modelo.setNumRows(0);
@@ -92,58 +94,54 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         tblCliente.getColumn("C.I.").setPreferredWidth(20);
         tblCliente.getColumn("Razón Social").setPreferredWidth(100);
         tblCliente.getColumn("R.U.T.").setPreferredWidth(20);
-      
-        try{
-         Session seccion = HibernateUtil.getSeccion();   
-         
-         List<Cliente> lista_clientes = new ArrayList();
-         lista_clientes = seccion.createQuery(Filtro).list();
-         
-         int tamano_lista = lista_clientes.size();
-         
-         for (int i=0; i<tamano_lista; i++){
-             
-             Cliente clientes = lista_clientes.get(i);
-             
-             Object[] linea = new Object[12];
-             linea[0] = clientes.getId_cliente();
-             linea[1] = clientes.getNombre();
-             linea[2] = clientes.getCi();
-             linea[3] = clientes.getRazon_social();
-             linea[4] = clientes.getRut();
-             linea[5] = clientes.getDireccion();
-             linea[6] = clientes.getCiudad();
-             linea[7] = clientes.getPais();
-             linea[8] = clientes.getCel();
-             linea[9] = clientes.getTelefono();
-             linea[10] = clientes.getEmail();
-             SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");     //Formatação da data do BD para mostrar na Tela
-             Date dataIngreso = clientes.getFecha_ingreso();
+
+        try {
+            Session seccion = HibernateUtil.getSeccion();
+
+            List<Cliente> lista_clientes = new ArrayList();
+            lista_clientes = seccion.createQuery(Filtro).list();
+
+            int tamano_lista = lista_clientes.size();
+
+            for (int i = 0; i < tamano_lista; i++) {
+
+                Cliente clientes = lista_clientes.get(i);
+
+                Object[] linea = new Object[12];
+                linea[0] = clientes.getId_cliente();
+                linea[1] = clientes.getNombre();
+                linea[2] = clientes.getCi();
+                linea[3] = clientes.getRazon_social();
+                linea[4] = clientes.getRut();
+                linea[5] = clientes.getDireccion();
+                linea[6] = clientes.getCiudad();
+                linea[7] = clientes.getPais();
+                linea[8] = clientes.getCel();
+                linea[9] = clientes.getTelefono();
+                linea[10] = clientes.getEmail();
+                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");     //Formatação da data do BD para mostrar na Tela
+                Date dataIngreso = clientes.getFecha_ingreso();
                 if (dataIngreso != null) {
                     linea[11] = formato.format(dataIngreso);
                 }
-             
-             modelo.addRow(linea);
-         }
-         
-        }catch(Exception error){
-        JOptionPane.showMessageDialog(null, "Error"+error);
+
+                modelo.addRow(linea);
+            }
+
+        } catch (Exception error) {
+            JOptionPane.showMessageDialog(null, "Error" + error);
         }
-       
+
     }
-       
-  
-    
 
     private void NuevoCliente() {
-        
+
         if (txtNombre.getText().trim().equals("")) {
             JOptionPane.showMessageDialog(this, "Informe el nombre del cliente!", "Error", JOptionPane.ERROR_MESSAGE);
             txtNombre.requestFocus();
         } else {
-            
-            
-            Session seccion = HibernateUtil.getSeccion();   
+
+            Session seccion = HibernateUtil.getSeccion();
             Cliente cliente = new Cliente();
             cliente.setNombre(txtNombre.getText());
             cliente.setCel(txtCel.getText());
@@ -151,45 +149,42 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             cliente.setCiudad(txtCiudad.getText());
             cliente.setDireccion(txtDireccion.getText());
             cliente.setEmail(txtEmail.getText());
-            
+
             String FechaIngreso = Utilidades.getDataTelaToBD(txtFechaIngreso.getText());
             SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-            
+
             Date fechaConvertida = null;
             try {
                 fechaConvertida = formato.parse(FechaIngreso);
             } catch (ParseException ex) {
-                JOptionPane.showMessageDialog(null, "Error al dar formato a la fecha"+ex);
+                JOptionPane.showMessageDialog(null, "Error al dar formato a la fecha" + ex);
             }
-            
-            
+
             cliente.setFecha_ingreso(fechaConvertida);
             cliente.setPais(txtPaís.getText());
             cliente.setRazon_social(txtRazonSocial.getText());
             cliente.setRut(txtRut.getText());
             cliente.setTelefono(txtTelefono.getText());
-            
+
             Transaction transacion = seccion.beginTransaction();
             seccion.save(cliente);
             transacion.commit();
             seccion.close();
-            
+
             JOptionPane.showMessageDialog(null, "Cliente registrado correctamente!");
-            
-    
-        
+
         }
     }
 
-   private void EditarCliente() {
-        
-       if (txtNombre.getText().trim().equals("")) {
+    private void EditarCliente() {
+
+        if (txtNombre.getText().trim().equals("")) {
             JOptionPane.showMessageDialog(this, "Informe el nombre del cliente!", "Erro", JOptionPane.ERROR_MESSAGE);
             txtNombre.requestFocus();
-        
-       } else {
-           
-            Session seccion = HibernateUtil.getSeccion();    
+
+        } else {
+
+            Session seccion = HibernateUtil.getSeccion();
             Cliente cliente = new Cliente();
             cliente.setId_cliente(Integer.parseInt(jlbCodigo.getText()));
             cliente.setNombre(txtNombre.getText());
@@ -200,45 +195,44 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             cliente.setEmail(txtEmail.getText());
             String FechaIngreso = Utilidades.getDataTelaToBD(txtFechaIngreso.getText());
             SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
-            
+
             Date fechaConvertida = null;
             try {
                 fechaConvertida = formato.parse(FechaIngreso);
             } catch (ParseException ex) {
-                JOptionPane.showMessageDialog(null, "Error al dar formato a la fecha"+ex);
+                JOptionPane.showMessageDialog(null, "Error al dar formato a la fecha" + ex);
             }
-            
+
             cliente.setFecha_ingreso(fechaConvertida);
             cliente.setPais(txtPaís.getText());
             cliente.setRazon_social(txtRazonSocial.getText());
             cliente.setRut(txtRut.getText());
             cliente.setTelefono(txtTelefono.getText());
-            
+
             Transaction transacion = seccion.beginTransaction();
             seccion.update(cliente);
             transacion.commit();
             seccion.close();
-            
+
             JOptionPane.showMessageDialog(null, "Cliente editado correctamente!");
-           
-            
+
         }
-     
+
     }
-   
-       private void eliminaCliente(){
-           
-           Session seccion = HibernateUtil.getSeccion();   
-           Cliente cliente = new Cliente();
-           cliente.setId_cliente(Integer.parseInt(jlbCodigo.getText())); 
-           Transaction transacion = seccion.beginTransaction();
-           seccion.delete(cliente);
-           transacion.commit();
-           seccion.close();
-            
-            JOptionPane.showMessageDialog(null, "Cliente eliminado correctamente!");
-           
-       }
+
+    private void eliminaCliente() {
+
+        Session seccion = HibernateUtil.getSeccion();
+        Cliente cliente = new Cliente();
+        cliente.setId_cliente(Integer.parseInt(jlbCodigo.getText()));
+        Transaction transacion = seccion.beginTransaction();
+        seccion.delete(cliente);
+        transacion.commit();
+        seccion.close();
+
+        JOptionPane.showMessageDialog(null, "Cliente eliminado correctamente!");
+
+    }
 
     private void habilitaCampos() {
         txtNombre.setEditable(true);
@@ -287,9 +281,9 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         btnAlterar.setEnabled(false);
         btnExcluir.setEnabled(false);
     }
-    
-    private void limpiaCampos(){
-    
+
+    private void limpiaCampos() {
+
         jlbCodigo.setText("");
         txtNombre.setText("");
         txtDireccion.setText("");
@@ -303,9 +297,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         txtRazonSocial.setText("");
         txtRut.setText("");
     }
-    
 
-   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -772,7 +764,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
-        
+
         limpiaCampos();
         SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
         Date dia = new Date();
@@ -780,21 +772,21 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         txtFechaIngreso.setText(diaFormateado);
         habilitaCampos();
         habilitaBotoes();
-       
+
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
-        if (jlbCodigo.getText().equals("")){
-        NuevoCliente();
-        }else {
+        if (jlbCodigo.getText().equals("")) {
+            NuevoCliente();
+        } else {
             EditarCliente();
         }
-        
+
         muestraContenidoTabla();
         desabilitaBotoes();
         desabilitaCampos();
-        
+
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -804,7 +796,6 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
 
-        
         if (tblCliente.getSelectedRow() != -1) {
             habilitaBotoes();
             habilitaCampos();
@@ -817,7 +808,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         if (tblCliente.getSelectedRow() != -1) {
             String Nombre = txtNombre.getText();
-            int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación del Cliente "+Nombre+"?", "Confirmación", JOptionPane.YES_NO_OPTION);
+            int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación del Cliente " + Nombre + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
             if (resposta == JOptionPane.YES_OPTION) {
                 eliminaCliente();
             }
@@ -826,17 +817,16 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         }
         muestraContenidoTabla();
         limpiaCampos();
-        
+
     }//GEN-LAST:event_btnExcluirActionPerformed
 
     private void tblClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClienteMouseClicked
 
-       
-            limpiaCampos();
-        
-            try {
+        limpiaCampos();
+
+        try {
             int filaSeleccionada = tblCliente.getSelectedRow();
-            
+
             jlbCodigo.setText(tblCliente.getValueAt(filaSeleccionada, 0).toString());
 
             txtNombre.setText(tblCliente.getValueAt(filaSeleccionada, 1).toString());
@@ -846,13 +836,12 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             } else {
                 txtCI.setText(tblCliente.getValueAt(filaSeleccionada, 2).toString());
             }
-            
+
             Object objRS = tblCliente.getValueAt(filaSeleccionada, 3);
             if (objRS == null) {
             } else {
                 txtRazonSocial.setText(tblCliente.getValueAt(filaSeleccionada, 3).toString());
             }
-           
 
             Object objRUT = tblCliente.getValueAt(filaSeleccionada, 4);
             if (objRUT == null) /* || ((objCI instanceof String)&& ((String)objCI).length() == 0))*/ {
@@ -860,43 +849,43 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             } else {
                 txtRut.setText(tblCliente.getValueAt(filaSeleccionada, 4).toString());
             }
-            
+
             Object objDir = tblCliente.getValueAt(filaSeleccionada, 5);
             if (objDir == null) {
             } else {
                 txtDireccion.setText(tblCliente.getValueAt(filaSeleccionada, 5).toString());
             }
-            
+
             Object objCiu = tblCliente.getValueAt(filaSeleccionada, 6);
             if (objCiu == null) {
             } else {
                 txtCiudad.setText(tblCliente.getValueAt(filaSeleccionada, 6).toString());
             }
-            
+
             Object objPai = tblCliente.getValueAt(filaSeleccionada, 7);
             if (objPai == null) {
             } else {
                 txtPaís.setText(tblCliente.getValueAt(filaSeleccionada, 7).toString());
             }
-            
+
             Object objCel = tblCliente.getValueAt(filaSeleccionada, 8);
             if (objCel == null) {
             } else {
                 txtCel.setText(tblCliente.getValueAt(filaSeleccionada, 8).toString());
             }
-            
+
             Object objTel = tblCliente.getValueAt(filaSeleccionada, 9);
             if (objTel == null) {
             } else {
                 txtTelefono.setText(tblCliente.getValueAt(filaSeleccionada, 9).toString());
             }
-            
+
             Object objEmail = tblCliente.getValueAt(filaSeleccionada, 10);
             if (objEmail == null) {
             } else {
                 txtEmail.setText(tblCliente.getValueAt(filaSeleccionada, 10).toString());
             }
-            
+
             Object objFI = tblCliente.getValueAt(filaSeleccionada, 11);
             if (objFI == null) {
             } else {
@@ -905,32 +894,38 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
         } catch (Exception error) {
         }
-         
+
     }//GEN-LAST:event_tblClienteMouseClicked
 
     private void txtFiltroNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFiltroNombreActionPerformed
 
-        Filtro = "from Clientes where nombre like '%"+txtFiltroNombre.getText()+"%'";
+        Filtro = "from Clientes where nombre like '%" + txtFiltroNombre.getText() + "%'";
         muestraContenidoTabla();
     }//GEN-LAST:event_txtFiltroNombreActionPerformed
 
     private void btnSeleccionaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaClienteActionPerformed
 
         int filaSeleccionada = tblCliente.getSelectedRow();
-        if(filaSeleccionada == -1 ){
-            JOptionPane.showMessageDialog(null, "Seleccione un cliente en la tabla!","Error",JOptionPane.ERROR_MESSAGE);
-        }else{
-            
-        Cliente cliente = new Cliente();
-        cliente.setId_cliente(Integer.parseInt(tblCliente.getValueAt(filaSeleccionada, 0).toString()));
-        cliente.setNombre(tblCliente.getValueAt(filaSeleccionada, 1).toString());
-        seteaCliente.setClie(cliente);
-        this.dispose();
-        seteaCliente.toFront();
-        
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(null, "Seleccione un cliente en la tabla!", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+
+            Cliente cliente = new Cliente();
+            cliente.setId_cliente(Integer.parseInt(tblCliente.getValueAt(filaSeleccionada, 0).toString()));
+            cliente.setNombre(tblCliente.getValueAt(filaSeleccionada, 1).toString());
+            if (seteaClienteVenta == null) {
+                seteaClientePedido.setClie(cliente);
+                this.dispose();
+                seteaClientePedido.toFront();
+            } else if (seteaClientePedido == null) {
+                seteaClienteVenta.setClie(cliente);
+                this.dispose();
+                seteaClienteVenta.toFront();
+            }
+
         }
-       
-        
+
+
     }//GEN-LAST:event_btnSeleccionaClienteActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

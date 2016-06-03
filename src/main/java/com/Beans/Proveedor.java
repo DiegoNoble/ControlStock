@@ -4,7 +4,7 @@
  */
 package com.Beans;
 
-import com.Beans.Articulos;
+import com.Beans.Articulo;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;

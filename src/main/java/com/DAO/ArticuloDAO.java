@@ -5,7 +5,7 @@
 package com.DAO;
 
 import Utilidades.HibernateUtil;
-import com.Beans.Articulos;
+import com.Beans.Articulo;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -34,12 +34,12 @@ public class ArticuloDAO extends DAOGenerico<Object> {
 
     }
     
-    public Articulos buscaArtUnicoPorIDStr(String id) throws Exception{
+    public Articulo buscaArtUnicoPorIDStr(String id) throws Exception{
         
-            Articulos articulo = new Articulos();
+            Articulo articulo = new Articulo();
             transacion = seccion.beginTransaction();
             Query query = seccion.createQuery("from Articulos where id ='"+id+"'");
-            articulo = (Articulos) query.uniqueResult();
+            articulo = (Articulo) query.uniqueResult();
             transacion.commit();
         
         return articulo;

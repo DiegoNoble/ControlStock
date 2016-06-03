@@ -1,6 +1,6 @@
 package com.Articulos;
 
-import com.Beans.Articulos;
+import com.Beans.Articulo;
 import com.DAO.DAOGenerico;
 import com.Beans.Categoria;
 import com.CategoriaArticulos.CategoriaFrame;
@@ -11,6 +11,7 @@ import com.Renderers.MyDefaultCellRenderer;
 import com.Beans.Unidad;
 import com.Unidades.UnidadFrame;
 import com.Beans.ArticulosVenta;
+import com.Pedidos.RegistraPedido;
 import com.Ventas.RegistraVentaFrame;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
@@ -30,11 +31,12 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
     int edicion = 0;
     private RegistraCompraFrame registraCompraFrame;
     private RegistraVentaFrame registraVentaFrame;
+    private RegistraPedido registraPedido;
     private Categoria categoria;
     private Unidad unidad;
     private DefaultTableModel tableModelArticulos;
     private ListSelectionModel listModelArticulos;
-    private List<Articulos> listaArticulos;
+    private List<Articulo> listaArticulos;
     private ArticuloDAO articulosDAO;
     private DAOGenerico dAOGenerico;
     String codigoViejo = null;
@@ -46,7 +48,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
         defineModelo();
         listaArticulos = new ArrayList();
         articulosDAO = new ArticuloDAO();
-        listaArticulos = articulosDAO.BuscaTodos(Articulos.class);
+        listaArticulos = articulosDAO.BuscaTodos(Articulo.class);
         muestraContenidoTabla();
 
     }
@@ -57,7 +59,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
         defineModelo();
         listaArticulos = new ArrayList();
         articulosDAO = new ArticuloDAO();
-        listaArticulos = articulosDAO.BuscaTodos(Articulos.class);
+        listaArticulos = articulosDAO.BuscaTodos(Articulo.class);
         muestraContenidoTabla();
         this.registraVentaFrame = seteaArticulo;
         AutoCompleteDecorator.decorate(cbCategoria);
@@ -69,15 +71,36 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
 
         this.setSize(950, 650);
 
-
         //if (Perfil.equals("Operador")) {
-
         //  btnSalvar.setEnabled(false);
         //btnCancelar.setEnabled(false);
         //btnAlterar.setVisible(false);
-
         //}
+    }
 
+    public FrameSeleccionaArticulo(RegistraPedido seteaArticulo) {
+        initComponents();
+        btnSeleccionaArticuloCompra.setVisible(false);
+        defineModelo();
+        listaArticulos = new ArrayList();
+        articulosDAO = new ArticuloDAO();
+        listaArticulos = articulosDAO.BuscaTodos(Articulo.class);
+        muestraContenidoTabla();
+        this.registraPedido = seteaArticulo;
+        AutoCompleteDecorator.decorate(cbCategoria);
+        actualizaComboBox();
+
+        AutoCompleteDecorator.decorate(cbUnidad);
+        actualizaCbUnidad();
+        jPanel2.setVisible(false);
+
+        this.setSize(950, 650);
+
+        //if (Perfil.equals("Operador")) {
+        //  btnSalvar.setEnabled(false);
+        //btnCancelar.setEnabled(false);
+        //btnAlterar.setVisible(false);
+        //}
     }
 
     public FrameSeleccionaArticulo(RegistraCompraFrame seteaArticulo, String Perfil) {
@@ -86,7 +109,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
         defineModelo();
         listaArticulos = new ArrayList();
         articulosDAO = new ArticuloDAO();
-        listaArticulos = articulosDAO.BuscaTodos(Articulos.class);
+        listaArticulos = articulosDAO.BuscaTodos(Articulo.class);
         muestraContenidoTabla();
         this.registraCompraFrame = seteaArticulo;
         AutoCompleteDecorator.decorate(cbCategoria);
@@ -95,7 +118,6 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
         AutoCompleteDecorator.decorate(cbUnidad);
         actualizaCbUnidad();
         jPanel2.setVisible(false);
-
 
         if (Perfil.equals("Operador")) {
 
@@ -170,17 +192,16 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
 
             tableModelArticulos.setNumRows(0);
 
-            for (Articulos articulo : listaArticulos) {
+            for (Articulo articulo : listaArticulos) {
 
                 tableModelArticulos.addRow(new Object[]{
-                            articulo.getId(),
-                            articulo.getNombre(),
-                            articulo.getDescripcion(),
-                            articulo.getCantidad(),
-                            articulo.getDescuento(),
-                            articulo.getValor_venta()});
+                    articulo.getId(),
+                    articulo.getNombre(),
+                    articulo.getDescripcion(),
+                    articulo.getCantidad(),
+                    articulo.getDescuento(),
+                    articulo.getValor_venta()});
             }
-
 
         } catch (Exception error) {
             JOptionPane.showMessageDialog(null, "Error" + error);
@@ -208,7 +229,6 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
                 txtValor_CompraConImp.setText(String.valueOf(listaArticulos.get(tblArticulos.getSelectedRow()).getValor_compra_impuesto()));
                 cbUnidad.setSelectedItem(listaArticulos.get(tblArticulos.getSelectedRow()).getUnidad());
 
-
             } catch (Exception error) {
                 error.printStackTrace();
             }
@@ -225,7 +245,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
 
             try {
 
-                Articulos articulo = new Articulos();
+                Articulo articulo = new Articulo();
                 articulo.setId(txtCodigo.getText());
                 articulo.setNombre(txtNombre.getText());
                 articulo.setCantidad(Double.parseDouble(txtCantidad.getText()));
@@ -251,7 +271,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(null, "Articulo registrado correctamente!");
                 listaArticulos.clear();
                 articulosDAO = new ArticuloDAO();
-                listaArticulos = articulosDAO.BuscaTodos(Articulos.class);
+                listaArticulos = articulosDAO.BuscaTodos(Articulo.class);
                 muestraContenidoTabla();
                 desabilitaBotoes();
                 desabilitaCampos();
@@ -273,7 +293,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
                 txtNombre.requestFocus();
 
             } else {
-                Articulos articulo = new Articulos();
+                Articulo articulo = new Articulo();
                 articulo.setId(txtCodigo.getText());
                 articulo.setNombre(txtNombre.getText());
                 articulo.setCantidad(Double.parseDouble(txtCantidad.getText()));
@@ -293,7 +313,6 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
                 articulo.setIva(Double.parseDouble(String.valueOf(cbIva.getSelectedItem())));
                 articulo.setValor_compra_impuesto(Double.parseDouble(txtValor_CompraConImp.getText()));
 
-
                 DAOGenerico dao = new DAOGenerico(articulo);
                 dao.registraOActualiza();
 
@@ -303,11 +322,10 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
                     daoElimina.elimina();
                 }
 
-
                 JOptionPane.showMessageDialog(null, "Articulo editado correctamente!");
                 listaArticulos.clear();
                 articulosDAO = new ArticuloDAO();
-                listaArticulos = articulosDAO.BuscaTodos(Articulos.class);
+                listaArticulos = articulosDAO.BuscaTodos(Articulo.class);
                 muestraContenidoTabla();
                 desabilitaBotoes();
                 desabilitaCampos();
@@ -322,7 +340,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
 
     private void eliminaProducto() {
 
-        Articulos articulo = new Articulos();
+        Articulo articulo = new Articulo();
         articulo.setId(listaArticulos.get(tblArticulos.getSelectedRow()).getId());
 
         dAOGenerico = new DAOGenerico(articulo);
@@ -332,7 +350,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
 
     }
 
-    private void seleccionaArticuloVenta() {
+    private void seleccionaArticulo() {
 
         if (tblArticulos.getSelectedRow() == -1) {
 
@@ -340,12 +358,16 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
 
         } else {
 
-            Articulos articulo = new Articulos();
+            Articulo articulo = new Articulo();
             articulo.setId(listaArticulos.get(tblArticulos.getSelectedRow()).getId());
             articulo.setNombre(listaArticulos.get(tblArticulos.getSelectedRow()).getNombre());
             articulo.setValor_venta(listaArticulos.get(tblArticulos.getSelectedRow()).getValor_venta());
 
-            registraVentaFrame.setArticulo(articulo);
+            if (registraVentaFrame == null) {
+                registraPedido.setArticulo(articulo);
+            } else if (registraPedido == null) {
+                registraVentaFrame.setArticulo(articulo);
+            }
 
         }
     }
@@ -358,7 +380,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
 
         } else {
 
-            Articulos articulo = new Articulos();
+            Articulo articulo = new Articulo();
             articulo.setId(listaArticulos.get(tblArticulos.getSelectedRow()).getId());
             articulo.setNombre(listaArticulos.get(tblArticulos.getSelectedRow()).getNombre());
 
@@ -1107,11 +1129,11 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
 
             if (txtFiltro.getText().equals("")) {
                 listaArticulos.clear();
-                listaArticulos = articulosDAO.BuscaTodos(Articulos.class);
+                listaArticulos = articulosDAO.BuscaTodos(Articulo.class);
             } else {
 
                 listaArticulos.clear();
-                listaArticulos = articulosDAO.buscarPorIDString(Articulos.class, txtFiltro.getText());
+                listaArticulos = articulosDAO.buscarPorIDString(Articulo.class, txtFiltro.getText());
                 muestraContenidoTabla();
 
             }
@@ -1120,13 +1142,13 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
         } else if (rbNombre.isSelected() == true) {
 
             listaArticulos.clear();
-            listaArticulos = articulosDAO.buscarPor(Articulos.class, "nombre", txtFiltro.getText());
+            listaArticulos = articulosDAO.buscarPor(Articulo.class, "nombre", txtFiltro.getText());
             muestraContenidoTabla();
 
         } else if (rbDescripcion.isSelected() == true) {
 
             listaArticulos.clear();
-            listaArticulos = articulosDAO.buscarPor(Articulos.class, "descripcion", txtFiltro.getText());
+            listaArticulos = articulosDAO.buscarPor(Articulo.class, "descripcion", txtFiltro.getText());
             muestraContenidoTabla();
         }
 
@@ -1149,7 +1171,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
     private void txtCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodigoFocusLost
 
         try {
-            Articulos articulo = new ArticuloDAO().buscaArtUnicoPorIDStr(txtCodigo.getText());
+            Articulo articulo = new ArticuloDAO().buscaArtUnicoPorIDStr(txtCodigo.getText());
             if ((articulo != null && txtNombre.getText().equals(""))) {
                 JOptionPane.showMessageDialog(null, "El código ingresado ya existe en la base de datos", "Error de código", JOptionPane.ERROR_MESSAGE);
                 txtCodigo.requestFocus();
@@ -1187,12 +1209,12 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
 
     private void btnSeleccionaArticuloVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaArticuloVentaActionPerformed
 
-        seleccionaArticuloVenta();
+        seleccionaArticulo();
     }//GEN-LAST:event_btnSeleccionaArticuloVentaActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
         this.dispose();
-        
+
     }//GEN-LAST:event_btnVolverActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

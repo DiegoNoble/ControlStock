@@ -12,20 +12,29 @@ public class ArticulosPedido implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    @ManyToOne(targetEntity = Articulos.class)
+    @ManyToOne(targetEntity = Articulo.class)
     @JoinColumn(name = "id_articulo")
-    private Articulos articulo;
+    private Articulo articulo;
 
     @ManyToOne(targetEntity = Pedido.class)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
-
+    private Integer posicion;
     private Double cantPedida;
     private Double cantAtendida;
     private Double cantPendiente;
+    private Double importePedido;
+    private Double importeAtendido;
+    private Double importePendiente;
 
     public ArticulosPedido() {
+    }
+
+    public ArticulosPedido(Articulo articulo, Double cantPedida, Double importePedido) {
+        this.articulo = articulo;
+        this.cantPedida = cantPedida;
+        this.importePedido = importePedido;
     }
 
     public Integer getId() {
@@ -36,11 +45,11 @@ public class ArticulosPedido implements Serializable {
         this.id = id;
     }
 
-    public Articulos getArticulo() {
+    public Articulo getArticulo() {
         return articulo;
     }
 
-    public void setArticulo(Articulos articulo) {
+    public void setArticulo(Articulo articulo) {
         this.articulo = articulo;
     }
 
@@ -74,6 +83,38 @@ public class ArticulosPedido implements Serializable {
 
     public void setCantPendiente(Double cantPendiente) {
         this.cantPendiente = cantPendiente;
+    }
+
+    public Integer getPosicion() {
+        return posicion;
+    }
+
+    public void setPosicion(Integer posicion) {
+        this.posicion = posicion;
+    }
+
+    public Double getImportePedido() {
+        return importePedido;
+    }
+
+    public void setImportePedido(Double importePedido) {
+        this.importePedido = importePedido;
+    }
+
+    public Double getImporteAtendido() {
+        return importeAtendido;
+    }
+
+    public void setImporteAtendido(Double importeAtendido) {
+        this.importeAtendido = importeAtendido;
+    }
+
+    public Double getImportePendiente() {
+        return importePendiente;
+    }
+
+    public void setImportePendiente(Double importePendiente) {
+        this.importePendiente = importePendiente;
     }
 
 }

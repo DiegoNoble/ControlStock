@@ -2,7 +2,7 @@
 package com.Beans;
 
 import com.Ventas.*;
-import com.Beans.Articulos;
+import com.Beans.Articulo;
 import java.io.Serializable;
 import javax.persistence.*;
 import org.hibernate.annotations.Cascade;
@@ -25,9 +25,9 @@ public class ArticulosCompra implements Serializable {
     private Double cantidad;
     @Column(name ="descuento")
     private String descuento;
-    @ManyToOne (targetEntity=Articulos.class)
+    @ManyToOne (targetEntity=Articulo.class)
     @JoinColumn(name="id_articulo")
-    private Articulos articulo;
+    private Articulo articulo;
     @ManyToOne (targetEntity=FacturaCompra.class)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @JoinColumn(name="id_factura")
@@ -49,12 +49,12 @@ public class ArticulosCompra implements Serializable {
     }
 
 
-    public Articulos getArticulo() {
+    public Articulo getArticulo() {
         return articulo;
     }
 
     
-    public void setArticulo(Articulos articulo) {
+    public void setArticulo(Articulo articulo) {
         this.articulo = articulo;
     }
 

@@ -17,9 +17,9 @@ public class ArticulosVenta implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name ="cantidad")
     private Double cantidad;
-    @ManyToOne (targetEntity=Articulos.class)
+    @ManyToOne (targetEntity=Articulo.class)
     @JoinColumn(name="id_articulo")
-    private Articulos articulo;
+    private Articulo articulo;
     @ManyToOne (targetEntity=Factura.class)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
     @JoinColumn(name="id_factura")
@@ -70,14 +70,14 @@ public class ArticulosVenta implements Serializable {
         this.id = id;
     }
 
-    public Articulos getArticulo() {
+    public Articulo getArticulo() {
         return articulo;
     }
 
     /**
      * @param articulo the articulo to set
      */
-    public void setArticulo(Articulos articulo) {
+    public void setArticulo(Articulo articulo) {
         this.articulo = articulo;
     }
 

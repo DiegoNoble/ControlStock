@@ -5,7 +5,7 @@ import com.Beans.Factura;
 import com.Beans.ArticulosVenta;
 import com.DAO.DAOGenerico;
 import Utilidades.Utilidades;
-import com.Beans.Articulos;
+import com.Beans.Articulo;
 import com.Articulos.FrameSeleccionaArticulo;
 import com.Beans.Caja;
 import com.Beans.MonedaEnum;
@@ -34,7 +34,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class RegistraVentaFrame extends javax.swing.JInternalFrame {
 
-    private Articulos articulo;
+    private Articulo articulo;
     private Cliente Clie;
     public DefaultTableModel tableModel;
     List<ArticulosVenta> listaArticulos;
@@ -157,7 +157,7 @@ public class RegistraVentaFrame extends javax.swing.JInternalFrame {
 
                     ArticulosVenta articulosVenta = new ArticulosVenta();
 
-                    Articulos articulo = new Articulos();
+                    Articulo articulo = new Articulo();
                     articulo.setId(idArticulo);
                     articulosVenta.setArticulo(articulo);
                     articulosVenta.setDescuento(descuento);
@@ -753,7 +753,7 @@ public class RegistraVentaFrame extends javax.swing.JInternalFrame {
         try {
 
             articulosDAO = new ArticuloDAO();
-            Articulos articuloCompra = (Articulos) articulosDAO.buscaArtUnicoPorIDStr(txtFiltroCodigo.getText());
+            Articulo articuloCompra = (Articulo) articulosDAO.buscaArtUnicoPorIDStr(txtFiltroCodigo.getText());
             //Articulos articuloAcessoRapido = new Articulos();
             //articuloAcessoRapido.setId(articuloCompra.getId());
             //articuloAcessoRapido.setNombre(articuloCompra.getNombre());
@@ -905,11 +905,11 @@ public class RegistraVentaFrame extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 
-    public Articulos getArticulo() {
+    public Articulo getArticulo() {
         return articulo;
     }
 
-    public void setArticulo(Articulos articulo) {
+    public void setArticulo(Articulo articulo) {
         this.articulo = articulo;
 
         BigDecimal valorUnitario = new BigDecimal(articulo.getValor_venta() / 1.22);

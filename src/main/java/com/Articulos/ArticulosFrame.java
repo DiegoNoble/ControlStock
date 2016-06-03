@@ -1,6 +1,6 @@
 package com.Articulos;
 
-import com.Beans.Articulos;
+import com.Beans.Articulo;
 import com.DAO.DAOGenerico;
 import Utilidades.HibernateUtil;
 import Utilidades.Utilidades;
@@ -30,7 +30,7 @@ import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     int edicion = 0;
-    String Filtro = "from Articulos";
+    String Filtro = "from Articulo";
     private DefaultTableModel tableModelArticulos;
     private ListSelectionModel listModelArticulos;
     private DefaultTableModel tableModelCompras;
@@ -453,7 +453,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
             try {
 
-                Articulos articulo = new Articulos();
+                Articulo articulo = new Articulo();
                 articulo.setId(txtCodigo.getText());
                 articulo.setNombre(txtNombre.getText());
                 articulo.setCantidad(Double.parseDouble(txtCantidad.getText()));
@@ -498,7 +498,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         } else {
 
-            Articulos articulo = new Articulos();
+            Articulo articulo = new Articulo();
             articulo.setId(txtCodigo.getText());
             articulo.setNombre(txtNombre.getText());
             articulo.setCantidad(Double.parseDouble(txtCantidad.getText()));
@@ -547,14 +547,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
             Session seccion = HibernateUtil.getSeccion();
 
-            List<Articulos> lista_articulos = new ArrayList();
+            List<Articulo> lista_articulos = new ArrayList();
             lista_articulos = seccion.createQuery(Filtro).list();
 
             int tamano_lista = lista_articulos.size();
 
             for (int i = 0; i < tamano_lista; i++) {
 
-                Articulos articulos = lista_articulos.get(i);
+                Articulo articulos = lista_articulos.get(i);
 
                 Object[] linea = new Object[14];
                 linea[0] = i + 1;
@@ -682,7 +682,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     private void eliminaProducto() {
 
-        Articulos articulo = new Articulos();
+        Articulo articulo = new Articulo();
         articulo.setId(txtCodigo.getText());
 
         DAOGenerico dao = new DAOGenerico(articulo);
@@ -1824,7 +1824,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     private void txtCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodigoFocusLost
         try {
-            Articulos articulo = new ArticuloDAO().buscaArtUnicoPorIDStr(txtCodigo.getText());
+            Articulo articulo = new ArticuloDAO().buscaArtUnicoPorIDStr(txtCodigo.getText());
             if ((articulo != null && txtNombre.getText().equals(""))) {
                 JOptionPane.showMessageDialog(null, "El código ingresado ya existe en la base de datos", "Error de código", JOptionPane.ERROR_MESSAGE);
                 txtCodigo.requestFocus();

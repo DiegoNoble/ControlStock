@@ -4,14 +4,15 @@
   <session-factory>
     <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="hibernate.connection.url">jdbc:mysql://192.168.1.101:3306/control_stock</property>
-    <property name="hibernate.connection.username">usuario</property>
-    <property name="hibernate.connection.password">usuario</property>
+    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/control_stock</property>
+    <property name="hibernate.connection.username">root</property>
+    <property name="hibernate.connection.password">dieguito</property>
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.format_sql">true</property>
-    <mapping class="com.Beans.Clientes"/>
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <mapping class="com.Beans.Cliente"/>
     <mapping class="com.Beans.Proveedor"/>
-    <mapping class="com.Beans.Articulos"/>
+    <mapping class="com.Beans.Articulo"/>
     <mapping class="com.Beans.ArticulosVenta"/>
     <mapping class="com.Beans.Factura"/>
     <mapping class="com.Beans.ArticulosCompra"/>
@@ -26,5 +27,6 @@
     <mapping class="com.Beans.Cotizacion"/>
     <mapping class="com.Beans.CompraPago"/>
     <mapping class="com.Beans.PagoCompra"/>
+    <mapping class="com.Beans.Vendedor"/>
   </session-factory>
 </hibernate-configuration>

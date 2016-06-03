@@ -1,7 +1,7 @@
 package com.DAO;
 
 import Utilidades.HibernateUtil;
-import com.Beans.Articulos;
+import com.Beans.Articulo;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;

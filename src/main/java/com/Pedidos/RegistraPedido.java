@@ -1,26 +1,18 @@
 package com.Pedidos;
 
-import Utilidades.HibernateUtil;
 import com.Beans.Pedido;
 import com.Beans.ArticulosPedido;
-import com.DAO.DAOGenerico;
 import Utilidades.Utilidades;
-import com.Beans.Articulos;
+import com.Beans.Articulo;
 import com.Articulos.FrameSeleccionaArticulo;
-import com.Beans.Caja;
-import com.Beans.MonedaEnum;
-import com.Beans.TipoDocumentoEnum;
 import com.Clientes.ClienteFrame;
 import com.Beans.Cliente;
-import com.Beans.Rubros;
-import com.CuentasRecibir.CreditosVentas;
+import com.Beans.Vendedor;
 import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;
+import com.DAO.ClienteDAO;
+import com.DAO.VendedorDAO;
 import com.Renderers.MyDefaultCellRenderer;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,20 +20,22 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.*;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class RegistraPedido extends javax.swing.JInternalFrame {
 
-    private Articulos articulo;
-    private Cliente Clie;
-    public DefaultTableModel tableModel;
-    List<ArticulosPedido> listaArticulos;
-    private Pedido pedido;
-    private static Pedido pedidoSingleton;
-    private ArticuloDAO articulosDAO;
-    private ArticulosPedidoDAO articulosPedidoDAO;
+    Articulo articulo;
+    List<Cliente> listClientes;
+    List<Vendedor> listVendedores;
+    Cliente Clie;
+    ArticulosPedidoTableModel tableModel;
+    List<ArticulosPedido> listArticulosPedido;
+    Pedido pedido;
+    static Pedido pedidoSingleton;
+    ArticuloDAO articulosDAO;
+    ClienteDAO clienteDAO;
+    VendedorDAO vendedorDAO;
+    ArticulosPedidoDAO articulosPedidoDAO;
     double subTotal;
     double IVA;
     double redondeo;
@@ -50,12 +44,12 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         initComponents();
 
         dpFecha.setDate(new Date());
-        Date fecha = dpFecha.getDate();
 
-        listaArticulos = new ArrayList<ArticulosPedido>();
-        TableModel();
+        listArticulosPedido = new ArrayList<ArticulosPedido>();
+        defineModelo();
 
-        AutoCompleteDecorator.decorate(cbNombreCliente);
+        AutoCompleteDecorator.decorate(cbCliente);
+        AutoCompleteDecorator.decorate(cbVendedor);
         cargaComboBoxes();
 
     }
@@ -72,36 +66,48 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private void cargaComboBoxes() {
 
         try {
-            List<Cliente> listadeClientes = new ArrayList();
+            listClientes = new ArrayList();
 
-            DAOGenerico dao = new DAOGenerico();
-            listadeClientes = dao.BuscaTodos(Cliente.class);
+            clienteDAO = new ClienteDAO();
+            listClientes = clienteDAO.BuscaTodos(Cliente.class);
 
-            cbNombreCliente.removeAllItems();
+            cbCliente.removeAllItems();
 
-            for (Cliente clientes : listadeClientes) {
+            for (Cliente clientes : listClientes) {
 
-                cbNombreCliente.addItem(clientes);
+                cbCliente.addItem(clientes);
             }
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            JOptionPane.showMessageDialog(null, "Error al cargar clientes" + e, "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
-        DefaultComboBoxModel Moneda = new DefaultComboBoxModel(MonedaEnum.values());
-        cbMoneda.setModel(Moneda);
-        cbMoneda.removeItemAt(2);
 
-        DefaultComboBoxModel comboModelTipo = new DefaultComboBoxModel(TipoDocumentoEnum.values());
-        cbTipoPedido.setModel(comboModelTipo);
+        try {
+            listVendedores = new ArrayList();
+
+            vendedorDAO = new VendedorDAO();
+            listVendedores = vendedorDAO.BuscaTodos(Vendedor.class);
+
+            cbVendedor.removeAllItems();
+
+            for (Vendedor vendedor : listVendedores) {
+
+                cbVendedor.addItem(vendedor);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar vendedores" + e, "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
 
     }
 
-    private void TableModel() {
+    private void defineModelo() {
 
         ((DefaultTableCellRenderer) tblArticulosPedido.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 
-        tableModel = (DefaultTableModel) tblArticulosPedido.getModel();
-        tableModel.setNumRows(0);
+        tableModel = new ArticulosPedidoTableModel(listArticulosPedido);
 
         txtTotal.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -125,37 +131,34 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
     }
 
-    private void confirmaVenta() {
+    private void confirmaPedido() {
 
         try {
-            if (getClie() == null) {
-                JOptionPane.showMessageDialog(this, "Selecione un cliente!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else if (tableModel.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(this, "Seleccione un articulo a vender!", "Error", JOptionPane.ERROR_MESSAGE);
+            if (listArticulosPedido.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Seleccione un articulo", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
 
                 for (int i = 0; i < tableModel.getRowCount(); i++) {
 
-                    String idArticulo = tableModel.getValueAt(i, 0).toString();
-                    double valorSinIvaConDescuento = Double.valueOf(tableModel.getValueAt(i, 5).toString());
-                    double valorConIvaConDescuento = Utilidades.Redondear(valorSinIvaConDescuento * 1.22, 2);
-                    String descuento = (String) tableModel.getValueAt(i, 4);
-                    double unidades = Double.valueOf(tableModel.getValueAt(i, 2).toString());
+                    /*String idArticulo = tableModel.getValueAt(i, 0).toString();
+                     double valorSinIvaConDescuento = Double.valueOf(tableModel.getValueAt(i, 5).toString());
+                     double valorConIvaConDescuento = Utilidades.Redondear(valorSinIvaConDescuento * 1.22, 2);
+                     String descuento = (String) tableModel.getValueAt(i, 4);
+                     double unidades = Double.valueOf(tableModel.getValueAt(i, 2).toString());
 
-                    ArticulosPedido articulosVenta = new ArticulosPedido();
+                     ArticulosPedido articulosVenta = new ArticulosPedido();
 
-                    Articulos articulo = new Articulos();
-                    articulo.setId(idArticulo);
-                    articulosVenta.setArticulo(articulo);
-                    articulosVenta.setDescuento(descuento);
-                    articulosVenta.setValorConIva(valorConIvaConDescuento);
-                    articulosVenta.setValorSinIva(valorSinIvaConDescuento);
-                    articulosVenta.setCantidad(unidades);
-                    articulosVenta.setPedido(pedido);
+                     Articulo articulo = new Articulo();
+                     articulo.setId(idArticulo);
+                     articulosVenta.setArticulo(articulo);
+                     articulosVenta.setDescuento(descuento);
+                     articulosVenta.setValorConIva(valorConIvaConDescuento);
+                     articulosVenta.setValorSinIva(valorSinIvaConDescuento);
+                     articulosVenta.setCantidad(unidades);
+                     articulosVenta.setPedido(pedido);
 
-                    DAOGenerico dao = new DAOGenerico(articulosVenta);
-                    dao.registra();
-
+                     DAOGenerico dao = new DAOGenerico(articulosVenta);
+                     dao.registra();*/
                 }
                 JOptionPane.showMessageDialog(this, "Venta realizada correctamente!", "Información", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -168,7 +171,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private void retirarArticulo() {
 
         if (tblArticulosPedido.getSelectedRow() != -1) {
-            tableModel.removeRow(tblArticulosPedido.getSelectedRow());
+            tableModel.eliminar(tblArticulosPedido.getSelectedRow());
             calcularTotales();
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um item da lista!", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -177,71 +180,71 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     }
 
     public void registraMovimiento() {
-        try {
-            DateFormat formatoData = new SimpleDateFormat("yyyy/MM/dd");
-            Date fecha = dpFecha.getDate();
+        /*  try {
+         DateFormat formatoData = new SimpleDateFormat("yyyy/MM/dd");
+         Date fecha = dpFecha.getDate();
 
-            String date = formatoData.format(fecha);
+         String date = formatoData.format(fecha);
 
-            Date fechaBD = null;
+         Date fechaBD = null;
 
-            fechaBD = formatoData.parse(date);
+         fechaBD = formatoData.parse(date);
 
-            if (cbMoneda.getSelectedItem() == MonedaEnum.PESOS) {
+         if (cbMoneda.getSelectedItem() == MonedaEnum.PESOS) {
 
-                Session seccion = HibernateUtil.getSeccion();
-                Transaction transaccion = seccion.beginTransaction();
+         Session seccion = HibernateUtil.getSeccion();
+         Transaction transaccion = seccion.beginTransaction();
 
-                String valor = (txtTotal.getText()).replace(",", ".");
+         String valor = (txtTotal.getText()).replace(",", ".");
 
-                Caja caja = new Caja();
-                caja.setConcepto("VENTA MERCADERÍA");
-                caja.setFecha(fechaBD);
+         Caja caja = new Caja();
+         caja.setConcepto("VENTA MERCADERÍA");
+         caja.setFecha(fechaBD);
 
-                caja.setRubro(new Rubros(8));
-                caja.setEntrada_pesos(Double.parseDouble(valor));
-                seccion.save(caja);
-                transaccion.commit();
-                seccion.close();
+         caja.setRubro(new Rubros(8));
+         caja.setEntrada_pesos(Double.parseDouble(valor));
+         seccion.save(caja);
+         transaccion.commit();
+         seccion.close();
 
-            } else if (cbMoneda.getSelectedItem() == MonedaEnum.REALES) {
+         } else if (cbMoneda.getSelectedItem() == MonedaEnum.REALES) {
 
-                Session seccion = HibernateUtil.getSeccion();
-                Transaction transaccion = seccion.beginTransaction();
+         Session seccion = HibernateUtil.getSeccion();
+         Transaction transaccion = seccion.beginTransaction();
 
-                String valor = (txtTotal.getText()).replace(",", ".");
+         String valor = (txtTotal.getText()).replace(",", ".");
 
-                Caja caja = new Caja();
-                caja.setConcepto("VENTA MERCADERÍA");
-                caja.setFecha(fechaBD);
+         Caja caja = new Caja();
+         caja.setConcepto("VENTA MERCADERÍA");
+         caja.setFecha(fechaBD);
 
-                caja.setRubro(new Rubros(8));
-                caja.setEntrada_reales(Double.parseDouble(valor));
-                seccion.save(caja);
-                transaccion.commit();
-                seccion.close();
-            } else if (cbMoneda.getSelectedItem() == MonedaEnum.DOLARES) {
+         caja.setRubro(new Rubros(8));
+         caja.setEntrada_reales(Double.parseDouble(valor));
+         seccion.save(caja);
+         transaccion.commit();
+         seccion.close();
+         } else if (cbMoneda.getSelectedItem() == MonedaEnum.DOLARES) {
 
-                Session seccion = HibernateUtil.getSeccion();
-                Transaction transaccion = seccion.beginTransaction();
+         Session seccion = HibernateUtil.getSeccion();
+         Transaction transaccion = seccion.beginTransaction();
 
-                Caja caja = new Caja();
-                caja.setConcepto("VENTA MERCADERÍA");
-                caja.setFecha(fechaBD);
+         Caja caja = new Caja();
+         caja.setConcepto("VENTA MERCADERÍA");
+         caja.setFecha(fechaBD);
 
-                caja.setRubro(new Rubros(8));
-                String valor = (txtTotal.getText()).replace(",", ".");
-                caja.setEntrada_dolares(Double.parseDouble(valor));
-                seccion.save(caja);
-                transaccion.commit();
-                seccion.close();
+         caja.setRubro(new Rubros(8));
+         String valor = (txtTotal.getText()).replace(",", ".");
+         caja.setEntrada_dolares(Double.parseDouble(valor));
+         seccion.save(caja);
+         transaccion.commit();
+         seccion.close();
 
-            }
+         }
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Error " + e);
+         } catch (Exception e) {
+         JOptionPane.showMessageDialog(null, "Error " + e);
 
-        }
+         }*/
     }
 
     void calcularTotales() {
@@ -333,9 +336,9 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel6 = new javax.swing.JPanel();
         btnSelecionaCliente = new javax.swing.JButton();
-        cbNombreCliente = new javax.swing.JComboBox();
+        cbCliente = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblArticulosVenta = new javax.swing.JTable();
+        tblArticulosPedido = new javax.swing.JTable();
         jTabbedPane3 = new javax.swing.JTabbedPane();
         jPanel10 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -343,7 +346,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel11 = new javax.swing.JPanel();
         btnSelecionaCliente1 = new javax.swing.JButton();
-        cbNombreCliente1 = new javax.swing.JComboBox();
+        cbVendedor = new javax.swing.JComboBox();
         jPanel9 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         txtSubTotal = new javax.swing.JTextField();
@@ -460,14 +463,14 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(btnSelecionaCliente, gridBagConstraints);
 
-        cbNombreCliente.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        cbCliente.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(cbNombreCliente, gridBagConstraints);
+        jPanel6.add(cbCliente, gridBagConstraints);
 
         jTabbedPane2.addTab("Cliente", jPanel6);
 
@@ -480,8 +483,8 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(jTabbedPane2, gridBagConstraints);
 
-        tblArticulosVenta.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        tblArticulosVenta.setModel(new javax.swing.table.DefaultTableModel(
+        tblArticulosPedido.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        tblArticulosPedido.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -504,23 +507,23 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
                 return canEdit [columnIndex];
             }
         });
-        tblArticulosVenta.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(tblArticulosVenta);
-        if (tblArticulosVenta.getColumnModel().getColumnCount() > 0) {
-            tblArticulosVenta.getColumnModel().getColumn(0).setPreferredWidth(25);
-            tblArticulosVenta.getColumnModel().getColumn(0).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosVenta.getColumnModel().getColumn(1).setPreferredWidth(120);
-            tblArticulosVenta.getColumnModel().getColumn(1).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosVenta.getColumnModel().getColumn(2).setPreferredWidth(5);
-            tblArticulosVenta.getColumnModel().getColumn(2).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosVenta.getColumnModel().getColumn(3).setPreferredWidth(5);
-            tblArticulosVenta.getColumnModel().getColumn(3).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosVenta.getColumnModel().getColumn(4).setPreferredWidth(5);
-            tblArticulosVenta.getColumnModel().getColumn(4).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosVenta.getColumnModel().getColumn(5).setPreferredWidth(20);
-            tblArticulosVenta.getColumnModel().getColumn(5).setCellRenderer(new MyDefaultCellRenderer());
-            tblArticulosVenta.getColumnModel().getColumn(6).setPreferredWidth(20);
-            tblArticulosVenta.getColumnModel().getColumn(6).setCellRenderer(new MyDefaultCellRenderer());
+        tblArticulosPedido.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tblArticulosPedido);
+        if (tblArticulosPedido.getColumnModel().getColumnCount() > 0) {
+            tblArticulosPedido.getColumnModel().getColumn(0).setPreferredWidth(25);
+            tblArticulosPedido.getColumnModel().getColumn(0).setCellRenderer(new MyDefaultCellRenderer());
+            tblArticulosPedido.getColumnModel().getColumn(1).setPreferredWidth(120);
+            tblArticulosPedido.getColumnModel().getColumn(1).setCellRenderer(new MyDefaultCellRenderer());
+            tblArticulosPedido.getColumnModel().getColumn(2).setPreferredWidth(5);
+            tblArticulosPedido.getColumnModel().getColumn(2).setCellRenderer(new MyDefaultCellRenderer());
+            tblArticulosPedido.getColumnModel().getColumn(3).setPreferredWidth(5);
+            tblArticulosPedido.getColumnModel().getColumn(3).setCellRenderer(new MyDefaultCellRenderer());
+            tblArticulosPedido.getColumnModel().getColumn(4).setPreferredWidth(5);
+            tblArticulosPedido.getColumnModel().getColumn(4).setCellRenderer(new MyDefaultCellRenderer());
+            tblArticulosPedido.getColumnModel().getColumn(5).setPreferredWidth(20);
+            tblArticulosPedido.getColumnModel().getColumn(5).setCellRenderer(new MyDefaultCellRenderer());
+            tblArticulosPedido.getColumnModel().getColumn(6).setPreferredWidth(20);
+            tblArticulosPedido.getColumnModel().getColumn(6).setCellRenderer(new MyDefaultCellRenderer());
         }
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -566,14 +569,14 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel11.add(btnSelecionaCliente1, gridBagConstraints);
 
-        cbNombreCliente1.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        cbVendedor.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 4;
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel11.add(cbNombreCliente1, gridBagConstraints);
+        jPanel11.add(cbVendedor, gridBagConstraints);
 
         jTabbedPane4.addTab("Vendedor", jPanel11);
 
@@ -739,17 +742,9 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         try {
 
             articulosDAO = new ArticuloDAO();
-            Articulos articuloCompra = (Articulos) articulosDAO.buscaArtUnicoPorIDStr(txtFiltroCodigo.getText());
-            //Articulos articuloAcessoRapido = new Articulos();
-            //articuloAcessoRapido.setId(articuloCompra.getId());
-            //articuloAcessoRapido.setNombre(articuloCompra.getNombre());
+            Articulo articuloPedido = (Articulo) articulosDAO.buscaArtUnicoPorIDStr(txtFiltroCodigo.getText());
 
-            BigDecimal valorUnitario = new BigDecimal(articuloCompra.getValor_venta() / 1.22);
-            Double valorVenta = valorUnitario.setScale(2, RoundingMode.CEILING).doubleValue();
-            tableModel.addRow(new Object[]{articuloCompra.getId(),
-                articuloCompra.getNombre(), new Double(1.0), valorVenta, "0"});
-            //calcularTotales();
-
+            tableModel.agregar(new ArticulosPedido(articuloPedido, 1.0, articuloPedido.getValor_venta()));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Articulo no encontrado!", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -806,31 +801,31 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
     private void btnRegistraVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistraVentaActionPerformed
 
-        setClie((Cliente) cbNombreCliente.getSelectedItem());
-        pedido.setTipo((TipoDocumentoEnum) cbTipoPedido.getSelectedItem());
-        pedido.setTotal(Double.parseDouble(txtTotal.getText()));
-        pedido.setFecha(Utilidades.RecibeDateRetornaDateFormatoBD(dpFecha.getDate()));
-        pedido.setMoneda((MonedaEnum) cbMoneda.getSelectedItem());
-        String tipoPedido = cbTipoPedido.getSelectedItem().toString();
+        /* setClie((Cliente) cbNombreCliente.getSelectedItem());
+         pedido.setTipo((TipoDocumentoEnum) cbTipoPedido.getSelectedItem());
+         pedido.setTotal(Double.parseDouble(txtTotal.getText()));
+         pedido.setFecha(Utilidades.RecibeDateRetornaDateFormatoBD(dpFecha.getDate()));
+         pedido.setMoneda((MonedaEnum) cbMoneda.getSelectedItem());
+         String tipoPedido = cbTipoPedido.getSelectedItem().toString();
 
-        switch (tipoPedido) {
-            case ("Crédito"):
-                pedido.setNroDocumento(Integer.parseInt(txtNroDocumento.getText()));
-                pedidoSingleton = pedido;
-                confirmaVenta();
-                CreditosVentas venta = new CreditosVentas(null, true);
-                venta.setLocationRelativeTo(null);
-                venta.setVisible(true);
-                this.dispose();
+         switch (tipoPedido) {
+         case ("Crédito"):
+         pedido.setNroDocumento(Integer.parseInt(txtNroDocumento.getText()));
+         pedidoSingleton = pedido;
+         confirmaPedido();
+         CreditosVentas venta = new CreditosVentas(null, true);
+         venta.setLocationRelativeTo(null);
+         venta.setVisible(true);
+         this.dispose();
 
-                break;
-            case ("Contado"):
-                confirmaVenta();
-                registraMovimiento();
-                this.dispose();
+         break;
+         case ("Contado"):
+         confirmaPedido();
+         registraMovimiento();
+         this.dispose();
 
-                break;
-        }
+         break;
+         }*/
 
     }//GEN-LAST:event_btnRegistraVentaActionPerformed
 
@@ -846,8 +841,8 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnSelecionaCliente;
     private javax.swing.JButton btnSelecionaCliente1;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JComboBox cbNombreCliente;
-    private javax.swing.JComboBox cbNombreCliente1;
+    private javax.swing.JComboBox cbCliente;
+    private javax.swing.JComboBox cbVendedor;
     private org.jdesktop.swingx.JXDatePicker dpFecha;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -873,7 +868,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTable tblArticulosVenta;
+    private javax.swing.JTable tblArticulosPedido;
     private javax.swing.JTextField txtFiltroCodigo;
     private javax.swing.JTextField txtIVA;
     private javax.swing.JTextField txtRedondeo;
@@ -881,18 +876,14 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 
-    public Articulos getArticulo() {
+    public Articulo getArticulo() {
         return articulo;
     }
 
-    public void setArticulo(Articulos articulo) {
+    public void setArticulo(Articulo articulo) {
         this.articulo = articulo;
 
-        BigDecimal valorUnitario = new BigDecimal(articulo.getValor_venta() / 1.22);
-        Double valorVenta = valorUnitario.setScale(2, RoundingMode.CEILING).doubleValue();
-        tableModel.addRow(new Object[]{articulo.getId(),
-            articulo.getNombre(), new Double(1.0), valorVenta, "0"});
-        //calcularTotales();
+        tableModel.agregar(new ArticulosPedido(articulo, 1.0, articulo.getValor_venta()));
     }
 
     public Cliente getClie() {
@@ -900,9 +891,6 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     }
 
     public void setClie(Cliente Clie) {
-        this.Clie = Clie;
-        Clie.getId_cliente();
-        cbNombreCliente.setSelectedItem(Clie);
-        pedido.setCliente(Clie);
+        cbCliente.setSelectedItem(Clie);
     }
 }

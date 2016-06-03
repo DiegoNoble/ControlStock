@@ -10,7 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "articulo")
-public class Articulos implements Serializable {
+public class Articulo implements Serializable {
     
     @Id
     @Column(name = "id")
@@ -43,7 +43,7 @@ public class Articulos implements Serializable {
     private Double valorCompraConImpuesto;
     
 
-    public Articulos() {
+    public Articulo() {
     }
 
     /**

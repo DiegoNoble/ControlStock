@@ -14,6 +14,7 @@ import com.CuentasPagar.ConsultaPagosCompras;
 import com.CuentasPagar.FrameRecordatorioCuentasPagar;
 import com.CuentasPagar.RegistroGastosFijos;
 import com.DAO.FacturaCompraDAO;
+import com.Pedidos.RegistraPedido;
 import com.Proveedores.ProveedorFrame;
 import com.Unidades.UnidadFrame;
 import com.Ventas.ConsultaVentaFrame;
@@ -36,9 +37,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     public String perfil;
     private List<FacturaCompra> listFactVencimientos;
     private FacturaCompraDAO facturaCompraDAO;
-    
-    
-    
+
     public MenuPrincipal() {
         initComponents();
         setSize(1152, 864);
@@ -47,7 +46,6 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         this.perfil = frameLogin.getInstance().getPerfil();
         txtNombre.setText(frameLogin.getInstance().getNombre());
         txtPerfil.setText(perfil);
-        
 
         switch (perfil) {
             case "Operador":
@@ -107,11 +105,11 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
     public void buscaVencimientosCuentasPagar() {
 
-            facturaCompraDAO = new FacturaCompraDAO();
+        facturaCompraDAO = new FacturaCompraDAO();
         try {
             listFactVencimientos = facturaCompraDAO.buscaProximosVencimientos();
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error al buscar vencimientos" +ex);
+            JOptionPane.showMessageDialog(null, "Error al buscar vencimientos" + ex);
             ex.printStackTrace();
         }
         if (listFactVencimientos.isEmpty()) {
@@ -125,9 +123,6 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         }
 
     }
-    
-   
-   
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -164,6 +159,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         mnuVentas = new javax.swing.JMenu();
         mnuItemRegistrarVentas = new javax.swing.JMenuItem();
         mnuItemConsultarVendas = new javax.swing.JMenuItem();
+        mnuItemRegistrarVentas2 = new javax.swing.JMenuItem();
         mnuCompras = new javax.swing.JMenu();
         mnuItemRegistrarVentas1 = new javax.swing.JMenuItem();
         mnuItemConsultarVendas1 = new javax.swing.JMenuItem();
@@ -464,6 +460,17 @@ public final class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         mnuVentas.add(mnuItemConsultarVendas);
+
+        mnuItemRegistrarVentas2.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemRegistrarVentas2.setText(" Registrar Pedido ");
+        mnuItemRegistrarVentas2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        mnuItemRegistrarVentas2.setBorderPainted(true);
+        mnuItemRegistrarVentas2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemRegistrarVentas2ActionPerformed(evt);
+            }
+        });
+        mnuVentas.add(mnuItemRegistrarVentas2);
 
         jMenuBar1.add(mnuVentas);
 
@@ -803,14 +810,22 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_mnuItemUnidadesActionPerformed
 
     private void mnuItemConsultaPagosProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaPagosProveedoresActionPerformed
-        
+
         ConsultaPagosCompras pagosProveedores = new ConsultaPagosCompras();
         centralizaJanela(pagosProveedores);
         desktopPane.add(pagosProveedores);
         pagosProveedores.setVisible(true);
         pagosProveedores.toFront();
-        
+
     }//GEN-LAST:event_mnuItemConsultaPagosProveedoresActionPerformed
+
+    private void mnuItemRegistrarVentas2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemRegistrarVentas2ActionPerformed
+        RegistraPedido registraPedido = new RegistraPedido();
+        centralizaJanela(registraPedido);
+        desktopPane.add(registraPedido);
+        registraPedido.setVisible(true);
+        registraPedido.toFront();
+    }//GEN-LAST:event_mnuItemRegistrarVentas2ActionPerformed
 
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -865,6 +880,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem mnuItemRegistraCuentaFija;
     private javax.swing.JMenuItem mnuItemRegistrarVentas;
     private javax.swing.JMenuItem mnuItemRegistrarVentas1;
+    private javax.swing.JMenuItem mnuItemRegistrarVentas2;
     private javax.swing.JMenuItem mnuItemSalir;
     private javax.swing.JMenuItem mnuItemSesion;
     private javax.swing.JMenuItem mnuItemUnidades;

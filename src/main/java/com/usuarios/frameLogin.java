@@ -283,7 +283,7 @@ public class frameLogin extends javax.swing.JFrame {
                 try {
                     //setLogs();
                     
-                    UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
+                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
                     new frameLogin().setVisible(true);
                 } catch (Exception ex) {
                     ex.printStackTrace();

@@ -85,7 +85,7 @@ public class PagoCliente extends javax.swing.JDialog {
                     registroEnCaja.setRubro(rubro);
 
                     DAOGenerico dao = new DAOGenerico(registroEnCaja);
-                    dao.registra();
+                    dao.guardar();
 
 
                 case "Reales R$":
@@ -100,7 +100,7 @@ public class PagoCliente extends javax.swing.JDialog {
                     registroEnCajaReales.setRubro(rubro1);
 
                     DAOGenerico dao1 = new DAOGenerico(registroEnCajaReales);
-                    dao1.registra();
+                    dao1.guardar();
 
 
                 case "Dolares U$":
@@ -116,7 +116,7 @@ public class PagoCliente extends javax.swing.JDialog {
                     registroEnCajaDolares.setRubro(rubro2);
 
                     DAOGenerico dao2 = new DAOGenerico(registroEnCajaDolares);
-                    dao2.registra();
+                    dao2.guardar();
 
             }
 

@@ -7,8 +7,8 @@ package com.Pedidos;
 
 import com.Beans.Articulo;
 import com.Beans.ArticulosPedido;
-import java.util.LinkedList;
 import java.util.List;
+import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -21,26 +21,27 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
     private final String[] colunas = new String[]{"Pos", "Cod.", "Nombre", "Cantidad", "Unitario", "Total"};
     //lista para a manipulacao do objeto
     private List<ArticulosPedido> list;
+    JTextField txtTotal;
 
-    public ArticulosPedidoTableModel() {
-        list = new LinkedList<ArticulosPedido>();
-    }
-
-    public ArticulosPedidoTableModel(List<ArticulosPedido> list) {
+    public ArticulosPedidoTableModel(List<ArticulosPedido> list, JTextField txtTotal) {
+        this.txtTotal = txtTotal;
         this.list = list;
     }
 
     //numero de linhas
+    @Override
     public int getRowCount() {
         return list.size();
     }
 
     //numero de colunas
+    @Override
     public int getColumnCount() {
         return colunas.length;
     }
 
     //define o que cada coluna conterï¿½ do objeto
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         ArticulosPedido c = list.get(rowIndex);
         switch (columnIndex) {
@@ -48,15 +49,28 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
             case 0:
                 return c.getPosicion();
             case 1:
-                return c.getArticulo().getId();
+                return c.getArticulo();
             case 2:
-                return c.getArticulo().getNombre();
+                if (c.getArticulo() != null) {
+                    return c.getArticulo().getNombre();
+                } else {
+                    return "";
+                }
             case 3:
                 return c.getCantPedida();
             case 4:
-                return c.getArticulo().getValor_venta();
+                if (c.getArticulo() != null) {
+                    return c.getArticulo().getValor_venta();
+                } else {
+                    return 0.0;
+                }
+
             case 5:
-                return c.getCantPedida() * c.getArticulo().getValor_venta();
+                if (c.getArticulo() != null) {
+                    return c.getCantPedida() * c.getArticulo().getValor_venta();
+                } else {
+                    return 0.0;
+                }
 
             default:
                 return null;
@@ -76,7 +90,7 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
             case 0:
                 return Integer.class;
             case 1:
-                return String.class;
+                return Articulo.class;
             case 2:
                 return String.class;
             case 3:
@@ -93,53 +107,41 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-
-        return true;
-
-    }
-
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        ArticulosPedido c = list.get(rowIndex);
-        switch (columnIndex) {
-            case 0:
-                c.setPosicion((Integer) aValue);
-                break;
-            case 1:
-                c.setArticulo((Articulo) aValue);
-                break;
-            case 2:
-                c.setArticulo((Articulo) aValue);
-                break;
-            case 3:
-                c.setCantPedida((Double) aValue);
-                break;
-            case 5:
-                c.setImportePedido((Double) aValue);
-                break;
-
-        }
-        fireTableCellUpdated(rowIndex, columnIndex); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     public void agregar(ArticulosPedido articulosPedidos) {
         list.add(articulosPedidos);
 
         this.fireTableRowsInserted(list.size() - 1, list.size() - 1);
+        CalculaTotalPedido();
     }
 
     public void eliminar(int row) {
         list.remove(row);
         this.fireTableRowsDeleted(row, row);
+        CalculaTotalPedido();
     }
 
     public void atualizar(int row, ArticulosPedido articulosPedidos) {
         list.set(row, articulosPedidos);
         this.fireTableRowsUpdated(row, row);
+        CalculaTotalPedido();
     }
 
     public ArticulosPedido getCliente(int row) {
         return list.get(row);
     }
 
+    public void CalculaTotalPedido() {
+        Double total = 0.0;
+        for (ArticulosPedido articulosPedido : list) {
+            if (articulosPedido.getImportePedido() != null) {
+                total = total + articulosPedido.getImportePedido();
+            }
+        }
+
+        txtTotal.setText(total.toString());
+
+    }
 }

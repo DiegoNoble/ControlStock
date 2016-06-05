@@ -28,5 +28,9 @@
     <mapping class="com.Beans.CompraPago"/>
     <mapping class="com.Beans.PagoCompra"/>
     <mapping class="com.Beans.Vendedor"/>
+    <mapping class="com.Beans.ArticulosPedido"/>
+    <mapping class="com.Beans.Pedido"/>
+    <mapping class="com.Beans.MovStock"/>
+    <mapping class="com.Beans.Remito"/>
   </session-factory>
 </hibernate-configuration>

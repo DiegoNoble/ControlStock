@@ -2,6 +2,7 @@ package com.Beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 
 @Entity
@@ -13,9 +14,9 @@ public class Pedido implements Serializable {
     private Integer id;
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    private Double importeAtendido;
-    private Double importePendiente;
+    private Double importeAtendido = 0.0;
     private Double importeTotal;
+    private Double importePendiente = importeTotal;
 
     @ManyToOne(targetEntity = Cliente.class)
     @JoinColumn(name = "id_cliente")
@@ -25,10 +26,26 @@ public class Pedido implements Serializable {
     @JoinColumn(name = "id_vendedor")
     private Vendedor vendedor;
 
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ArticulosPedido> articulosPedido;
+
     @Enumerated(EnumType.STRING)
-    private EstadoPedido estadoPedido;
+    private SituacionPedido estadoPedido;
+    
+    private String observaciones;
 
     public Pedido() {
+
+    }
+
+    public Pedido(Date fecha, Double importeTotal, Cliente cliente, Vendedor vendedor, SituacionPedido estadoPedido, List<ArticulosPedido> articulosPedido) {
+        this.fecha = fecha;
+        this.importeTotal = importeTotal;
+        this.cliente = cliente;
+        this.vendedor = vendedor;
+        this.estadoPedido = estadoPedido;
+        this.importePendiente = importeTotal;
+        this.articulosPedido = articulosPedido;
     }
 
     public Integer getId() {
@@ -87,12 +104,29 @@ public class Pedido implements Serializable {
         this.vendedor = vendedor;
     }
 
-    public EstadoPedido getEstadoPedido() {
+    public SituacionPedido getEstadoPedido() {
         return estadoPedido;
     }
 
-    public void setEstadoPedido(EstadoPedido estadoPedido) {
+    public void setEstadoPedido(SituacionPedido estadoPedido) {
         this.estadoPedido = estadoPedido;
     }
 
+    public List<ArticulosPedido> getArticulosPedido() {
+        return articulosPedido;
+    }
+
+    public void setArticulosPedido(List<ArticulosPedido> articulosPedido) {
+        this.articulosPedido = articulosPedido;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
+    
 }

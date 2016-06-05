@@ -5,7 +5,7 @@ import com.Beans.MonedaEnum;
 import com.Beans.FacturaCompra;
 import com.DAO.FacturaCompraDAO;
 import com.Beans.Proveedor;
-import com.Renderers.MyDateCellRenderer;
+import com.Renderers.MeDateCellRenderer;
 import com.Renderers.MyDefaultCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
@@ -253,7 +253,7 @@ public class RegistraPagos extends javax.swing.JInternalFrame {
         jScrollPane4.setViewportView(tblFacturasAPagar);
         tblFacturasAPagar.getColumnModel().getColumn(0).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturasAPagar.getColumnModel().getColumn(1).setCellRenderer(new MyDefaultCellRenderer());
-        tblFacturasAPagar.getColumnModel().getColumn(2).setCellRenderer(new MyDateCellRenderer());
+        tblFacturasAPagar.getColumnModel().getColumn(2).setCellRenderer(new MeDateCellRenderer());
         tblFacturasAPagar.getColumnModel().getColumn(3).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturasAPagar.getColumnModel().getColumn(4).setCellRenderer(new MyDefaultCellRenderer());
 
@@ -309,7 +309,7 @@ public class RegistraPagos extends javax.swing.JInternalFrame {
         jScrollPane3.setViewportView(tblFacturasPendientes);
         tblFacturasPendientes.getColumnModel().getColumn(0).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturasPendientes.getColumnModel().getColumn(1).setCellRenderer(new MyDefaultCellRenderer());
-        tblFacturasPendientes.getColumnModel().getColumn(2).setCellRenderer(new MyDateCellRenderer());
+        tblFacturasPendientes.getColumnModel().getColumn(2).setCellRenderer(new MeDateCellRenderer());
         tblFacturasPendientes.getColumnModel().getColumn(3).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturasPendientes.getColumnModel().getColumn(4).setCellRenderer(new MyDefaultCellRenderer());
 

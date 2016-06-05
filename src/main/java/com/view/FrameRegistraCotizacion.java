@@ -3,7 +3,7 @@ package com.view;
 import com.DAO.DAOGenerico;
 import Utilidades.Utilidades;
 import com.Beans.Cotizacion;
-import com.Renderers.MyDateCellRenderer;
+import com.Renderers.MeDateCellRenderer;
 import com.Renderers.MyDefaultCellRenderer;
 import java.util.Date;
 import java.util.List;
@@ -82,7 +82,7 @@ public class FrameRegistraCotizacion extends javax.swing.JInternalFrame {
                 Date hoy = Utilidades.RecibeDateRetornaDateFormatoBD(new Date());
                 cotizacion.setFecha(hoy);
                 dao = new DAOGenerico(cotizacion);
-                dao.registra();
+                dao.guardar();
 
                 JOptionPane.showMessageDialog(null, "Usuario registrado correctamente!");
             } catch (Exception ex) {
@@ -269,7 +269,7 @@ public class FrameRegistraCotizacion extends javax.swing.JInternalFrame {
         });
         tblCotizacion.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblCotizacion);
-        tblCotizacion.getColumnModel().getColumn(0).setCellRenderer(new MyDateCellRenderer());
+        tblCotizacion.getColumnModel().getColumn(0).setCellRenderer(new MeDateCellRenderer());
         tblCotizacion.getColumnModel().getColumn(1).setCellRenderer(new MyDefaultCellRenderer());
         tblCotizacion.getColumnModel().getColumn(2).setCellRenderer(new MyDefaultCellRenderer());
         tblCotizacion.getColumnModel().getColumn(3).setCellRenderer(new MyDefaultCellRenderer());

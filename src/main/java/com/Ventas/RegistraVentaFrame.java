@@ -167,7 +167,7 @@ public class RegistraVentaFrame extends javax.swing.JInternalFrame {
                     articulosVenta.setFactura(facturaVenta);
 
                     DAOGenerico dao = new DAOGenerico(articulosVenta);
-                    dao.registra();
+                    dao.guardar();
 
                 }
                 JOptionPane.showMessageDialog(this, "Venta realizada correctamente!", "Información", JOptionPane.INFORMATION_MESSAGE);

@@ -4,9 +4,11 @@
  */
 package com.DAO;
 
-import Utilidades.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import com.Beans.ArticulosPedido;
+import com.Beans.Pedido;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.hibernate.Query;
 
 /**
  *
@@ -14,21 +16,24 @@ import org.hibernate.Transaction;
  */
 public class ArticulosPedidoDAO extends DAOGenerico<Object> {
 
-    private final Session seccion;
-    Transaction transacion = null;
-    private Object objeto;
-
-   
-    public ArticulosPedidoDAO () {
-
-        this.seccion = HibernateUtil.getSeccion();
-        
+    public ArticulosPedidoDAO(ArticulosPedido objeto) {
+        super.objeto = objeto;
     }
-    
-    public ArticulosPedidoDAO(Object objeto) {
 
-        this.seccion = HibernateUtil.getSeccion();
-        this.objeto = objeto;
+    public List<ArticulosPedido> buscarPorPedido(Pedido pedido) {
 
-    }     
+        List objetos = null;
+        try {
+
+            transacion = seccion.beginTransaction();
+            Query query = seccion.createQuery("from  ArticulosPedido where pedido.id = '" + pedido.getId() + "'");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al traer todos los registros" + e);
+        }
+        return objetos;
+    }
+
 }

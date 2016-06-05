@@ -18,9 +18,9 @@ import org.hibernate.jdbc.Work;
 
 public class DAOGenerico<Objeto>  {
 
-    private final Session seccion;
+    final Session seccion;
     Transaction transacion = null;
-    private Objeto objeto;
+    Objeto objeto;
 
     public DAOGenerico(Objeto objeto) {
 
@@ -34,7 +34,7 @@ public class DAOGenerico<Objeto>  {
         
     }
 
-    public void registra() throws Exception{
+    public void guardar() throws Exception{
 
             transacion = seccion.beginTransaction();
             seccion.save(objeto);
@@ -46,10 +46,11 @@ public class DAOGenerico<Objeto>  {
         
         try {
             transacion = seccion.beginTransaction();
-            seccion.update(objeto);
+            seccion.merge(objeto);
             transacion.commit();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error al registrar" + e, "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
             transacion.rollback();
         }
 
@@ -168,7 +169,7 @@ public class DAOGenerico<Objeto>  {
         try {
             
             transacion = seccion.beginTransaction();
-            Query query = seccion.createQuery("from  "+classe.getName()+" where "+campoTabla+" like '%"+filtro+"%'");
+            Query query = seccion.createQuery("from  "+classe.getName()+" where "+campoTabla+" like '%"+filtro+"%' order by id desc");
             objetos = query.list();
             transacion.commit();
             
@@ -259,8 +260,6 @@ public class DAOGenerico<Objeto>  {
         return objetos;
 
     }
-    
-   
     
     public List buscaVentas(String idArticulo, String fechaInicial, String fechaFinal) {
         

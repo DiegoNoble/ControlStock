@@ -2,7 +2,7 @@ package com.CuentasPagar;
 
 import com.Beans.FacturaCompra;
 import com.DAO.FacturaCompraDAO;
-import com.Renderers.MyDateCellRenderer;
+import com.Renderers.MeDateCellRenderer;
 import com.Renderers.MyDefaultCellRenderer;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -113,9 +113,9 @@ public final class FrameRecordatorioCuentasPagar extends javax.swing.JInternalFr
         tblVencimientos.getColumnModel().getColumn(2).setPreferredWidth(10);
         tblVencimientos.getColumnModel().getColumn(2).setCellRenderer(new MyDefaultCellRenderer());
         tblVencimientos.getColumnModel().getColumn(3).setPreferredWidth(20);
-        tblVencimientos.getColumnModel().getColumn(3).setCellRenderer(new MyDateCellRenderer());
+        tblVencimientos.getColumnModel().getColumn(3).setCellRenderer(new MeDateCellRenderer());
         tblVencimientos.getColumnModel().getColumn(4).setPreferredWidth(20);
-        tblVencimientos.getColumnModel().getColumn(4).setCellRenderer(new MyDateCellRenderer());
+        tblVencimientos.getColumnModel().getColumn(4).setCellRenderer(new MeDateCellRenderer());
         tblVencimientos.getColumnModel().getColumn(5).setPreferredWidth(10);
         tblVencimientos.getColumnModel().getColumn(5).setCellRenderer(new MyDefaultCellRenderer());
         tblVencimientos.getColumnModel().getColumn(6).setPreferredWidth(10);

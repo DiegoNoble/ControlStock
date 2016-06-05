@@ -266,7 +266,7 @@ public class FrameSeleccionaArticulo extends javax.swing.JInternalFrame {
                 articulo.setValor_compra_impuesto(Double.parseDouble(txtValor_CompraConImp.getText()));
 
                 dAOGenerico = new DAOGenerico(articulo);
-                dAOGenerico.registra();
+                dAOGenerico.guardar();
 
                 JOptionPane.showMessageDialog(null, "Articulo registrado correctamente!");
                 listaArticulos.clear();

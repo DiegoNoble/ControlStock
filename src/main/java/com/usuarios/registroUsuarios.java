@@ -126,7 +126,7 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
                 usuarios.setPerfil(cbPerfil.getSelectedItem().toString());
 
                 DAOGenerico dao = new DAOGenerico(usuarios);
-                dao.registra();
+                dao.guardar();
 
                 JOptionPane.showMessageDialog(null, "Usuario registrado correctamente!");
             } catch (Exception ex) {

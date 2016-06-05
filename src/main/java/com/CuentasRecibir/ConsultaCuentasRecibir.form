@@ -149,7 +149,7 @@
                               <Title/>
                               <Editor/>
                               <Renderer editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                                <Connection code="new MyDateCellRenderer()" type="code"/>
+                                <Connection code="new com.Renderers.MeDateCellRenderer()" type="code"/>
                               </Renderer>
                             </Column>
                             <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
@@ -344,7 +344,7 @@
                               <Title/>
                               <Editor/>
                               <Renderer editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                                <Connection code="new MyDateCellRenderer()" type="code"/>
+                                <Connection code="new com.Renderers.MeDateCellRenderer()" type="code"/>
                               </Renderer>
                             </Column>
                             <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">

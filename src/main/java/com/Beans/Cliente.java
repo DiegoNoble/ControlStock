@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Table(name = "cliente")
 
 public class Cliente implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -40,11 +40,13 @@ public class Cliente implements Serializable {
     private String ci;
     @Column(name = "razon_social")
     private String Razon_social;
-    @Column(name = "rut")
-    private String rut;
+    @Column(name = "documento")
+    private String documento;
     @Column(name = "fecha_ingreso")
     @Temporal(TemporalType.TIMESTAMP)
     private Date Fecha_ingreso;
+    @Enumerated(EnumType.STRING)
+    private CondicionImpositiva condicionImpositiva;
 
     public Cliente() {
     }
@@ -192,15 +194,15 @@ public class Cliente implements Serializable {
     /**
      * @return the rut
      */
-    public String getRut() {
-        return rut;
+    public String getDocumento() {
+        return documento;
     }
 
     /**
      * @param rut the rut to set
      */
-    public void setRut(String rut) {
-        this.rut = rut;
+    public void setDocumento(String rut) {
+        this.documento = rut;
     }
 
     /**
@@ -217,11 +219,18 @@ public class Cliente implements Serializable {
         this.Fecha_ingreso = Fecha_ingreso;
     }
 
-    public String toString(){
+    public String toString() {
         return nombre;
-       
+
     }
 
+    public CondicionImpositiva getCondicionImpositiva() {
+        return condicionImpositiva;
+    }
 
-       
+    public void setCondicionImpositiva(CondicionImpositiva condicionImpositiva) {
+        this.condicionImpositiva = condicionImpositiva;
+    }
+
+    
 }

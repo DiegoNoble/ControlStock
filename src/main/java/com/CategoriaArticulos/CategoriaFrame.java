@@ -131,7 +131,7 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
                 categoria.setNombre(txtCategoria.getText());
 
                 DAOGenerico dao = new DAOGenerico(categoria);
-                dao.registra();
+                dao.guardar();
 
                 JOptionPane.showMessageDialog(null, "Categoría registrada correctamente!");
             } catch (Exception ex) {

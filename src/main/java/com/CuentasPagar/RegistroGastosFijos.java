@@ -69,7 +69,7 @@ public class RegistroGastosFijos extends JInternalFrame {
                 factura.setMoneda((MonedaEnum) cbMoneda.getSelectedItem());
                 factura.setTotal(valorTotal);
                 factura.setProveedor(proveedorSeleccionado);
-                new DAOGenerico(factura).registra();
+                new DAOGenerico(factura).guardar();
                 
                 JOptionPane.showMessageDialog(null, "Gasto registrado correctamente !", "Proceso realizado correctamente", JOptionPane.INFORMATION_MESSAGE);
                 

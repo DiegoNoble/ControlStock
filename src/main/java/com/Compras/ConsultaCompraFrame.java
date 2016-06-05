@@ -6,7 +6,7 @@ import com.DAO.DAOGenerico;
 import com.DAO.FacturaCompraDAO;
 import com.DAO.ProveedorDAO;
 import com.Beans.Proveedor;
-import com.Renderers.MyDateCellRenderer;
+import com.Renderers.MeDateCellRenderer;
 import com.Renderers.MyDefaultCellRenderer;
 import com.usuarios.frameLogin;
 import java.text.SimpleDateFormat;
@@ -308,7 +308,7 @@ public class ConsultaCompraFrame extends javax.swing.JInternalFrame {
         tblFacturaCompra.getColumnModel().getColumn(2).setPreferredWidth(110);
         tblFacturaCompra.getColumnModel().getColumn(2).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturaCompra.getColumnModel().getColumn(3).setPreferredWidth(15);
-        tblFacturaCompra.getColumnModel().getColumn(3).setCellRenderer(new MyDateCellRenderer());
+        tblFacturaCompra.getColumnModel().getColumn(3).setCellRenderer(new MeDateCellRenderer());
         tblFacturaCompra.getColumnModel().getColumn(4).setPreferredWidth(5);
         tblFacturaCompra.getColumnModel().getColumn(4).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturaCompra.getColumnModel().getColumn(5).setPreferredWidth(15);

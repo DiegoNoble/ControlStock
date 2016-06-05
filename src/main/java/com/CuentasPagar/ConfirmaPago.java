@@ -70,7 +70,7 @@ public class ConfirmaPago extends javax.swing.JDialog {
                     facturaCompra.setEstado(EstadoEnum.PAGO);
 
                     DAOGenerico daoRegistraPago = new DAOGenerico(facturasPagas);
-                    daoRegistraPago.registra();
+                    daoRegistraPago.guardar();
 
                     DAOGenerico daoActualizaFacturaCompra = new DAOGenerico(facturaCompra);
                     daoActualizaFacturaCompra.actualiza();
@@ -111,7 +111,7 @@ public class ConfirmaPago extends javax.swing.JDialog {
                     facturaCompra.setEstado(EstadoEnum.PAGO);
 
                     DAOGenerico daoRegistraPago = new DAOGenerico(facturasPagas);
-                    daoRegistraPago.registra();
+                    daoRegistraPago.guardar();
 
                     DAOGenerico daoActualizaFacturaCompra = new DAOGenerico(facturaCompra);
                     daoActualizaFacturaCompra.actualiza();

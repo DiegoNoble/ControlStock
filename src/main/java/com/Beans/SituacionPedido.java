@@ -1,11 +1,11 @@
 package com.Beans;
 
-public enum EstadoPedido {
+public enum SituacionPedido {
 
     NUEVO("Nuevo"), ATENDIDO("Atendido"), ATENTIDO_PARCIAL("Atentido parcialmente"), FACTURADO("Facturado");
     private String description;
 
-    EstadoPedido(String description) {
+    SituacionPedido(String description) {
         this.description = description;
     }
 

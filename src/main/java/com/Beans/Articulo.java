@@ -1,4 +1,3 @@
-
 package com.Beans;
 
 import java.io.Serializable;
@@ -11,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "articulo")
 public class Articulo implements Serializable {
-    
+
     @Id
     @Column(name = "id")
     private String id;
@@ -32,16 +31,15 @@ public class Articulo implements Serializable {
     private String descripcion;
     @Column(name = "ganancia_descuento")
     private Double ganancia_descuento;
-    @ManyToOne (targetEntity=Categoria.class)
-    @JoinColumn(name="categoria")
+    @ManyToOne(targetEntity = Categoria.class)
+    @JoinColumn(name = "categoria")
     private Categoria categoria;
-    @ManyToOne (targetEntity=Unidad.class)
-    @JoinColumn(name="unidad")
+    @ManyToOne(targetEntity = Unidad.class)
+    @JoinColumn(name = "unidad")
     private Unidad unidad;
     private Double iva;
     @Column(name = "valor_compra_impuesto")
     private Double valorCompraConImpuesto;
-    
 
     public Articulo() {
     }
@@ -227,5 +225,10 @@ public class Articulo implements Serializable {
     public void setUnidad(Unidad unidad) {
         this.unidad = unidad;
     }
-    
+
+    @Override
+    public String toString() {
+        return id;
+    }
+
 }

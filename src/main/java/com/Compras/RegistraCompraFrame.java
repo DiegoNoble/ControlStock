@@ -198,7 +198,7 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
                     articuloDAO = new ArticuloDAO();
                     Articulo oldArticulo = (Articulo) articuloDAO.buscaArtUnicoPorIDStr(articulosCompra.getArticulo().getId());
                     DAOGenerico dao = new DAOGenerico(articulosCompra);
-                    dao.registra();
+                    dao.guardar();
 
 
                     articulosCompraDao = new ArticulosCompraDAO();

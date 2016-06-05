@@ -133,7 +133,7 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
                 unidad.setDescripcion(txtDescripcion.getText());
 
                 DAOGenerico dao = new DAOGenerico(unidad);
-                dao.registra();
+                dao.guardar();
 
                 JOptionPane.showMessageDialog(null, "Unidad registrada correctamente!");
             } catch (Exception ex) {

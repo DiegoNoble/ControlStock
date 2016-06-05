@@ -112,7 +112,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
                 linea[1] = clientes.getNombre();
                 linea[2] = clientes.getCi();
                 linea[3] = clientes.getRazon_social();
-                linea[4] = clientes.getRut();
+                linea[4] = clientes.getDocumento();
                 linea[5] = clientes.getDireccion();
                 linea[6] = clientes.getCiudad();
                 linea[7] = clientes.getPais();
@@ -163,7 +163,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             cliente.setFecha_ingreso(fechaConvertida);
             cliente.setPais(txtPaís.getText());
             cliente.setRazon_social(txtRazonSocial.getText());
-            cliente.setRut(txtRut.getText());
+            cliente.setDocumento(txtRut.getText());
             cliente.setTelefono(txtTelefono.getText());
 
             Transaction transacion = seccion.beginTransaction();
@@ -206,7 +206,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             cliente.setFecha_ingreso(fechaConvertida);
             cliente.setPais(txtPaís.getText());
             cliente.setRazon_social(txtRazonSocial.getText());
-            cliente.setRut(txtRut.getText());
+            cliente.setDocumento(txtRut.getText());
             cliente.setTelefono(txtTelefono.getText());
 
             Transaction transacion = seccion.beginTransaction();

@@ -7,7 +7,7 @@ import com.Beans.FacturaCompra;
 import com.DAO.FacturaCompraDAO;
 import com.DAO.PagosComprasDAO;
 import com.Beans.Proveedor;
-import com.Renderers.MyDateCellRenderer;
+import com.Renderers.MeDateCellRenderer;
 import com.Renderers.MyDefaultCellRenderer;
 import java.util.ArrayList;
 import java.util.List;
@@ -273,7 +273,7 @@ public class ConsultaPagosCompras extends javax.swing.JInternalFrame {
         jScrollPane4.setViewportView(tblFacturasPagas);
         tblFacturasPagas.getColumnModel().getColumn(0).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturasPagas.getColumnModel().getColumn(1).setCellRenderer(new MyDefaultCellRenderer());
-        tblFacturasPagas.getColumnModel().getColumn(2).setCellRenderer(new MyDateCellRenderer());
+        tblFacturasPagas.getColumnModel().getColumn(2).setCellRenderer(new MeDateCellRenderer());
         tblFacturasPagas.getColumnModel().getColumn(3).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturasPagas.getColumnModel().getColumn(4).setCellRenderer(new MyDefaultCellRenderer());
 
@@ -332,7 +332,7 @@ public class ConsultaPagosCompras extends javax.swing.JInternalFrame {
         tblPagosCompras.getColumnModel().getColumn(1).setPreferredWidth(40);
         tblPagosCompras.getColumnModel().getColumn(1).setCellRenderer(new MyDefaultCellRenderer());
         tblPagosCompras.getColumnModel().getColumn(2).setPreferredWidth(40);
-        tblPagosCompras.getColumnModel().getColumn(2).setCellRenderer(new MyDateCellRenderer());
+        tblPagosCompras.getColumnModel().getColumn(2).setCellRenderer(new MeDateCellRenderer());
         tblPagosCompras.getColumnModel().getColumn(3).setPreferredWidth(40);
         tblPagosCompras.getColumnModel().getColumn(3).setCellRenderer(new MyDefaultCellRenderer());
         tblPagosCompras.getColumnModel().getColumn(4).setPreferredWidth(200);

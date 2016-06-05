@@ -1,28 +1,34 @@
 package com.Pedidos;
 
+import Utilidades.ControlarEntradaTexto;
 import com.Beans.Pedido;
 import com.Beans.ArticulosPedido;
-import Utilidades.Utilidades;
 import com.Beans.Articulo;
 import com.Articulos.FrameSeleccionaArticulo;
 import com.Clientes.ClienteFrame;
 import com.Beans.Cliente;
+import com.Beans.SituacionPedido;
 import com.Beans.Vendedor;
 import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;
 import com.DAO.ClienteDAO;
+import com.DAO.PedidoDAO;
 import com.DAO.VendedorDAO;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
 
 public class RegistraPedido extends javax.swing.JInternalFrame {
 
     List<Cliente> listClientes;
     List<Vendedor> listVendedores;
+    List<Articulo> listArticulos;
     ArticulosPedidoTableModel tableModel;
     List<ArticulosPedido> listArticulosPedido;
     Pedido pedido;
@@ -31,6 +37,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     ClienteDAO clienteDAO;
     VendedorDAO vendedorDAO;
     ArticulosPedidoDAO articulosPedidoDAO;
+    PedidoDAO pedidoDAO;
     double subTotal;
     double IVA;
     double redondeo;
@@ -44,7 +51,10 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
         AutoCompleteDecorator.decorate(cbCliente);
         AutoCompleteDecorator.decorate(cbVendedor);
-        cargaComboBoxes();
+        AutoCompleteDecorator.decorate(cbArticulos);
+        cargaComboArticulos();
+        cargaComboClientes();
+        cargaComboVendedor();
 
     }
 
@@ -57,7 +67,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         return pedidoSingleton;
     }
 
-    private void cargaComboBoxes() {
+    private void cargaComboClientes() {
 
         try {
             listClientes = new ArrayList();
@@ -76,6 +86,9 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "Error al cargar clientes" + e, "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
+    }
+
+    void cargaComboVendedor() {
 
         try {
             listVendedores = new ArrayList();
@@ -97,12 +110,54 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
     }
 
+    void cargaComboArticulos() {
+        try {
+            articulosDAO = new ArticuloDAO();
+
+            cbArticulos.removeAllItems();
+            listArticulos = articulosDAO.BuscaTodos(Articulo.class);
+
+            for (Articulo articulo : listArticulos) {
+
+                cbArticulos.addItem(articulo);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar clientes" + e, "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
     private void defineModelo() {
+
+        Character chs[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'};
+        txtCantidad.setDocument(new ControlarEntradaTexto(10, chs));
 
         ((DefaultTableCellRenderer) tblArticulosPedido.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         listArticulosPedido = new ArrayList<ArticulosPedido>();
-        tableModel = new ArticulosPedidoTableModel(listArticulosPedido);
+        tableModel = new ArticulosPedidoTableModel(listArticulosPedido, txtTotal);
+
         tblArticulosPedido.setModel(tableModel);
+
+        int[] anchos = {5, 100, 200, 20, 20, 50};
+
+        for (int i = 0; i < tblArticulosPedido.getColumnCount(); i++) {
+
+            tblArticulosPedido.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+
+        }
+
+        ListSelectionModel listModel = tblArticulosPedido.getSelectionModel();
+        listModel.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent lse) {
+                if (tblArticulosPedido.getSelectedRow() != -1) {
+                    btnEliminar.setEnabled(true);
+                } else {
+                    btnEliminar.setEnabled(false);
+                }
+            }
+        });
 
     }
 
@@ -113,30 +168,18 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(this, "Seleccione un articulo", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
 
-                for (int i = 0; i < tableModel.getRowCount(); i++) {
-
-                    /*String idArticulo = tableModel.getValueAt(i, 0).toString();
-                     double valorSinIvaConDescuento = Double.valueOf(tableModel.getValueAt(i, 5).toString());
-                     double valorConIvaConDescuento = Utilidades.Redondear(valorSinIvaConDescuento * 1.22, 2);
-                     String descuento = (String) tableModel.getValueAt(i, 4);
-                     double unidades = Double.valueOf(tableModel.getValueAt(i, 2).toString());
-
-                     ArticulosPedido articulosVenta = new ArticulosPedido();
-
-                     Articulo articulo = new Articulo();
-                     articulo.setId(idArticulo);
-                     articulosVenta.setArticulo(articulo);
-                     articulosVenta.setDescuento(descuento);
-                     articulosVenta.setValorConIva(valorConIvaConDescuento);
-                     articulosVenta.setValorSinIva(valorSinIvaConDescuento);
-                     articulosVenta.setCantidad(unidades);
-                     articulosVenta.setPedido(pedido);
-
-                     DAOGenerico dao = new DAOGenerico(articulosVenta);
-                     dao.registra();*/
+                pedido = new Pedido(dpFecha.getDate(), Double.parseDouble(txtTotal.getText()), (Cliente) cbCliente.getSelectedItem(),
+                        (Vendedor) cbVendedor.getSelectedItem(), SituacionPedido.NUEVO, listArticulosPedido);
+                for (ArticulosPedido articulosPedido : listArticulosPedido) {
+                    articulosPedido.setPedido(pedido);
                 }
-                JOptionPane.showMessageDialog(this, "Venta realizada correctamente!", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+                pedidoDAO = new PedidoDAO(pedido);
+                pedidoDAO.guardar();
+
             }
+            JOptionPane.showMessageDialog(this, "Venta realizada correctamente!", "Información", JOptionPane.INFORMATION_MESSAGE);
+
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
@@ -147,7 +190,6 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
         if (tblArticulosPedido.getSelectedRow() != -1) {
             tableModel.eliminar(tblArticulosPedido.getSelectedRow());
-            calcularTotales();
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um item da lista!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -155,8 +197,14 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     }
 
     public void agregarArticuloPedido(Articulo articulo) {
-        tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articulo, 1.0, articulo.getValor_venta()
-        ));
+        if (listArticulos.contains(articulo)) {
+
+            cbArticulos.setSelectedItem(articulo);
+        } else {
+
+            cargaComboArticulos();
+            cbArticulos.setSelectedItem(articulo);
+        }
     }
 
     public void agregarVendedor(Vendedor vendedor) {
@@ -177,77 +225,6 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         }
     }
 
-    void calcularTotales() {
-        try {
-
-            for (int i = 0; i < tableModel.getRowCount(); i++) {
-
-                double unidades = (double) tableModel.getValueAt(i, 2);
-                double precioUnitario = (double) tableModel.getValueAt(i, 3);
-                String descuentos = (String) tableModel.getValueAt(i, 4);
-
-                if (descuentos.contains("+")) {
-
-                    int indexSeperacion = descuentos.indexOf("+");
-                    int lastIndexSeperacion = descuentos.lastIndexOf("+");
-
-                    if (indexSeperacion == lastIndexSeperacion) {
-                        int descuentoUno = Integer.parseInt(descuentos.substring(0, indexSeperacion));
-                        int descuentoDos = Integer.parseInt(descuentos.substring(indexSeperacion + 1));
-
-                        double precioUnitarioConDescuentoUno = Utilidades.Redondear(precioUnitario - (precioUnitario * descuentoUno / 100), 4);
-                        double precioUnitarioConDescuentos = Utilidades.Redondear(precioUnitarioConDescuentoUno - (precioUnitarioConDescuentoUno * descuentoDos / 100), 4);
-
-                        double valorNeto = Utilidades.Redondear((precioUnitarioConDescuentos * unidades), 4);
-                        tableModel.setValueAt(Utilidades.Redondear(precioUnitarioConDescuentos, 2), i, 5);
-                        tableModel.setValueAt(Utilidades.Redondear(valorNeto, 2), i, 6);
-
-                    } else {
-
-                        int descuentoUno = Integer.parseInt(descuentos.substring(0, indexSeperacion));
-                        int descuentoDos = Integer.parseInt(descuentos.substring(indexSeperacion + 1, lastIndexSeperacion));
-                        int descuentoTres = Integer.parseInt(descuentos.substring(lastIndexSeperacion + 1));
-
-                        double precioUnitarioConDescuentoUno = Utilidades.Redondear(precioUnitario - (precioUnitario * descuentoUno / 100), 4);
-                        double precioUnitarioConDescuentoDos = Utilidades.Redondear(precioUnitarioConDescuentoUno - (precioUnitarioConDescuentoUno * descuentoDos / 100), 4);
-                        double precioUnitarioConDescuentos = Utilidades.Redondear(precioUnitarioConDescuentoDos - (precioUnitarioConDescuentoDos * descuentoTres / 100), 4);
-
-                        double valorNeto = Utilidades.Redondear((precioUnitarioConDescuentos * unidades), 4);
-                        tableModel.setValueAt(Utilidades.Redondear(precioUnitarioConDescuentos, 2), i, 5);
-                        tableModel.setValueAt(Utilidades.Redondear(valorNeto, 2), i, 6);
-                    }
-
-                } else {
-
-                    int descuentoUnico = Integer.parseInt(descuentos);
-                    double precioUnitarioConDescuentoUnico = Utilidades.Redondear(precioUnitario - (precioUnitario * descuentoUnico / 100), 4);
-
-                    double valorNeto = Utilidades.Redondear((precioUnitarioConDescuentoUnico * unidades), 4);
-                    tableModel.setValueAt(Utilidades.Redondear(precioUnitarioConDescuentoUnico, 2), i, 5);
-                    tableModel.setValueAt(Utilidades.Redondear(valorNeto, 2), i, 6);
-
-                }
-
-            }
-            subTotal = 0;
-            for (int i = 0; i < tblArticulosPedido.getRowCount(); i++) {
-
-                double suma = (double) tblArticulosPedido.getValueAt(i, 6);
-                subTotal = subTotal + suma;
-
-            }
-            txtSubTotal.setText(String.valueOf(Utilidades.Redondear(subTotal, 2)));
-            redondeo = 0.0;
-            txtRedondeo.setText(String.valueOf(redondeo));
-            IVA = Utilidades.Redondear(subTotal * 22 / 100, 2);
-            txtIVA.setText(String.valueOf(IVA));
-            txtTotal.setText(String.valueOf(Utilidades.Redondear(subTotal + IVA + redondeo, 2)));
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }
-
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -258,40 +235,32 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel5 = new javax.swing.JPanel();
-        btnSelecionaArticulo = new javax.swing.JButton();
-        txtFiltroCodigo = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
-        jTabbedPane2 = new javax.swing.JTabbedPane();
-        jPanel6 = new javax.swing.JPanel();
-        btnSelecionaCliente = new javax.swing.JButton();
-        cbCliente = new javax.swing.JComboBox();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblArticulosPedido = new javax.swing.JTable();
-        jTabbedPane3 = new javax.swing.JTabbedPane();
-        jPanel10 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        dpFecha = new org.jdesktop.swingx.JXDatePicker();
-        jTabbedPane4 = new javax.swing.JTabbedPane();
         jPanel11 = new javax.swing.JPanel();
         btnSelecionaCliente1 = new javax.swing.JButton();
         cbVendedor = new javax.swing.JComboBox();
-        jPanel9 = new javax.swing.JPanel();
-        jLabel11 = new javax.swing.JLabel();
-        txtSubTotal = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
+        btnSelecionaCliente = new javax.swing.JButton();
+        cbCliente = new javax.swing.JComboBox();
+        jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txtIVA = new javax.swing.JTextField();
-        jPanel7 = new javax.swing.JPanel();
+        jPanel12 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblArticulosPedido = new javax.swing.JTable();
+        jPanel13 = new javax.swing.JPanel();
+        btnBuscar = new javax.swing.JButton();
+        btnNuevo = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        cbArticulos = new javax.swing.JComboBox();
+        txtCantidad = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        txtRedondeo = new javax.swing.JTextField();
+        btnNuevo1 = new javax.swing.JButton();
+        jPanel10 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        dpFecha = new org.jdesktop.swingx.JXDatePicker();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        txtTotal = new javax.swing.JTextField();
+        txtTotal = new javax.swing.JFormattedTextField();
         jPanel4 = new javax.swing.JPanel();
-        btnRetirarArticulo = new javax.swing.JButton();
-        btnCalcularTotales = new javax.swing.JButton();
         btnRegistraVenta = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
@@ -321,65 +290,32 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jTabbedPane1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jTabbedPane1.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        jPanel11.setLayout(new java.awt.GridBagLayout());
 
-        jPanel5.setLayout(new java.awt.GridBagLayout());
-
-        btnSelecionaArticulo.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        btnSelecionaArticulo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/Zoom.png"))); // NOI18N
-        btnSelecionaArticulo.addActionListener(new java.awt.event.ActionListener() {
+        btnSelecionaCliente1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/search.png"))); // NOI18N
+        btnSelecionaCliente1.setBorder(null);
+        btnSelecionaCliente1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSelecionaArticuloActionPerformed(evt);
+                btnSelecionaCliente1ActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(btnSelecionaArticulo, gridBagConstraints);
-
-        txtFiltroCodigo.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        txtFiltroCodigo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtFiltroCodigoActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 120;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(txtFiltroCodigo, gridBagConstraints);
-
-        jLabel9.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel9.setText("Busqueda rápida");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LAST_LINE_END;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(jLabel9, gridBagConstraints);
-
-        jTabbedPane1.addTab("Seleccione el Articulo", jPanel5);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jTabbedPane1, gridBagConstraints);
+        jPanel11.add(btnSelecionaCliente1, gridBagConstraints);
 
-        jTabbedPane2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jTabbedPane2.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        cbVendedor.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel11.add(cbVendedor, gridBagConstraints);
 
-        jPanel6.setLayout(new java.awt.GridBagLayout());
-
-        btnSelecionaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/Zoom.png"))); // NOI18N
+        btnSelecionaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/search.png"))); // NOI18N
+        btnSelecionaCliente.setBorder(null);
         btnSelecionaCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSelecionaClienteActionPerformed(evt);
@@ -387,32 +323,40 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 30;
-        gridBagConstraints.gridheight = 40;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(btnSelecionaCliente, gridBagConstraints);
+        jPanel11.add(btnSelecionaCliente, gridBagConstraints);
 
         cbCliente.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(cbCliente, gridBagConstraints);
+        jPanel11.add(cbCliente, gridBagConstraints);
 
-        jTabbedPane2.addTab("Cliente", jPanel6);
+        jLabel6.setText("Vendedor");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel11.add(jLabel6, gridBagConstraints);
+
+        jLabel7.setText("Cliente");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel11.add(jLabel7, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.ipadx = 20;
-        gridBagConstraints.ipady = 20;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jTabbedPane2, gridBagConstraints);
+        gridBagConstraints.gridwidth = 2;
+        jPanel3.add(jPanel11, gridBagConstraints);
+
+        jPanel12.setLayout(new java.awt.GridBagLayout());
 
         tblArticulosPedido.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
         tblArticulosPedido.setModel(new javax.swing.table.DefaultTableModel(
@@ -430,66 +374,122 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        jPanel3.add(jScrollPane1, gridBagConstraints);
+        jPanel12.add(jScrollPane1, gridBagConstraints);
+
+        jPanel13.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel13.setLayout(new java.awt.GridBagLayout());
+
+        btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/search.png"))); // NOI18N
+        btnBuscar.setToolTipText("Buscar articulo");
+        btnBuscar.setBorder(null);
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        jPanel13.add(btnBuscar, gridBagConstraints);
+
+        btnNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/add.png"))); // NOI18N
+        btnNuevo.setToolTipText("Nueva posición");
+        btnNuevo.setBorder(null);
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        jPanel13.add(btnNuevo, gridBagConstraints);
+
+        btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/delete.png"))); // NOI18N
+        btnEliminar.setToolTipText("Eliminar posición");
+        btnEliminar.setBorder(null);
+        btnEliminar.setEnabled(false);
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        jPanel13.add(btnEliminar, gridBagConstraints);
+
+        cbArticulos.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel13.add(cbArticulos, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 30;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel13.add(txtCantidad, gridBagConstraints);
+
+        jLabel5.setText("Articulo");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        jPanel13.add(jLabel5, gridBagConstraints);
+
+        jLabel8.setText("Cantidad");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        jPanel13.add(jLabel8, gridBagConstraints);
+
+        btnNuevo1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/add.png"))); // NOI18N
+        btnNuevo1.setToolTipText("Nueva posición");
+        btnNuevo1.setBorder(null);
+        btnNuevo1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevo1ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        jPanel13.add(btnNuevo1, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        jPanel12.add(jPanel13, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel3.add(jPanel12, gridBagConstraints);
 
         jLabel3.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jLabel3.setText("Fecha del pedido");
         jPanel10.add(jLabel3);
         jPanel10.add(dpFecha);
 
-        jTabbedPane3.addTab("Documento", jPanel10);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanel3.add(jTabbedPane3, gridBagConstraints);
-
-        jTabbedPane4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jTabbedPane4.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-
-        jPanel11.setLayout(new java.awt.GridBagLayout());
-
-        btnSelecionaCliente1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/Zoom.png"))); // NOI18N
-        btnSelecionaCliente1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSelecionaCliente1ActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 30;
-        gridBagConstraints.gridheight = 40;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel11.add(btnSelecionaCliente1, gridBagConstraints);
-
-        cbVendedor.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 4;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel11.add(cbVendedor, gridBagConstraints);
-
-        jTabbedPane4.addTab("Vendedor", jPanel11);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.ipadx = 20;
-        gridBagConstraints.ipady = 20;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jTabbedPane4, gridBagConstraints);
+        gridBagConstraints.gridwidth = 2;
+        jPanel3.add(jPanel10, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -498,113 +498,32 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanel3, gridBagConstraints);
 
-        jPanel9.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        jPanel8.setLayout(new java.awt.GridBagLayout());
 
-        jLabel11.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel11.setText("Subtotal.....");
-        jPanel9.add(jLabel11);
+        jLabel10.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        jLabel10.setText("Total pedido");
+        jPanel8.add(jLabel10, new java.awt.GridBagConstraints());
 
-        txtSubTotal.setEnabled(false);
-        txtSubTotal.setMinimumSize(new java.awt.Dimension(6, 17));
-        txtSubTotal.setPreferredSize(new java.awt.Dimension(100, 30));
-        jPanel9.add(txtSubTotal);
+        txtTotal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("$ #,##0.00"))));
+        txtTotal.setEnabled(false);
+        txtTotal.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel8.add(txtTotal, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        getContentPane().add(jPanel9, gridBagConstraints);
-
-        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-
-        jLabel7.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel7.setText("IVA...........");
-        jPanel2.add(jLabel7);
-
-        txtIVA.setEnabled(false);
-        txtIVA.setMinimumSize(new java.awt.Dimension(6, 17));
-        txtIVA.setPreferredSize(new java.awt.Dimension(100, 30));
-        jPanel2.add(txtIVA);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        getContentPane().add(jPanel2, gridBagConstraints);
-
-        jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-
-        jLabel8.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel8.setText("Redondeo...");
-        jPanel7.add(jLabel8);
-
-        txtRedondeo.setEnabled(false);
-        txtRedondeo.setMinimumSize(new java.awt.Dimension(6, 17));
-        txtRedondeo.setPreferredSize(new java.awt.Dimension(100, 30));
-        txtRedondeo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtRedondeoActionPerformed(evt);
-            }
-        });
-        txtRedondeo.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtRedondeoFocusLost(evt);
-            }
-        });
-        jPanel7.add(txtRedondeo);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        getContentPane().add(jPanel7, gridBagConstraints);
-
-        jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-
-        jLabel10.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel10.setText("Total .........");
-        jPanel8.add(jLabel10);
-
-        txtTotal.setEnabled(false);
-        txtTotal.setMinimumSize(new java.awt.Dimension(6, 17));
-        txtTotal.setPreferredSize(new java.awt.Dimension(100, 30));
-        jPanel8.add(txtTotal);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         getContentPane().add(jPanel8, gridBagConstraints);
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        btnRetirarArticulo.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        btnRetirarArticulo.setMnemonic('Q');
-        btnRetirarArticulo.setText("Quitar Articulo");
-        btnRetirarArticulo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRetirarArticuloActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnRetirarArticulo);
-
-        btnCalcularTotales.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        btnCalcularTotales.setMnemonic('C');
-        btnCalcularTotales.setText("Calcular Totales");
-        btnCalcularTotales.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCalcularTotalesActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnCalcularTotales);
-
         btnRegistraVenta.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btnRegistraVenta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/pedido.png"))); // NOI18N
         btnRegistraVenta.setMnemonic('R');
-        btnRegistraVenta.setText("Registrar Venta");
+        btnRegistraVenta.setText("Registrar Pedido");
         btnRegistraVenta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRegistraVentaActionPerformed(evt);
@@ -614,7 +533,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         getContentPane().add(jPanel4, gridBagConstraints);
 
@@ -630,104 +549,11 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_btnSelecionaClienteActionPerformed
 
-    private void btnSelecionaArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaArticuloActionPerformed
-
-        FrameSeleccionaArticulo articuloVenta = new FrameSeleccionaArticulo(this);
-        this.getDesktopPane().add(articuloVenta);
-        articuloVenta.setVisible(true);
-        articuloVenta.toFront();
-
-    }//GEN-LAST:event_btnSelecionaArticuloActionPerformed
-
-    private void txtFiltroCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFiltroCodigoActionPerformed
-
-        try {
-
-            articulosDAO = new ArticuloDAO();
-            Articulo articuloPedido = (Articulo) articulosDAO.buscaArtUnicoPorIDStr(txtFiltroCodigo.getText());
-
-            tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articuloPedido, 1.0, articuloPedido.getValor_venta()));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Articulo no encontrado!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        txtFiltroCodigo.setText("");
-
-    }//GEN-LAST:event_txtFiltroCodigoActionPerformed
-
-    private void txtRedondeoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtRedondeoActionPerformed
-
-        try {
-            if (txtRedondeo.getText().contains("-")) {
-
-                redondeo = Double.valueOf(txtRedondeo.getText().replace("-", "0"));
-                txtTotal.setText(String.valueOf(Utilidades.Redondear(subTotal + IVA - redondeo, 2)));
-
-            } else {
-
-                redondeo = Double.valueOf(txtRedondeo.getText());
-                txtTotal.setText(String.valueOf(Utilidades.Redondear(subTotal + IVA + redondeo, 2)));
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Caracteres invalidos!", "Error!", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_txtRedondeoActionPerformed
-
-    private void txtRedondeoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtRedondeoFocusLost
-
-        try {
-            if (txtRedondeo.getText().contains("-")) {
-
-                redondeo = Double.valueOf(txtRedondeo.getText().replace("-", "0"));
-                txtTotal.setText(String.valueOf(Utilidades.Redondear(subTotal + IVA - redondeo, 2)));
-
-            } else {
-
-                redondeo = Double.valueOf(txtRedondeo.getText());
-                txtTotal.setText(String.valueOf(Utilidades.Redondear(subTotal + IVA + redondeo, 2)));
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Caracteres invalidos!", "Error!", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_txtRedondeoFocusLost
-
-    private void btnRetirarArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetirarArticuloActionPerformed
-
-        retirarArticulo();
-    }//GEN-LAST:event_btnRetirarArticuloActionPerformed
-
-    private void btnCalcularTotalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalcularTotalesActionPerformed
-        calcularTotales();
-
-    }//GEN-LAST:event_btnCalcularTotalesActionPerformed
-
     private void btnRegistraVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistraVentaActionPerformed
 
-        /* setClie((Cliente) cbNombreCliente.getSelectedItem());
-         pedido.setTipo((TipoDocumentoEnum) cbTipoPedido.getSelectedItem());
-         pedido.setTotal(Double.parseDouble(txtTotal.getText()));
-         pedido.setFecha(Utilidades.RecibeDateRetornaDateFormatoBD(dpFecha.getDate()));
-         pedido.setMoneda((MonedaEnum) cbMoneda.getSelectedItem());
-         String tipoPedido = cbTipoPedido.getSelectedItem().toString();
-
-         switch (tipoPedido) {
-         case ("Crédito"):
-         pedido.setNroDocumento(Integer.parseInt(txtNroDocumento.getText()));
-         pedidoSingleton = pedido;
-         confirmaPedido();
-         CreditosVentas venta = new CreditosVentas(null, true);
-         venta.setLocationRelativeTo(null);
-         venta.setVisible(true);
-         this.dispose();
-
-         break;
-         case ("Contado"):
-         confirmaPedido();
-         registraMovimiento();
-         this.dispose();
-
-         break;
-         }*/
+        confirmaPedido();
+        listArticulosPedido.clear();
+        tableModel.fireTableDataChanged();
 
     }//GEN-LAST:event_btnRegistraVentaActionPerformed
 
@@ -736,47 +562,66 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_btnSelecionaCliente1ActionPerformed
 
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        FrameSeleccionaArticulo articuloVenta = new FrameSeleccionaArticulo(this);
+        this.getDesktopPane().add(articuloVenta);
+        articuloVenta.setVisible(true);
+        articuloVenta.toFront();
+
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+
+        Articulo articulo = (Articulo) cbArticulos.getSelectedItem();
+        Double cantidad = Double.valueOf(txtCantidad.getText());
+        Double total = cantidad * articulo.getValor_venta();
+        tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articulo, cantidad, total));
+
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+
+        tableModel.eliminar(tblArticulosPedido.getSelectedRow());
+
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnNuevo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevo1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnNuevo1ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCalcularTotales;
+    private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnNuevo;
+    private javax.swing.JButton btnNuevo1;
     private javax.swing.JButton btnRegistraVenta;
-    private javax.swing.JButton btnRetirarArticulo;
-    private javax.swing.JButton btnSelecionaArticulo;
     private javax.swing.JButton btnSelecionaCliente;
     private javax.swing.JButton btnSelecionaCliente1;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox cbArticulos;
     private javax.swing.JComboBox cbCliente;
     private javax.swing.JComboBox cbVendedor;
     private org.jdesktop.swingx.JXDatePicker dpFecha;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTabbedPane jTabbedPane2;
-    private javax.swing.JTabbedPane jTabbedPane3;
-    private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tblArticulosPedido;
-    private javax.swing.JTextField txtFiltroCodigo;
-    private javax.swing.JTextField txtIVA;
-    private javax.swing.JTextField txtRedondeo;
-    private javax.swing.JTextField txtSubTotal;
-    private javax.swing.JTextField txtTotal;
+    private javax.swing.JTextField txtCantidad;
+    private javax.swing.JFormattedTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 
 }

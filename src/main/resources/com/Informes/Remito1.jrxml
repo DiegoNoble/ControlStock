@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="605a6178-594c-44f5-ba47-0c4fe287951f">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="idRemito" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[SELECT
+     remito.`fecha` AS remito_fecha,
+     pedido.`id` AS pedido_id,
+     pedido.`fecha` AS pedido_fecha,
+     cliente.`id_cliente` AS cliente_id_cliente,
+     cliente.`razon_social` AS cliente_razon_social,
+     cliente.`cel` AS cliente_cel,
+     cliente.`ci` AS cliente_ci,
+     cliente.`ciudad` AS cliente_ciudad,
+     cliente.`direccion` AS cliente_direccion,
+     cliente.`email` AS cliente_email,
+     cliente.`telefono` AS cliente_telefono,
+     articulos_pedido.`cantAtendida` AS articulos_pedido_cantAtendida,
+     articulos_pedido.`importeAtendido` AS articulos_pedido_importeAtendido,
+     articulos_pedido.`posicion` AS articulos_pedido_posicion,
+     remito.`id` AS remito_id,
+     pedido.`id_vendedor` AS pedido_id_vendedor,
+     articulo.`descripcion` AS articulo_descripcion,
+     articulo.`valor_venta` AS articulo_valor_venta,
+     cliente.`condicionImpositiva` AS cliente_condicionImpositiva,
+     cliente.`documento` AS cliente_documento,
+     articulo.`id` AS articulo_id,
+     remito.`importeRemito` AS remito_importeRemito,
+     pedido.`observaciones` AS pedido_observaciones
+FROM
+     `pedido` pedido INNER JOIN `articulos_pedido` articulos_pedido ON pedido.`id` = articulos_pedido.`id_pedido`
+     INNER JOIN `remito` remito ON pedido.`id` = remito.`id_pedido`
+     INNER JOIN `cliente` cliente ON pedido.`id_cliente` = cliente.`id_cliente`
+     INNER JOIN `articulo` articulo ON articulos_pedido.`id_articulo` = articulo.`id`
+WHERE
+     remito.`id` = $P{idRemito}]]>
+	</queryString>
+	<field name="remito_fecha" class="java.sql.Timestamp"/>
+	<field name="pedido_id" class="java.lang.Integer"/>
+	<field name="pedido_fecha" class="java.sql.Date"/>
+	<field name="cliente_id_cliente" class="java.lang.Integer"/>
+	<field name="cliente_razon_social" class="java.lang.String"/>
+	<field name="cliente_cel" class="java.lang.String"/>
+	<field name="cliente_ci" class="java.lang.String"/>
+	<field name="cliente_ciudad" class="java.lang.String"/>
+	<field name="cliente_direccion" class="java.lang.String"/>
+	<field name="cliente_email" class="java.lang.String"/>
+	<field name="cliente_telefono" class="java.lang.String"/>
+	<field name="articulos_pedido_cantAtendida" class="java.lang.Double"/>
+	<field name="articulos_pedido_importeAtendido" class="java.lang.Double"/>
+	<field name="articulos_pedido_posicion" class="java.lang.Integer"/>
+	<field name="remito_id" class="java.lang.Integer"/>
+	<field name="pedido_id_vendedor" class="java.lang.Integer"/>
+	<field name="articulo_descripcion" class="java.lang.String"/>
+	<field name="articulo_valor_venta" class="java.lang.Double"/>
+	<field name="cliente_condicionImpositiva" class="java.lang.String"/>
+	<field name="cliente_documento" class="java.lang.String"/>
+	<field name="articulo_id" class="java.lang.String"/>
+	<field name="remito_importeRemito" class="java.lang.Double"/>
+	<field name="pedido_observaciones" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="183" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="56" width="218" height="125" uuid="1423fb5b-501b-442f-8d41-c74551380daf"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="0" y="0" width="168" height="58" uuid="e7cec89b-ea08-47df-952d-708226d808b0"/>
+				<textElement>
+					<font fontName="Arial Black" size="40"/>
+				</textElement>
+				<text><![CDATA[Remito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="58" width="57" height="20" uuid="35bbf6b3-fda4-428e-a72e-fb75805ae907"/>
+				<textElement>
+					<font fontName="Arial" size="15" isBold="true" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Cliente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="398" y="0" width="57" height="20" uuid="7be49bc8-f6f3-43bd-98cb-666f2b58f74e"/>
+				<textElement>
+					<font fontName="Arial" size="15" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Número]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="398" y="20" width="57" height="20" uuid="60c67848-f969-431d-aa07-0b589cac9401"/>
+				<textElement>
+					<font fontName="Arial" size="15" isBold="true" isItalic="false" isUnderline="false"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="374" y="58" width="91" height="20" uuid="6b5cd410-5ac1-4a5a-8293-187f862b689c"/>
+				<textElement>
+					<font fontName="Arial" size="15" isBold="true" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Preventista:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="374" y="85" width="44" height="20" uuid="b0544bdb-b50c-4152-a86f-43e6d9c036e9"/>
+				<textElement>
+					<font fontName="Arial" size="15" isBold="true" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Obs:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="455" y="20" width="100" height="20" uuid="bb3d4a37-7fd2-4319-baed-ee6be4fbcd3b"/>
+				<textFieldExpression><![CDATA[$F{remito_fecha}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="100" height="20" uuid="46b121e0-04fa-4a0a-91d6-04ff62376917"/>
+				<textFieldExpression><![CDATA[$F{remito_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="57" y="58" width="161" height="20" uuid="c03f8883-9e1d-478a-b693-9c8239400678"/>
+				<textFieldExpression><![CDATA[$F{cliente_razon_social}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="118" width="218" height="20" uuid="4dcab6b4-0ac4-4fc6-8838-7f37e054e7e7"/>
+				<textFieldExpression><![CDATA[$F{cliente_direccion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="138" width="218" height="20" uuid="564122a1-13ea-4b9d-a21c-136f24bb7512"/>
+				<textFieldExpression><![CDATA[$F{cliente_ciudad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="158" width="100" height="20" uuid="c44e3fef-0a3a-4de2-a02d-cd874f28648d"/>
+				<textFieldExpression><![CDATA[$F{cliente_cel}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="118" y="158" width="100" height="20" uuid="077d9622-53bd-44f7-aa09-103cf8d1b674"/>
+				<textFieldExpression><![CDATA[$F{cliente_telefono}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="57" y="78" width="161" height="20" uuid="ddc782f3-55c6-4abb-b1ed-16f0aa940be6"/>
+				<textFieldExpression><![CDATA[$F{cliente_documento}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="57" y="98" width="161" height="20" uuid="b3553ad3-cfcd-4cd4-99e3-e0606c92fa22"/>
+				<textFieldExpression><![CDATA[$F{cliente_condicionImpositiva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="58" width="90" height="20" uuid="8d70e500-f09c-48a8-91f0-e3fb1721f00b"/>
+				<textFieldExpression><![CDATA[$F{pedido_id_vendedor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="374" y="105" width="181" height="73" uuid="1b2331d5-51eb-4819-8db6-62a9d6c80829"/>
+				<textElement>
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pedido_observaciones}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="47" height="20" uuid="08f02f4a-f7f7-4795-a78a-d708f330cc80"/>
+				<text><![CDATA[Posición]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="57" y="2" width="100" height="20" uuid="2b03886c-8f0c-47c4-be55-0a2a7737d2cb"/>
+				<text><![CDATA[Cod]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="157" y="4" width="100" height="20" uuid="fe461684-089a-433d-b28e-cc3013e2a16b"/>
+				<text><![CDATA[Descripción]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="257" y="4" width="100" height="20" uuid="dc6380a8-a699-4ee8-9212-547fe4c54ab5"/>
+				<text><![CDATA[Unitario]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="355" y="4" width="100" height="20" uuid="e6661134-c704-4f31-8001-41dcc52b5881"/>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="2" width="100" height="20" uuid="af0ef0ba-da32-4360-ac9b-a564fea30b03"/>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="47" height="20" uuid="301a91d4-3602-4674-99af-da211370f1db"/>
+				<textFieldExpression><![CDATA[$F{articulos_pedido_posicion}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="157" y="0" width="100" height="20" uuid="9102da4f-c8b4-4ed0-a641-8e7ade801af1"/>
+				<textFieldExpression><![CDATA[$F{articulo_descripcion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="257" y="0" width="100" height="20" uuid="4b283aa3-8afa-434f-95fe-6aabbc791547"/>
+				<textFieldExpression><![CDATA[$F{articulo_valor_venta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="57" y="0" width="100" height="20" uuid="e63592d6-fab9-4cfa-8151-aeb6e39e90bc"/>
+				<textFieldExpression><![CDATA[$F{articulo_id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="355" y="0" width="100" height="20" uuid="d2c9e4a0-9f1a-4b16-af60-a86d84ee29b7"/>
+				<textFieldExpression><![CDATA[$F{articulos_pedido_cantAtendida}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="455" y="0" width="100" height="20" uuid="2ec7369a-988d-4119-963c-17588aa9b985"/>
+				<textFieldExpression><![CDATA[$F{articulos_pedido_importeAtendido}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42" splitType="Stretch">
+			<textField pattern="$ #,##0.00">
+				<reportElement x="455" y="2" width="100" height="20" uuid="a2413eba-ed93-4f94-a801-7b599841c9fd"/>
+				<textFieldExpression><![CDATA[$F{remito_importeRemito}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="355" y="2" width="100" height="20" uuid="fe802998-735c-47ef-b4f1-9fc6070ea8b0"/>
+				<text><![CDATA[Total remito]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

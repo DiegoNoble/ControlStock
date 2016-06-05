@@ -17,7 +17,7 @@ import javax.swing.table.DefaultTableCellRenderer;
  * @author Dyego Souza do Carmo
  * @since 
  */
-public class MyDateCellRenderer extends DefaultTableCellRenderer {
+public class MeDateCellRenderer extends DefaultTableCellRenderer {
 
     private static final long serialVersionUID = 1L;
 
@@ -27,7 +27,7 @@ public class MyDateCellRenderer extends DefaultTableCellRenderer {
      * @author Dyego Souza do Carmo
      * @version 1.0, 
      */
-    public MyDateCellRenderer() {
+    public MeDateCellRenderer() {
         super();
         setHorizontalAlignment(CENTER);
     }

@@ -10,7 +10,7 @@ import com.Beans.EstadoEnum;
 import com.Beans.Cliente;
 import com.DAO.FacturaVentaDAO;
 import com.Renderers.MyCalendarCellRenderer;
-import com.Renderers.MyDateCellRenderer;
+import com.Renderers.MeDateCellRenderer;
 import com.Renderers.MyDefaultCellRenderer;
 import java.lang.Exception;
 import java.util.List;
@@ -311,7 +311,7 @@ public class ConsultaCuentasRecibir extends javax.swing.JInternalFrame {
         jScrollPane1.setViewportView(tblPagos);
         tblPagos.getColumnModel().getColumn(0).setCellRenderer(new MyDefaultCellRenderer());
         tblPagos.getColumnModel().getColumn(1).setCellRenderer(new MyCalendarCellRenderer());
-        tblPagos.getColumnModel().getColumn(2).setCellRenderer(new MyDateCellRenderer());
+        tblPagos.getColumnModel().getColumn(2).setCellRenderer(new MeDateCellRenderer());
         tblPagos.getColumnModel().getColumn(3).setCellRenderer(new MyDefaultCellRenderer());
         tblPagos.getColumnModel().getColumn(4).setCellRenderer(new MyDefaultCellRenderer());
         tblPagos.getColumnModel().getColumn(5).setCellRenderer(new MyDefaultCellRenderer());
@@ -412,7 +412,7 @@ public class ConsultaCuentasRecibir extends javax.swing.JInternalFrame {
         tblFacturas.getColumnModel().getColumn(0).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturas.getColumnModel().getColumn(1).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturas.getColumnModel().getColumn(2).setCellRenderer(new MyDefaultCellRenderer());
-        tblFacturas.getColumnModel().getColumn(3).setCellRenderer(new MyDateCellRenderer());
+        tblFacturas.getColumnModel().getColumn(3).setCellRenderer(new MeDateCellRenderer());
         tblFacturas.getColumnModel().getColumn(4).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturas.getColumnModel().getColumn(5).setCellRenderer(new MyDefaultCellRenderer());
         tblFacturas.getColumnModel().getColumn(6).setCellRenderer(new MyDefaultCellRenderer());

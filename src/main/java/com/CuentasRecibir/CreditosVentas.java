@@ -377,7 +377,7 @@ public class CreditosVentas extends javax.swing.JDialog {
                     credito.setValorCredito(valorCredito);
 
                     DAOGenerico dao = new DAOGenerico(credito);
-                    dao.registra();
+                    dao.guardar();
 
                     for (int i = 0; i < listaPagos.size(); i++) {
 
@@ -388,7 +388,7 @@ public class CreditosVentas extends javax.swing.JDialog {
                         pagoDAO.setValor(listaPagos.get(i).getValor());
                         pagoDAO.setEstado(EstadoEnum.PENDIENTE);
                         DAOGenerico registraPagos = new DAOGenerico(pagoDAO);
-                        registraPagos.registra();
+                        registraPagos.guardar();
 
                     }
 

@@ -2,7 +2,6 @@ package com.Unidades;
 
 import com.Beans.Unidad;
 import com.DAO.DAOGenerico;
-import com.Articulos.FrameSeleccionaArticulo;
 import com.Articulos.ArticulosFrame;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -20,8 +19,7 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
     private DefaultTableModel tableModelUnidades;
     private ListSelectionModel listModelUnidades;
     private ArticulosFrame articulosFrame;
-    private FrameSeleccionaArticulo articulosCompraFrame;
-   
+
     public UnidadFrame() {
         initComponents();
 
@@ -29,25 +27,15 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
         defineModelo();
         actualizaTable();
     }
-    
-     public UnidadFrame(ArticulosFrame articulosFrame) {
+
+    public UnidadFrame(ArticulosFrame articulosFrame) {
         initComponents();
 
         defineModelo();
         actualizaTable();
-        
+
         btnSeleccionaUnidadNormal.setVisible(true);
         this.articulosFrame = articulosFrame;
-    }
-     
-     public UnidadFrame(FrameSeleccionaArticulo articulosCompraFrame) {
-        initComponents();
-
-        defineModelo();
-        actualizaTable();
-        
-        btnSeleccionaUnidadCompra.setVisible(true);
-        this.articulosCompraFrame = articulosCompraFrame;
     }
 
     class CenterRenderer extends DefaultTableCellRenderer { //----> Classe utilizada para centralizar el contenido de las columnas de las tablas
@@ -75,18 +63,13 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
         ((DefaultTableCellRenderer) tblUnidades.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 
         TableColumn column = tblUnidades.getColumnModel().getColumn(1); //----> LLamada de la funcion que centraliza el contenido en las columnas del Jtable
-        
 
         column.setCellRenderer(centerRenderer);
-        
 
         DefaultTableModel modelo = (DefaultTableModel) tblUnidades.getModel();
         modelo.setNumRows(0);
 
         tblUnidades.getColumn("Descripción").setPreferredWidth(50); //------> Ajusta el tamaño de las columnas
-       
-
-
 
     }
 
@@ -100,7 +83,7 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
             int tamano_lista = lista_unidades.size();
 
             tableModelUnidades.setNumRows(0);
-            
+
             for (int i = 0; i < tamano_lista; i++) {
 
                 Unidad unidades = lista_unidades.get(i);
@@ -108,8 +91,6 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
                 Object[] linea = new Object[2];
                 linea[0] = unidades.getId();
                 linea[1] = unidades.getDescripcion();
-                
-
 
                 tableModelUnidades.addRow(linea);
             }
@@ -118,10 +99,8 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "Error" + error);
         }
 
-
     }
 
-      
     private void NuevoUnidad() {
 
         if (txtDescripcion.getText().equals("")) {
@@ -138,10 +117,8 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(null, "Unidad registrada correctamente!");
             } catch (Exception ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: "+ex);
+                JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
             }
-
-
 
         }
     }
@@ -154,7 +131,6 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
 
         } else {
 
-            
             Unidad usuarios = new Unidad();
             usuarios.setId(Integer.parseInt(jlbCodigo.getText()));
             usuarios.setDescripcion(txtDescripcion.getText());
@@ -164,20 +140,18 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
 
             JOptionPane.showMessageDialog(null, "Unidad editada correctamente!");
 
-
         }
 
     }
 
     private void eliminaUnidad() {
 
-        
         Unidad unidad = new Unidad();
         unidad.setId(Integer.parseInt(jlbCodigo.getText()));
-        
+
         DAOGenerico dao = new DAOGenerico(unidad);
         dao.elimina();
-           
+
         JOptionPane.showMessageDialog(null, "Unidad eliminada correctamente!");
 
     }
@@ -230,7 +204,6 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
         txtDescripcion.setText("");
         jlbCodigo.setText("");
 
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -249,7 +222,6 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
         jlbCodigo = new javax.swing.JLabel();
         txtDescripcion = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
-        btnSeleccionaUnidadCompra = new javax.swing.JButton();
         btnSeleccionaUnidadNormal = new javax.swing.JButton();
         btnNuevo = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
@@ -308,9 +280,11 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
             }
         });
         jScrollPane1.setViewportView(tblUnidades);
-        tblUnidades.getColumnModel().getColumn(0).setMinWidth(0);
-        tblUnidades.getColumnModel().getColumn(0).setPreferredWidth(0);
-        tblUnidades.getColumnModel().getColumn(0).setMaxWidth(0);
+        if (tblUnidades.getColumnModel().getColumnCount() > 0) {
+            tblUnidades.getColumnModel().getColumn(0).setMinWidth(0);
+            tblUnidades.getColumnModel().getColumn(0).setPreferredWidth(0);
+            tblUnidades.getColumnModel().getColumn(0).setMaxWidth(0);
+        }
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -364,16 +338,6 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
         getContentPane().add(jPanel3, gridBagConstraints);
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
-
-        btnSeleccionaUnidadCompra.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnSeleccionaUnidadCompra.setMnemonic('U');
-        btnSeleccionaUnidadCompra.setText("Selecciona Unidad");
-        btnSeleccionaUnidadCompra.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSeleccionaUnidadCompraActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnSeleccionaUnidadCompra);
 
         btnSeleccionaUnidadNormal.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         btnSeleccionaUnidadNormal.setMnemonic('U');
@@ -511,7 +475,7 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
     private void btnSeleccionaUnidadNormalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaUnidadNormalActionPerformed
 
         try {
-            
+
             int filaSeleccionada = tblUnidades.getSelectedRow();
             if (filaSeleccionada == -1) {
                 JOptionPane.showMessageDialog(null, "Seleccione una categoría en la tabla!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -532,38 +496,12 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnSeleccionaUnidadNormalActionPerformed
 
-    private void btnSeleccionaUnidadCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaUnidadCompraActionPerformed
-
-        try {
-
-            int filaSeleccionada = tblUnidades.getSelectedRow();
-            if (filaSeleccionada == -1) {
-                JOptionPane.showMessageDialog(null, "Seleccione una categoría en la tabla!", "Error", JOptionPane.ERROR_MESSAGE);
-
-            } else {
-
-                int unidadSeleccionada = (int) tblUnidades.getValueAt(filaSeleccionada, 0);
-                DAOGenerico dao = new DAOGenerico();
-                Unidad unidad = (Unidad) dao.buscarPorID(Unidad.class, unidadSeleccionada);
-
-                articulosCompraFrame.setUnidad(unidad);
-                this.dispose();
-                articulosCompraFrame.toFront();
-
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
-        
-    }//GEN-LAST:event_btnSeleccionaUnidadCompraActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JButton btnSalvar;
-    private javax.swing.JButton btnSeleccionaUnidadCompra;
     private javax.swing.JButton btnSeleccionaUnidadNormal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

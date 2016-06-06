@@ -6,7 +6,6 @@ import com.Beans.ArticulosVenta;
 import com.DAO.DAOGenerico;
 import Utilidades.Utilidades;
 import com.Beans.Articulo;
-import com.Articulos.FrameSeleccionaArticulo;
 import com.Beans.Caja;
 import com.Beans.MonedaEnum;
 import com.Beans.TipoDocumentoEnum;
@@ -741,11 +740,11 @@ public class RegistraVentaFrame extends javax.swing.JInternalFrame {
 
     private void btnSelecionaArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaArticuloActionPerformed
 
-        FrameSeleccionaArticulo articuloVenta = new FrameSeleccionaArticulo(this);
+        /*Articu articuloVenta = new FrameSeleccionaArticulo(this);
         this.getDesktopPane().add(articuloVenta);
         articuloVenta.setVisible(true);
         articuloVenta.toFront();
-
+*/
     }//GEN-LAST:event_btnSelecionaArticuloActionPerformed
 
     private void txtFiltroCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFiltroCodigoActionPerformed

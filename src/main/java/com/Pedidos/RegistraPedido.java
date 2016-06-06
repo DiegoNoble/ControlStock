@@ -1,10 +1,10 @@
 package com.Pedidos;
 
 import Utilidades.ControlarEntradaTexto;
+import com.Articulos.ArticulosFrame;
 import com.Beans.Pedido;
 import com.Beans.ArticulosPedido;
 import com.Beans.Articulo;
-import com.Articulos.FrameSeleccionaArticulo;
 import com.Clientes.ClienteFrame;
 import com.Beans.Cliente;
 import com.Beans.SituacionPedido;
@@ -22,7 +22,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
-import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
 
 public class RegistraPedido extends javax.swing.JInternalFrame {
 
@@ -563,10 +562,10 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnSelecionaCliente1ActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        FrameSeleccionaArticulo articuloVenta = new FrameSeleccionaArticulo(this);
-        this.getDesktopPane().add(articuloVenta);
-        articuloVenta.setVisible(true);
-        articuloVenta.toFront();
+        ArticulosFrame articulosFrame = new ArticulosFrame(this);
+        this.getDesktopPane().add(articulosFrame);
+        articulosFrame.setVisible(true);
+        articulosFrame.toFront();
 
     }//GEN-LAST:event_btnBuscarActionPerformed
 

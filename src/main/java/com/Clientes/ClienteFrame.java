@@ -456,7 +456,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         jPanel2.add(txtPaís, gridBagConstraints);
 
         jLabel8.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel8.setText("C.I");
+        jLabel8.setText("Documento");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
@@ -629,7 +629,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "Código", "Nombre", "C.I.", "Razón Social", "R.U.T.", "Dirección", "ciudad", "pais", "cel", "telefono", "email", "fecha_ingreso"
+                "Código", "Nombre", "C.I.", "Razón Social", "Documento", "Dirección", "ciudad", "pais", "cel", "telefono", "email", "fecha_ingreso"
             }
         ) {
             Class[] types = new Class [] {
@@ -654,27 +654,29 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             }
         });
         jScrollPane1.setViewportView(tblCliente);
-        tblCliente.getColumnModel().getColumn(5).setMinWidth(0);
-        tblCliente.getColumnModel().getColumn(5).setPreferredWidth(0);
-        tblCliente.getColumnModel().getColumn(5).setMaxWidth(0);
-        tblCliente.getColumnModel().getColumn(6).setMinWidth(0);
-        tblCliente.getColumnModel().getColumn(6).setPreferredWidth(0);
-        tblCliente.getColumnModel().getColumn(6).setMaxWidth(0);
-        tblCliente.getColumnModel().getColumn(7).setMinWidth(0);
-        tblCliente.getColumnModel().getColumn(7).setPreferredWidth(0);
-        tblCliente.getColumnModel().getColumn(7).setMaxWidth(0);
-        tblCliente.getColumnModel().getColumn(8).setMinWidth(0);
-        tblCliente.getColumnModel().getColumn(8).setPreferredWidth(0);
-        tblCliente.getColumnModel().getColumn(8).setMaxWidth(0);
-        tblCliente.getColumnModel().getColumn(9).setMinWidth(0);
-        tblCliente.getColumnModel().getColumn(9).setPreferredWidth(0);
-        tblCliente.getColumnModel().getColumn(9).setMaxWidth(0);
-        tblCliente.getColumnModel().getColumn(10).setMinWidth(0);
-        tblCliente.getColumnModel().getColumn(10).setPreferredWidth(0);
-        tblCliente.getColumnModel().getColumn(10).setMaxWidth(0);
-        tblCliente.getColumnModel().getColumn(11).setMinWidth(0);
-        tblCliente.getColumnModel().getColumn(11).setPreferredWidth(0);
-        tblCliente.getColumnModel().getColumn(11).setMaxWidth(0);
+        if (tblCliente.getColumnModel().getColumnCount() > 0) {
+            tblCliente.getColumnModel().getColumn(5).setMinWidth(0);
+            tblCliente.getColumnModel().getColumn(5).setPreferredWidth(0);
+            tblCliente.getColumnModel().getColumn(5).setMaxWidth(0);
+            tblCliente.getColumnModel().getColumn(6).setMinWidth(0);
+            tblCliente.getColumnModel().getColumn(6).setPreferredWidth(0);
+            tblCliente.getColumnModel().getColumn(6).setMaxWidth(0);
+            tblCliente.getColumnModel().getColumn(7).setMinWidth(0);
+            tblCliente.getColumnModel().getColumn(7).setPreferredWidth(0);
+            tblCliente.getColumnModel().getColumn(7).setMaxWidth(0);
+            tblCliente.getColumnModel().getColumn(8).setMinWidth(0);
+            tblCliente.getColumnModel().getColumn(8).setPreferredWidth(0);
+            tblCliente.getColumnModel().getColumn(8).setMaxWidth(0);
+            tblCliente.getColumnModel().getColumn(9).setMinWidth(0);
+            tblCliente.getColumnModel().getColumn(9).setPreferredWidth(0);
+            tblCliente.getColumnModel().getColumn(9).setMaxWidth(0);
+            tblCliente.getColumnModel().getColumn(10).setMinWidth(0);
+            tblCliente.getColumnModel().getColumn(10).setPreferredWidth(0);
+            tblCliente.getColumnModel().getColumn(10).setMaxWidth(0);
+            tblCliente.getColumnModel().getColumn(11).setMinWidth(0);
+            tblCliente.getColumnModel().getColumn(11).setPreferredWidth(0);
+            tblCliente.getColumnModel().getColumn(11).setMaxWidth(0);
+        }
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;

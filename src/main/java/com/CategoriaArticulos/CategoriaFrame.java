@@ -2,12 +2,8 @@ package com.CategoriaArticulos;
 
 import com.Beans.Categoria;
 import com.DAO.DAOGenerico;
-import com.Articulos.FrameSeleccionaArticulo;
 import com.Articulos.ArticulosFrame;
-import com.Compras.RegistraCompraFrame;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
@@ -24,36 +20,23 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
     MaskFormatter formatoftxtFechaIngreso;
     private DefaultTableModel tableModelCategoria;
     private ListSelectionModel listModelCategoria;
-    private FrameSeleccionaArticulo articulosCompraFrame;
     private ArticulosFrame articulosFrame;
-    
+
     public CategoriaFrame() {
         initComponents();
 
         defineModelo();
         actualizaTable();
         btnSeleccionaCategoriaArticuloFrame.setVisible(false);
-        btnSeleccionaCategoría.setVisible(false);
     }
-    
-     public CategoriaFrame(ArticulosFrame articulosFrame) {
+
+    public CategoriaFrame(ArticulosFrame articulosFrame) {
         initComponents();
 
         defineModelo();
         actualizaTable();
-        
-        btnSeleccionaCategoría.setVisible(false);
+
         this.articulosFrame = articulosFrame;
-    }
-     
-     public CategoriaFrame(FrameSeleccionaArticulo articulosCompraFrame) {
-        initComponents();
-
-        defineModelo();
-        actualizaTable();
-        
-        btnSeleccionaCategoriaArticuloFrame.setVisible(false);
-        this.articulosCompraFrame = articulosCompraFrame;
     }
 
     class CenterRenderer extends DefaultTableCellRenderer { //----> Classe utilizada para centralizar el contenido de las columnas de las tablas
@@ -82,7 +65,7 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
 
         TableColumn column = tblCategoria.getColumnModel().getColumn(0); //----> LLamada de la funcion que centraliza el contenido en las columnas del Jtable
         TableColumn column1 = tblCategoria.getColumnModel().getColumn(1);
-       
+
         column.setCellRenderer(centerRenderer);
         column1.setCellRenderer(centerRenderer);
 
@@ -91,7 +74,7 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
 
         tblCategoria.getColumn("Código").setPreferredWidth(10); //------> Ajusta el tamaño de las columnas
         tblCategoria.getColumn("Categoría").setPreferredWidth(100);
-        
+
     }
 
     private void actualizaTable() {
@@ -103,7 +86,7 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
             int tamano_lista = lista_categorias.size();
 
             tableModelCategoria.setNumRows(0);
-            
+
             for (int i = 0; i < tamano_lista; i++) {
 
                 Categoria categoria = lista_categorias.get(i);
@@ -111,7 +94,7 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
                 Object[] linea = new Object[2];
                 linea[0] = categoria.getId();
                 linea[1] = categoria.getNombre();
-               
+
                 tableModelCategoria.addRow(linea);
             }
 
@@ -119,7 +102,7 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "Error" + error);
         }
     }
-      
+
     private void NuevaCategoria() {
 
         if (txtCategoria.getText().trim().equals("")) {
@@ -135,8 +118,8 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
 
                 JOptionPane.showMessageDialog(null, "Categoría registrada correctamente!");
             } catch (Exception ex) {
-               ex.printStackTrace();
-               JOptionPane.showMessageDialog(rootPane, "Error al salvar en base de datos: "+ex);
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(rootPane, "Error al salvar en base de datos: " + ex);
             }
 
         }
@@ -149,7 +132,7 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
             txtCategoria.requestFocus();
 
         } else {
-            
+
             Categoria categoria = new Categoria();
             categoria.setId(Integer.parseInt(jlbCodigo.getText()));
             categoria.setNombre(txtCategoria.getText());
@@ -165,13 +148,12 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
 
     private void eliminaCategoria() {
 
-        
         Categoria categoria = new Categoria();
         categoria.setId(Integer.parseInt(jlbCodigo.getText()));
-        
+
         DAOGenerico dao = new DAOGenerico(categoria);
         dao.elimina();
-           
+
         JOptionPane.showMessageDialog(null, "Categoría eliminada correctamente!");
 
     }
@@ -186,7 +168,7 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
 
             jlbCodigo.setText(tblCategoria.getValueAt(filaSeleccionada, 0).toString());
             txtCategoria.setText(tblCategoria.getValueAt(filaSeleccionada, 1).toString());
-            
+
         } catch (Exception error) {
         }
 
@@ -225,7 +207,6 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
         txtCategoria.setText("");
         jlbCodigo.setText("");
 
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -245,7 +226,6 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
         jlbCodigo = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         btnSeleccionaCategoriaArticuloFrame = new javax.swing.JButton();
-        btnSeleccionaCategoría = new javax.swing.JButton();
         btnNuevo = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
@@ -373,16 +353,6 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnSeleccionaCategoriaArticuloFrame);
 
-        btnSeleccionaCategoría.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnSeleccionaCategoría.setMnemonic('C');
-        btnSeleccionaCategoría.setText("Selecciona Categoría");
-        btnSeleccionaCategoría.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSeleccionaCategoríaActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnSeleccionaCategoría);
-
         btnNuevo.setMnemonic('N');
         btnNuevo.setText("Nuevo"); // NOI18N
         btnNuevo.addActionListener(new java.awt.event.ActionListener() {
@@ -500,30 +470,6 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
     private void tblCategoriaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCategoriaMouseClicked
     }//GEN-LAST:event_tblCategoriaMouseClicked
 
-    private void btnSeleccionaCategoríaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaCategoríaActionPerformed
-
-        try {
-
-            int filaSeleccionada = tblCategoria.getSelectedRow();
-            if (filaSeleccionada == -1) {
-                JOptionPane.showMessageDialog(null, "Seleccione una categoría en la tabla!", "Error", JOptionPane.ERROR_MESSAGE);
-
-            } else {
-
-                int articuloSeleccionado = (int) tblCategoria.getValueAt(filaSeleccionada, 0);
-                DAOGenerico dao = new DAOGenerico();
-                Categoria categoria = (Categoria) dao.buscarPorID(Categoria.class, articuloSeleccionado);
-
-                articulosCompraFrame.setCategoria(categoria);
-                this.dispose();
-                articulosCompraFrame.toFront();
-
-            }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
-        }
-    }//GEN-LAST:event_btnSeleccionaCategoríaActionPerformed
-
     private void btnSeleccionaCategoriaArticuloFrameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaCategoriaArticuloFrameActionPerformed
 
         try {
@@ -546,7 +492,7 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
-        
+
     }//GEN-LAST:event_btnSeleccionaCategoriaArticuloFrameActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -556,7 +502,6 @@ public class CategoriaFrame extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnNuevo;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSeleccionaCategoriaArticuloFrame;
-    private javax.swing.JButton btnSeleccionaCategoría;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

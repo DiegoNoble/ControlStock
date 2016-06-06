@@ -135,8 +135,6 @@ public class ConsultaCompraFrame extends javax.swing.JInternalFrame {
                             articulosCompra.getArticulo().getId(),
                             articulosCompra.getArticulo().getNombre(),
                             articulosCompra.getCantidad(),
-                            articulosCompra.getDescuento(),
-                            articulosCompra.getValorSinIva(),
                             articulosCompra.getValorConIva()
                         });
             }

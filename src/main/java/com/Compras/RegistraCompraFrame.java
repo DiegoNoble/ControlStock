@@ -4,8 +4,8 @@ import com.Beans.FacturaCompra;
 import com.Beans.ArticulosCompra;
 import com.DAO.DAOGenerico;
 import Utilidades.Utilidades;
+import com.Articulos.ArticulosFrame;
 import com.Beans.Articulo;
-import com.Articulos.FrameSeleccionaArticulo;
 import com.Beans.Cotizacion;
 import com.Beans.EstadoEnum;
 import com.Beans.MonedaEnum;
@@ -61,7 +61,7 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
         this.articulo = articulo;
 
         tableModel.addRow(new Object[]{articulo.getId(),
-                    articulo.getNombre()});
+            articulo.getNombre()});
     }
 
     public Proveedor getProveedor() {
@@ -119,7 +119,6 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
         tblArticulosCompra.getColumn("P. Uni. Dto").setPreferredWidth(30);
         tblArticulosCompra.getColumn("Importe Neto").setPreferredWidth(30);
 
-
         txtTotal.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -155,7 +154,6 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
 
         try {
 
-
             if (getProveedor() == null) {
                 JOptionPane.showMessageDialog(this, "Selecione un proveedor!", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (tableModel.getRowCount() == 0) {
@@ -175,7 +173,6 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
                     Articulo articulo = new Articulo();
                     articulo.setId(idArticulo);
                     articulosCompra.setArticulo(articulo);
-                    articulosCompra.setDescuento(descuento);
                     articulosCompra.setCantidad(unidades);
                     articulosCompra.setFacturaCompra(facturaCompra);
 
@@ -183,27 +180,22 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
                     switch (moneda) {
                         case "PESOS":
 
-                            articulosCompra.setValorSinIva(valorSinIvaConDescuento);
                             articulosCompra.setValorConIva(valorConIvaConDescuento);
                             break;
 
                         case "DOLARES":
 
-                            articulosCompra.setValorSinIva(Utilidades.Redondear(valorSinIvaConDescuento * verificaCotizacion().getDolares(), 2));
                             articulosCompra.setValorConIva(Utilidades.Redondear(valorConIvaConDescuento * verificaCotizacion().getDolares(), 2));
 
                             break;
 
                     }
                     articuloDAO = new ArticuloDAO();
-                    Articulo oldArticulo = (Articulo) articuloDAO.buscaArtUnicoPorIDStr(articulosCompra.getArticulo().getId());
                     DAOGenerico dao = new DAOGenerico(articulosCompra);
                     dao.guardar();
 
-
                     articulosCompraDao = new ArticulosCompraDAO();
-                    articulosCompraDao.calculaCostoMedio(idArticulo, articulosCompra.getValorSinIva(), articulosCompra.getCantidad(), oldArticulo.getValor_compra(), oldArticulo.getCantidad());
-
+                    articulosCompraDao.ajustaPrecioCosto(idArticulo, articulosCompra.getValorConIva());
 
                 }
                 JOptionPane.showMessageDialog(this, "Compra realizada correctamente!", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -729,17 +721,17 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(null, "Ya existe un documento ingresado con el mismo nro y serie, verifique", "Error en el documento!", JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error al registrar la compra "+ex, "Error, contacte al técnico !", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Error al registrar la compra " + ex, "Error, contacte al técnico !", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
     }//GEN-LAST:event_btnRegistraCompraActionPerformed
 
     private void btnSelecionaArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaArticuloActionPerformed
 
-        FrameSeleccionaArticulo articuloCompra = new FrameSeleccionaArticulo(this, perfil);
-        this.getDesktopPane().add(articuloCompra);
-        articuloCompra.setVisible(true);
-        articuloCompra.toFront();
+        ArticulosFrame articulosFrame = new ArticulosFrame(this);
+        this.getDesktopPane().add(articulosFrame);
+        articulosFrame.setVisible(true);
+        articulosFrame.toFront();
 
     }//GEN-LAST:event_btnSelecionaArticuloActionPerformed
 
@@ -750,7 +742,7 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
             Articulo articuloCompra = (Articulo) articuloDAO.buscaArtUnicoPorIDStr(txtFiltroCodigo.getText());
 
             tableModel.addRow(new Object[]{articuloCompra.getId(),
-                        articuloCompra.getNombre()});
+                articuloCompra.getNombre()});
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Articulo no encontrado!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -780,10 +772,8 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
                         int descuentoUno = Integer.parseInt(descuentos.substring(0, indexSeperacion));
                         int descuentoDos = Integer.parseInt(descuentos.substring(indexSeperacion + 1));
 
-
                         double precioUnitarioConDescuentoUno = Utilidades.Redondear(precioUnitario - (precioUnitario * descuentoUno / 100), 4);
                         double precioUnitarioConDescuentos = Utilidades.Redondear(precioUnitarioConDescuentoUno - (precioUnitarioConDescuentoUno * descuentoDos / 100), 4);
-
 
                         double valorNeto = Utilidades.Redondear((precioUnitarioConDescuentos * unidades), 4);
                         tableModel.setValueAt(Utilidades.Redondear(precioUnitarioConDescuentos, 2), i, 5);
@@ -795,11 +785,9 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
                         int descuentoDos = Integer.parseInt(descuentos.substring(indexSeperacion + 1, lastIndexSeperacion));
                         int descuentoTres = Integer.parseInt(descuentos.substring(lastIndexSeperacion + 1));
 
-
                         double precioUnitarioConDescuentoUno = Utilidades.Redondear(precioUnitario - (precioUnitario * descuentoUno / 100), 4);
                         double precioUnitarioConDescuentoDos = Utilidades.Redondear(precioUnitarioConDescuentoUno - (precioUnitarioConDescuentoUno * descuentoDos / 100), 4);
                         double precioUnitarioConDescuentos = Utilidades.Redondear(precioUnitarioConDescuentoDos - (precioUnitarioConDescuentoDos * descuentoTres / 100), 4);
-
 
                         double valorNeto = Utilidades.Redondear((precioUnitarioConDescuentos * unidades), 4);
                         tableModel.setValueAt(Utilidades.Redondear(precioUnitarioConDescuentos, 2), i, 5);

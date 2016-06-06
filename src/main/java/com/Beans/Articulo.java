@@ -16,21 +16,14 @@ public class Articulo implements Serializable {
     private String id;
     @Column(name = "nombre")
     private String nombre;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "valor_compra")
-    private Double valorCompraSinImpuesto;
-    @Column(name = "ganancia")
-    private Double ganancia;
     @Column(name = "valor_venta")
     private Double valor_venta;
-    @Column(name = "descuento")
-    private Double descuento;
+    @Column(name = "valor_compra")
+    private Double valorCompraConImpuesto;
     @Column(name = "cantidad")
     private Double cantidad;
     @Column(name = "descripcion")
     private String descripcion;
-    @Column(name = "ganancia_descuento")
-    private Double ganancia_descuento;
     @ManyToOne(targetEntity = Categoria.class)
     @JoinColumn(name = "categoria")
     private Categoria categoria;
@@ -38,8 +31,6 @@ public class Articulo implements Serializable {
     @JoinColumn(name = "unidad")
     private Unidad unidad;
     private Double iva;
-    @Column(name = "valor_compra_impuesto")
-    private Double valorCompraConImpuesto;
 
     public Articulo() {
     }
@@ -72,37 +63,7 @@ public class Articulo implements Serializable {
         this.nombre = nombre;
     }
 
-    /**
-     * @return the valor_compra
-     */
-    public Double getValor_compra() {
-        return valorCompraSinImpuesto;
-    }
-
-    /**
-     * @param valor_compra the valor_compra to set
-     */
-    public void setValor_compra(Double valor_compra) {
-        this.valorCompraSinImpuesto = valor_compra;
-    }
-
-    /**
-     * @return the ganancia
-     */
-    public Double getGanancia() {
-        return ganancia;
-    }
-
-    /**
-     * @param ganancia the ganancia to set
-     */
-    public void setGanancia(Double ganancia) {
-        this.ganancia = ganancia;
-    }
-
-    /**
-     * @return the valor_venta
-     */
+   
     public Double getValor_venta() {
         return valor_venta;
     }
@@ -114,23 +75,7 @@ public class Articulo implements Serializable {
         this.valor_venta = valor_venta;
     }
 
-    /**
-     * @return the descuento
-     */
-    public Double getDescuento() {
-        return descuento;
-    }
-
-    /**
-     * @param descuento the descuento to set
-     */
-    public void setDescuento(Double descuento) {
-        this.descuento = descuento;
-    }
-
-    /**
-     * @return the cantidad
-     */
+ 
     public Double getCantidad() {
         return cantidad;
     }
@@ -156,23 +101,7 @@ public class Articulo implements Serializable {
         this.descripcion = descripcion;
     }
 
-    /**
-     * @return the ganancia_descuento
-     */
-    public Double getGanancia_descuento() {
-        return ganancia_descuento;
-    }
-
-    /**
-     * @param ganancia_descuento the ganancia_descuento to set
-     */
-    public void setGanancia_descuento(Double ganancia_descuento) {
-        this.ganancia_descuento = ganancia_descuento;
-    }
-
-    /**
-     * @return the categoria
-     */
+ 
     public Categoria getCategoria() {
         return categoria;
     }

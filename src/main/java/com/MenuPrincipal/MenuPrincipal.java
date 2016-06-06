@@ -628,7 +628,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
     private void mnuItemProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemProductosActionPerformed
 
-        ArticulosFrame articulos = new ArticulosFrame();
+        ArticulosFrame articulos = new ArticulosFrame(perfil);
         desktopPane.add(articulos);
         articulos.setLocation(1, 1);
         articulos.setVisible(true);
@@ -715,7 +715,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
     private void btnConsultaArticulosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultaArticulosActionPerformed
 
-        ArticulosFrame articulos = new ArticulosFrame();
+        ArticulosFrame articulos = new ArticulosFrame(perfil);
         desktopPane.add(articulos);
         articulos.setLocation(1, 1);
         articulos.setVisible(true);

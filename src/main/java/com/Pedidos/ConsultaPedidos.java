@@ -71,7 +71,7 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
      }
 
      }*/
-    void buscar() {
+    public void buscar() {
         pedidoDAO = new PedidoDAO();
         if (rbCodPedido.isSelected()) {
             listPedidos.clear();
@@ -135,7 +135,7 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
             if (pedidoSeleccionado == null) {
                 JOptionPane.showMessageDialog(this, "Seleccione un pedido", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                AtenderPedido atenderPedido = new AtenderPedido(pedidoSeleccionado);
+                AtenderPedido atenderPedido = new AtenderPedido(this, pedidoSeleccionado);
                 super.getDesktopPane().add(atenderPedido);
                 atenderPedido.setVisible(true);
                 atenderPedido.toFront();

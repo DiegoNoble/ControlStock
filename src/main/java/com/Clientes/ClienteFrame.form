@@ -188,7 +188,7 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Verdana" size="10" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="C.I"/>
+            <Property name="text" type="java.lang.String" value="Documento"/>
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout" value="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout$GridBagConstraintsDescription">
@@ -438,7 +438,7 @@
                     <Column editable="false" title="Nombre" type="java.lang.String"/>
                     <Column editable="false" title="C.I." type="java.lang.String"/>
                     <Column editable="false" title="Raz&#xf3;n Social" type="java.lang.String"/>
-                    <Column editable="false" title="R.U.T." type="java.lang.String"/>
+                    <Column editable="false" title="Documento" type="java.lang.String"/>
                     <Column editable="false" title="Direcci&#xf3;n" type="java.lang.Object"/>
                     <Column editable="false" title="ciudad" type="java.lang.Object"/>
                     <Column editable="false" title="pais" type="java.lang.Object"/>

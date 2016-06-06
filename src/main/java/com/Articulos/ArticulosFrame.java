@@ -2,7 +2,6 @@ package com.Articulos;
 
 import com.Beans.Articulo;
 import com.DAO.DAOGenerico;
-import Utilidades.HibernateUtil;
 import Utilidades.Utilidades;
 import com.Beans.Categoria;
 import com.CategoriaArticulos.CategoriaFrame;
@@ -10,10 +9,10 @@ import com.Beans.ArticulosCompra;
 import com.Beans.Unidad;
 import com.Unidades.UnidadFrame;
 import com.Beans.ArticulosVenta;
+import com.Compras.RegistraCompraFrame;
 import com.DAO.ArticuloDAO;
+import com.Pedidos.RegistraPedido;
 import com.usuarios.frameLogin;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,16 +21,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import org.hibernate.Session;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     int edicion = 0;
-    String Filtro = "from Articulo";
-    private DefaultTableModel tableModelArticulos;
+    RegistraCompraFrame registraCompraFrame;
+    RegistraPedido registraPedido;
+    private ArticulosTableModel tableModelArticulos;
     private ListSelectionModel listModelArticulos;
     private DefaultTableModel tableModelCompras;
     private DefaultTableModel tableModelVentas;
@@ -39,12 +36,17 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private Unidad unidad;
     int panelVisible = 0;
     String codigoViejo = null;
+    Articulo articuloSeleccionado;
+    List<Articulo> listArticulos;
+    ArticuloDAO articuloDAO;
+    String perfil;
 
-    public ArticulosFrame() {
+    public ArticulosFrame(String perfil) {
         initComponents();
-
+        this.perfil = perfil;
+        btnSeleccionaArticuloVenta.setVisible(false);
         defineModelo();
-        actualizaTable(Filtro);
+        filtros();
         //btnExcluir.setVisible(false);
         this.setSize(950, 650);
 
@@ -71,6 +73,75 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         dpFechaInicial1.setDate(Utilidades.fechaPantalla(hoy));
         dpFechaFinal1.setDate(Utilidades.fechaPantalla(hoy));
 
+        jPanel2.setVisible(false);
+    }
+
+    public ArticulosFrame(RegistraCompraFrame registraCompraFrame) {
+        initComponents();
+        this.registraCompraFrame = registraCompraFrame;
+        btnSeleccionaArticuloVenta.setVisible(true);
+        defineModelo();
+        filtros();
+        //btnExcluir.setVisible(false);
+        this.setSize(950, 650);
+
+        if (frameLogin.getInstance().getPerfil().equals("Operador")) {
+
+            btnSalvar.setEnabled(false);
+            btnCancelar.setEnabled(false);
+            btnAlterar.setVisible(false);
+            btnExcluir.setVisible(false);
+        }
+        AutoCompleteDecorator.decorate(cbCategoria);
+        actualizaCbCategoria();
+        AutoCompleteDecorator.decorate(cbUnidad);
+        actualizaCbUnidad();
+
+        Date hoy = new Date();
+        dpFechaInicial.setFormats("dd/MM/yyyy");
+        dpFechaFinal.setFormats("dd/MM/yyyy");
+        dpFechaInicial.setDate(Utilidades.fechaPantalla(hoy));
+        dpFechaFinal.setDate(Utilidades.fechaPantalla(hoy));
+
+        dpFechaInicial1.setFormats("dd/MM/yyyy");
+        dpFechaFinal1.setFormats("dd/MM/yyyy");
+        dpFechaInicial1.setDate(Utilidades.fechaPantalla(hoy));
+        dpFechaFinal1.setDate(Utilidades.fechaPantalla(hoy));
+
+        jPanel2.setVisible(false);
+    }
+
+    public ArticulosFrame(RegistraPedido registraPedido) {
+        initComponents();
+        this.registraPedido = registraPedido;
+        btnSeleccionaArticuloVenta.setVisible(true);
+        defineModelo();
+        filtros();
+        //btnExcluir.setVisible(false);
+        this.setSize(950, 650);
+
+        if (frameLogin.getInstance().getPerfil().equals("Operador")) {
+
+            btnSalvar.setEnabled(false);
+            btnCancelar.setEnabled(false);
+            btnAlterar.setVisible(false);
+            btnExcluir.setVisible(false);
+        }
+        AutoCompleteDecorator.decorate(cbCategoria);
+        actualizaCbCategoria();
+        AutoCompleteDecorator.decorate(cbUnidad);
+        actualizaCbUnidad();
+
+        Date hoy = new Date();
+        dpFechaInicial.setFormats("dd/MM/yyyy");
+        dpFechaFinal.setFormats("dd/MM/yyyy");
+        dpFechaInicial.setDate(Utilidades.fechaPantalla(hoy));
+        dpFechaFinal.setDate(Utilidades.fechaPantalla(hoy));
+
+        dpFechaInicial1.setFormats("dd/MM/yyyy");
+        dpFechaFinal1.setFormats("dd/MM/yyyy");
+        dpFechaInicial1.setDate(Utilidades.fechaPantalla(hoy));
+        dpFechaFinal1.setDate(Utilidades.fechaPantalla(hoy));
 
         jPanel2.setVisible(false);
     }
@@ -115,6 +186,16 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         }
     }
 
+    private void seleccionaArticulo() {
+
+        if (registraPedido != null) {
+            registraPedido.agregarArticuloPedido(articuloSeleccionado);
+        } else if (registraCompraFrame != null) {
+            registraCompraFrame.setArticulo(articuloSeleccionado);
+
+        }
+    }
+
     class CenterRenderer extends DefaultTableCellRenderer { //----> Classe utilizada para centralizar el contenido de las columnas de las tablas
 
         public CenterRenderer() {
@@ -123,8 +204,13 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     }
 
     private void defineModelo() {
+        listArticulos = new ArrayList<>();
+        articuloDAO = new ArticuloDAO();
+        tableModelArticulos = new ArticulosTableModel(listArticulos);
+        tblArticulos.setModel(tableModelArticulos);
+        listArticulos.addAll(articuloDAO.BuscaTodos(Articulo.class));
+        tableModelArticulos.fireTableDataChanged();
 
-        tableModelArticulos = (DefaultTableModel) tblArticulos.getModel();
         tableModelCompras = (DefaultTableModel) tblCompras.getModel();
         tableModelVentas = (DefaultTableModel) tblVentas.getModel();
 
@@ -132,62 +218,22 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         listModelArticulos.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    detallesArticulos();
+                    if (tblArticulos.getSelectedRow() != -1) {
+                        articuloSeleccionado = listArticulos.get(tblArticulos.getSelectedRow());
+                        btnSeleccionaArticuloVenta.setEnabled(true);
+                        detallesArticulos();
 
+                    } else {
+                        articuloSeleccionado = null;
+                        btnSeleccionaArticuloVenta.setEnabled(true);
+                    }
                 }
             }
         });
 
-        TableCellRenderer centerRenderer = new CenterRenderer();
         ((DefaultTableCellRenderer) tblArticulos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         ((DefaultTableCellRenderer) tblCompras.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         ((DefaultTableCellRenderer) tblVentas.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
-        TableColumn column0 = tblArticulos.getColumnModel().getColumn(0);
-        TableColumn column = tblArticulos.getColumnModel().getColumn(1); //----> LLamada de la funcion que centraliza el contenido en las columnas del Jtable
-        TableColumn column1 = tblArticulos.getColumnModel().getColumn(2);
-        TableColumn column2 = tblArticulos.getColumnModel().getColumn(3);
-        TableColumn column3 = tblArticulos.getColumnModel().getColumn(4);
-        TableColumn column7 = tblArticulos.getColumnModel().getColumn(7);
-
-        TableColumn column8 = tblCompras.getColumnModel().getColumn(0); //----> LLamada de la funcion que centraliza el contenido en las columnas del Jtable
-        TableColumn column9 = tblCompras.getColumnModel().getColumn(1);
-        TableColumn column10 = tblCompras.getColumnModel().getColumn(2);
-        TableColumn column11 = tblCompras.getColumnModel().getColumn(3);
-        TableColumn column12 = tblCompras.getColumnModel().getColumn(4);
-
-        TableColumn column13 = tblVentas.getColumnModel().getColumn(0); //----> LLamada de la funcion que centraliza el contenido en las columnas del Jtable
-        TableColumn column14 = tblVentas.getColumnModel().getColumn(1);
-        TableColumn column15 = tblVentas.getColumnModel().getColumn(2);
-        TableColumn column16 = tblVentas.getColumnModel().getColumn(3);
-        TableColumn column17 = tblVentas.getColumnModel().getColumn(4);
-
-        column0.setCellRenderer(centerRenderer);
-        column.setCellRenderer(centerRenderer);
-        column1.setCellRenderer(centerRenderer);
-        column2.setCellRenderer(centerRenderer);
-        column3.setCellRenderer(centerRenderer);
-        column7.setCellRenderer(centerRenderer);
-
-        column8.setCellRenderer(centerRenderer);
-        column9.setCellRenderer(centerRenderer);
-        column10.setCellRenderer(centerRenderer);
-        column11.setCellRenderer(centerRenderer);
-        column12.setCellRenderer(centerRenderer);
-
-        column13.setCellRenderer(centerRenderer);
-        column14.setCellRenderer(centerRenderer);
-        column15.setCellRenderer(centerRenderer);
-        column16.setCellRenderer(centerRenderer);
-        column17.setCellRenderer(centerRenderer);
-
-
-        tblArticulos.getColumn("Nro.").setPreferredWidth(1);
-        tblArticulos.getColumn("Código").setPreferredWidth(100); //------> Ajusta el tamaño de las columnas
-        tblArticulos.getColumn("Nombre").setPreferredWidth(250);
-        tblArticulos.getColumn("Cantidad en Stock").setPreferredWidth(80);
-        tblArticulos.getColumn("Precio con Descuento").setPreferredWidth(80);
-        tblArticulos.getColumn("Precio Normal").setPreferredWidth(80);
 
         tblCompras.getColumn("Factura").setPreferredWidth(10); //------> Ajusta el tamaño de las columnas
         tblCompras.getColumn("Fecha").setPreferredWidth(20);
@@ -201,246 +247,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         tblVentas.getColumn("Unidades").setPreferredWidth(10);
         tblVentas.getColumn("Cliente").setPreferredWidth(30);
 
-
-        txtValor_CompraSinImp.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-                if (txtValor_CompraSinImp.getText().equals("")) {
-
-                    Double valorSinImpuesto = 0.0;
-                    Double precioConImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioConImp = valorSinImpuesto * impuesto;
-
-                    txtValor_CompraConImp.setText(String.valueOf(Utilidades.Redondear(precioConImp, 2)));
-
-                } else {
-
-                    Double valorSinImpuesto = Double.parseDouble(txtValor_CompraSinImp.getText());
-                    Double precioConImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioConImp = valorSinImpuesto * impuesto;
-
-                    txtValor_CompraConImp.setText(String.valueOf(Utilidades.Redondear(precioConImp, 2)));
-                }
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (txtValor_CompraSinImp.getText().equals("")) {
-
-                    Double valorSinImpuesto = 0.0;
-                    Double precioConImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioConImp = valorSinImpuesto * impuesto;
-
-                    txtValor_CompraConImp.setText(String.valueOf(Utilidades.Redondear(precioConImp, 2)));
-
-                } else {
-
-                    Double valorSinImpuesto = Double.parseDouble(txtValor_CompraSinImp.getText());
-                    Double precioConImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioConImp = valorSinImpuesto * impuesto;
-
-                    txtValor_CompraConImp.setText(String.valueOf(Utilidades.Redondear(precioConImp, 2)));
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (txtValor_CompraSinImp.getText().equals("")) {
-
-                    Double valorSinImpuesto = 0.0;
-                    Double precioConImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioConImp = valorSinImpuesto * impuesto;
-
-                    txtValor_CompraConImp.setText(String.valueOf(Utilidades.Redondear(precioConImp, 2)));
-
-                } else {
-
-                    Double valorSinImpuesto = Double.parseDouble(txtValor_CompraSinImp.getText());
-                    Double precioConImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioConImp = valorSinImpuesto * impuesto;
-
-                    txtValor_CompraConImp.setText(String.valueOf(Utilidades.Redondear(precioConImp, 2)));
-                }
-            }
-        });
-
-        txtValor_CompraConImp.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if (txtValor_CompraConImp.getText().equals("")) {
-
-                    Double valorConImpuesto = 0.0;
-                    Double precioSinImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioSinImp = (valorConImpuesto / impuesto);
-
-                    txtValor_CompraSinImp.setText(String.valueOf(Utilidades.Redondear(precioSinImp, 2)));
-
-                } else {
-
-                    Double valorConImpuesto = Double.parseDouble(txtValor_CompraConImp.getText());
-                    Double precioSinImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioSinImp = (valorConImpuesto / impuesto);
-
-                    txtValor_CompraSinImp.setText(String.valueOf(Utilidades.Redondear(precioSinImp, 2)));
-                }
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (txtValor_CompraConImp.getText().equals("")) {
-
-                    Double valorConImpuesto = 0.0;
-                    Double precioSinImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioSinImp = (valorConImpuesto / impuesto);
-
-                    txtValor_CompraSinImp.setText(String.valueOf(Utilidades.Redondear(precioSinImp, 2)));
-
-                } else {
-
-                    Double valorConImpuesto = Double.parseDouble(txtValor_CompraConImp.getText());
-                    Double precioSinImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioSinImp = (valorConImpuesto / impuesto);
-
-                    txtValor_CompraSinImp.setText(String.valueOf(Utilidades.Redondear(precioSinImp, 2)));
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (txtValor_CompraConImp.getText().equals("")) {
-
-                    Double valorConImpuesto = 0.0;
-                    Double precioSinImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioSinImp = (valorConImpuesto / impuesto);
-
-                    txtValor_CompraSinImp.setText(String.valueOf(Utilidades.Redondear(precioSinImp, 2)));
-
-                } else {
-
-                    Double valorConImpuesto = Double.parseDouble(txtValor_CompraConImp.getText());
-                    Double precioSinImp = null;
-                    Double impuesto = Double.parseDouble(String.valueOf("1." + cbIva.getSelectedItem()));
-                    precioSinImp = (valorConImpuesto / impuesto);
-
-                    txtValor_CompraSinImp.setText(String.valueOf(Utilidades.Redondear(precioSinImp, 2)));
-                }
-            }
-        });
-
-        txtValorVenta.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-                if (txtValorVenta.getText().equals("")) {
-
-                    Double ganancia = (100) * 0.0 / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGanancia.setText(gananciaFinal);
-
-                } else {
-
-                    Double ganancia = (100) * Double.parseDouble(txtValorVenta.getText()) / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGanancia.setText(gananciaFinal);
-                }
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-
-                if (txtValorVenta.getText().equals("")) {
-
-                    Double ganancia = (100) * 0.0 / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGanancia.setText(gananciaFinal);
-
-                } else {
-
-                    Double ganancia = (100) * Double.parseDouble(txtValorVenta.getText()) / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGanancia.setText(gananciaFinal);
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-
-                if (txtValorVenta.getText().equals("")) {
-
-                    Double ganancia = (100) * 0.0 / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGanancia.setText(gananciaFinal);
-
-                } else {
-
-                    Double ganancia = (100) * Double.parseDouble(txtValorVenta.getText()) / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGanancia.setText(gananciaFinal);
-                }
-
-            }
-        });
-
-        txtDescuento.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-                if (txtDescuento.getText().equals("")) {
-
-                    Double ganancia = (100) * 0.0 / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGananciaDescuento.setText(gananciaFinal);
-
-                } else {
-                    Double ganancia = (100) * Double.parseDouble(txtDescuento.getText()) / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGananciaDescuento.setText(gananciaFinal);
-                }
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (txtDescuento.getText().equals("")) {
-
-                    Double ganancia = (100) * 0.0 / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGananciaDescuento.setText(gananciaFinal);
-
-                } else {
-                    Double ganancia = (100) * Double.parseDouble(txtDescuento.getText()) / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGananciaDescuento.setText(gananciaFinal);
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                if (txtDescuento.getText().equals("")) {
-
-                    Double ganancia = (100) * 0.0 / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGananciaDescuento.setText(gananciaFinal);
-
-                } else {
-                    Double ganancia = (100) * Double.parseDouble(txtDescuento.getText()) / Double.parseDouble(txtValor_CompraConImp.getText()) - 100;
-                    String gananciaFinal = String.format("%.2f", ganancia).replace(",", ".");
-                    txtGananciaDescuento.setText(gananciaFinal);
-                }
-            }
-        });
     }
 
     private void NuevoProducto() {
@@ -457,11 +263,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 articulo.setId(txtCodigo.getText());
                 articulo.setNombre(txtNombre.getText());
                 articulo.setCantidad(Double.parseDouble(txtCantidad.getText()));
-                articulo.setDescuento(Double.parseDouble(txtDescuento.getText()));
-                articulo.setGanancia(Double.parseDouble(txtGanancia.getText()));
-                articulo.setGanancia_descuento(Double.parseDouble(txtGananciaDescuento.getText()));
                 articulo.setDescripcion(txtDescripcion.getText());
-                articulo.setValor_compra(Double.parseDouble(txtValor_CompraSinImp.getText()));
                 articulo.setValor_venta(Double.parseDouble(txtValorVenta.getText()));
 
                 List<Categoria> categoriaSeleccionada = new DAOGenerico().buscarPor(Categoria.class, "nombre", cbCategoria.getSelectedItem().toString());
@@ -478,8 +280,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
                 JOptionPane.showMessageDialog(null, "Articulo registrado correctamente!");
 
-                actualizaTable(Filtro);
-                //muestraContenidoTabla();
+                buscarTodos();
                 desabilitaBotoes();
                 desabilitaCampos();
 
@@ -502,11 +303,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             articulo.setId(txtCodigo.getText());
             articulo.setNombre(txtNombre.getText());
             articulo.setCantidad(Double.parseDouble(txtCantidad.getText()));
-            articulo.setDescuento(Double.parseDouble(txtDescuento.getText()));
-            articulo.setGanancia(Double.parseDouble(txtGanancia.getText()));
-            articulo.setGanancia_descuento(Double.parseDouble(txtGananciaDescuento.getText()));
             articulo.setDescripcion(txtDescripcion.getText());
-            articulo.setValor_compra(Double.parseDouble(txtValor_CompraSinImp.getText()));
             articulo.setValor_venta(Double.parseDouble(txtValorVenta.getText()));
 
             List<Categoria> categoriaSeleccionada = new DAOGenerico().buscarPor(Categoria.class, "nombre", cbCategoria.getSelectedItem().toString());
@@ -518,7 +315,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             articulo.setIva(Double.parseDouble(String.valueOf(cbIva.getSelectedItem())));
             articulo.setValor_compra_impuesto(Double.parseDouble(txtValor_CompraConImp.getText()));
 
-
             DAOGenerico dao = new DAOGenerico(articulo);
             dao.registraOActualiza();
 
@@ -528,10 +324,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 daoElimina.elimina();
             }
 
-
             JOptionPane.showMessageDialog(null, "Articulo editado correctamente!");
-            actualizaTable(Filtro);
-            //muestraContenidoTabla();
+            buscarTodos();
             desabilitaBotoes();
             desabilitaCampos();
 
@@ -539,44 +333,45 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     }
 
-    private void actualizaTable(String filtro) {
+    void buscarTodos() {
+         articuloDAO = new ArticuloDAO();
+        listArticulos.clear();
+        listArticulos.addAll(articuloDAO.BuscaTodos(Articulo.class));
+        tableModelArticulos.fireTableDataChanged();
+    }
+
+    private void filtros() {
 
         try {
 
-            tableModelArticulos.setNumRows(0);
+            tblArticulos.clearSelection();
+            articuloDAO = new ArticuloDAO();
+            if (rbCodigo.isSelected()) {
 
-            Session seccion = HibernateUtil.getSeccion();
+                if (txtFiltro.getText().equals("")) {
+                    listArticulos.clear();
+                    listArticulos.addAll(articuloDAO.BuscaTodos(Articulo.class));
+                    tableModelArticulos.fireTableDataChanged();
+                } else {
+                    listArticulos.clear();
+                    listArticulos.addAll(articuloDAO.buscarPor(Articulo.class, "id", txtFiltro.getText()));
+                    tableModelArticulos.fireTableDataChanged();
+                }
 
-            List<Articulo> lista_articulos = new ArrayList();
-            lista_articulos = seccion.createQuery(Filtro).list();
+            } else if (rbNombre.isSelected()) {
+                listArticulos.clear();
+                listArticulos.addAll(articuloDAO.buscarPor(Articulo.class, "nombre", txtFiltro.getText()));
+                tableModelArticulos.fireTableDataChanged();
 
-            int tamano_lista = lista_articulos.size();
-
-            for (int i = 0; i < tamano_lista; i++) {
-
-                Articulo articulos = lista_articulos.get(i);
-
-                Object[] linea = new Object[14];
-                linea[0] = i + 1;
-                linea[1] = articulos.getId();
-                linea[2] = articulos.getNombre();
-                linea[3] = articulos.getCantidad();
-                linea[4] = articulos.getDescuento();
-                linea[5] = articulos.getGanancia();
-                linea[6] = articulos.getValor_compra();
-                linea[7] = articulos.getValor_venta();
-                linea[8] = articulos.getDescripcion();
-                linea[9] = articulos.getGanancia_descuento();
-                linea[10] = articulos.getCategoria().getNombre();
-                linea[11] = articulos.getIva();
-                linea[12] = articulos.getValor_compra_impuesto();
-                linea[13] = articulos.getUnidad();
-
-                tableModelArticulos.addRow(linea);
+            } else if (rbDescripcion.isSelected() == true) {
+                listArticulos.clear();
+                listArticulos.addAll(articuloDAO.buscarPor(Articulo.class, "descripcion", txtFiltro.getText()));
+                tableModelArticulos.fireTableDataChanged();
             }
 
         } catch (Exception error) {
             JOptionPane.showMessageDialog(null, "Error" + error);
+            error.printStackTrace();
         }
     }
 
@@ -599,9 +394,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 Date fecha = listaCompras.get(i).getFacturaCompra().getFecha();
 
                 tableModelCompras.insertRow(i, new Object[]{listaCompras.get(i).getFacturaCompra().getIdfactura(),
-                            Utilidades.fechaPantallaString(fecha), listaCompras.get(i).getValorSinIva(),
-                            listaCompras.get(i).getCantidad(), listaCompras.get(i).getFacturaCompra().getProveedor().getNombre()});
-
+                    Utilidades.fechaPantallaString(fecha), listaCompras.get(i).getValorConIva(),
+                    listaCompras.get(i).getCantidad(), listaCompras.get(i).getFacturaCompra().getProveedor().getNombre()});
 
             }
             try {
@@ -641,9 +435,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 Date fecha = listaVentas.get(i).getFactura().getFecha();
 
                 tableModelVentas.insertRow(i, new Object[]{listaVentas.get(i).getFactura().getIdfactura(),
-                            Utilidades.fechaPantallaString(fecha), listaVentas.get(i).getValorConIva(),
-                            listaVentas.get(i).getCantidad(), listaVentas.get(i).getFactura().getCliente().getNombre()});
-
+                    Utilidades.fechaPantallaString(fecha), listaVentas.get(i).getValorConIva(),
+                    listaVentas.get(i).getCantidad(), listaVentas.get(i).getFactura().getCliente().getNombre()});
 
             }
             try {
@@ -696,91 +489,27 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         limpiaCampos();
 
-        try {
-            int filaSeleccionada = tblArticulos.getSelectedRow();
+        if (articuloSeleccionado != null) {
+            try {
+                txtCantidad.setText(articuloSeleccionado.getCantidad().toString());
+                txtCodigo.setText(articuloSeleccionado.getId());
+                txtDescripcion.setText(articuloSeleccionado.getDescripcion());
+                txtNombre.setText(articuloSeleccionado.getNombre());
+                txtValorVenta.setText(articuloSeleccionado.getValor_venta().toString());
+                txtValor_CompraConImp.setText(articuloSeleccionado.getValor_compra_impuesto().toString());
 
-            txtCodigo.setText(tblArticulos.getValueAt(filaSeleccionada, 1).toString());
-
-            txtNombre.setText(tblArticulos.getValueAt(filaSeleccionada, 2).toString());
-
-            Object objCan = tblArticulos.getValueAt(filaSeleccionada, 3);
-            if (objCan == null) {
-            } else {
-                txtCantidad.setText(tblArticulos.getValueAt(filaSeleccionada, 3).toString());
+            } catch (Exception error) {
+                JOptionPane.showMessageDialog(null, "Error al mostrar detalles", "Error", JOptionPane.ERROR_MESSAGE);
+                error.printStackTrace();
             }
-
-            Object objDesc = tblArticulos.getValueAt(filaSeleccionada, 4);
-            if (objDesc == null) {
-            } else {
-                txtDescuento.setText(tblArticulos.getValueAt(filaSeleccionada, 4).toString());
-            }
-
-            Object objGan = tblArticulos.getValueAt(filaSeleccionada, 5);
-            if (objGan == null) {
-            } else {
-                txtGanancia.setText(tblArticulos.getValueAt(filaSeleccionada, 5).toString());
-            }
-
-            Object objVCom = tblArticulos.getValueAt(filaSeleccionada, 6);
-            if (objVCom == null) {
-            } else {
-                txtValor_CompraSinImp.setText(tblArticulos.getValueAt(filaSeleccionada, 6).toString());
-            }
-
-            Object objVV = tblArticulos.getValueAt(filaSeleccionada, 7);
-            if (objVV == null) {
-            } else {
-                txtValorVenta.setText(tblArticulos.getValueAt(filaSeleccionada, 7).toString());
-            }
-
-            Object objDes = tblArticulos.getValueAt(filaSeleccionada, 8);
-            if (objDes == null) {
-            } else {
-                txtDescripcion.setText(tblArticulos.getValueAt(filaSeleccionada, 8).toString());
-            }
-
-            Object objGDes = tblArticulos.getValueAt(filaSeleccionada, 9);
-            if (objGDes == null) {
-            } else {
-                txtGananciaDescuento.setText(tblArticulos.getValueAt(filaSeleccionada, 9).toString());
-            }
-
-            Object ObjCat = tblArticulos.getValueAt(filaSeleccionada, 10);
-            if (ObjCat == null) {
-            } else {
-                cbCategoria.setSelectedItem(tblArticulos.getValueAt(filaSeleccionada, 10).toString());
-            }
-
-            Object ObjIva = tblArticulos.getValueAt(filaSeleccionada, 11);
-            if (ObjIva == null) {
-            } else {
-                cbIva.setSelectedItem(tblArticulos.getValueAt(filaSeleccionada, 11).toString());
-            }
-
-            Object ObjVCI = tblArticulos.getValueAt(filaSeleccionada, 12);
-            if (ObjVCI == null) {
-            } else {
-                txtValor_CompraConImp.setText(tblArticulos.getValueAt(filaSeleccionada, 12).toString());
-            }
-
-            Object ObjUni = tblArticulos.getValueAt(filaSeleccionada, 13);
-            if (ObjUni == null) {
-            } else {
-                cbUnidad.setSelectedItem(tblArticulos.getValueAt(filaSeleccionada, 13).toString());
-            }
-
-        } catch (Exception error) {
         }
-
     }
 
     private void habilitaCampos() {
         txtNombre.setEditable(true);
-        txtValor_CompraSinImp.setEditable(true);
         txtValor_CompraConImp.setEditable(true);
         //txtGanancia.setEditable(true);
         txtValorVenta.setEditable(true);
-        txtDescuento.setEditable(true);
         txtCantidad.setEditable(false);
         //txtCodigo.setEditable(true);
         txtDescripcion.setEnabled(true);
@@ -793,16 +522,17 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtDescripcion.setEnabled(true);
         btnSelecionaCategoria.setEnabled(true);
         btnSelecionaUnidad.setEnabled(true);
+        if (perfil.equals("Gerente")) {
+            txtCantidad.setEnabled(true);
+            txtCantidad.setEditable(true);
+        }
 
     }
 
     private void desabilitaCampos() {
         txtNombre.setEditable(false);
-        txtValor_CompraSinImp.setEditable(false);
         txtValor_CompraConImp.setEditable(false);
-        txtGanancia.setEditable(false);
         txtValorVenta.setEditable(false);
-        txtDescuento.setEditable(false);
         txtCantidad.setEditable(false);
         txtCodigo.setEditable(false);
         tblArticulos.setEnabled(true);
@@ -814,6 +544,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         cbIva.setEditable(false);
         btnSelecionaCategoria.setEnabled(false);
         btnSelecionaUnidad.setEnabled(false);
+
     }
 
     private void desabilitaBotoes() {
@@ -836,12 +567,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         txtCodigo.setText("");
         txtNombre.setText("");
-        txtValor_CompraSinImp.setText("");
         txtValor_CompraConImp.setText("");
-        txtGanancia.setText("");
-        txtGananciaDescuento.setText("");
         txtValorVenta.setText("");
-        txtDescuento.setText("");
         txtCantidad.setText("");
         txtDescripcion.setText("");
     }
@@ -862,30 +589,19 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jPanel8 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
         jlbCodigo = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txtCantidad = new javax.swing.JFormattedTextField();
-        txtCodigo = new javax.swing.JFormattedTextField();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        txtValorVenta = new javax.swing.JFormattedTextField();
-        jLabel5 = new javax.swing.JLabel();
-        txtGanancia = new javax.swing.JFormattedTextField();
-        jLabel8 = new javax.swing.JLabel();
-        txtDescuento = new javax.swing.JFormattedTextField();
-        jLabel12 = new javax.swing.JLabel();
-        txtGananciaDescuento = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         jTabbedPane3 = new javax.swing.JTabbedPane();
         jPanel7 = new javax.swing.JPanel();
-        jLabel17 = new javax.swing.JLabel();
-        txtValor_CompraSinImp = new javax.swing.JFormattedTextField();
         jLabel13 = new javax.swing.JLabel();
         cbIva = new javax.swing.JComboBox();
         jLabel18 = new javax.swing.JLabel();
         txtValor_CompraConImp = new javax.swing.JFormattedTextField();
+        jLabel6 = new javax.swing.JLabel();
+        txtValorVenta = new javax.swing.JFormattedTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtCantidad = new javax.swing.JFormattedTextField();
         jPanel11 = new javax.swing.JPanel();
         cbCategoria = new javax.swing.JComboBox();
         btnSelecionaCategoria = new javax.swing.JButton();
@@ -894,6 +610,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         cbUnidad = new javax.swing.JComboBox();
         btnSelecionaUnidad = new javax.swing.JButton();
         txtDescripcion = new javax.swing.JTextField();
+        txtCodigo = new javax.swing.JTextField();
         jPanel9 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         btnBuscar = new javax.swing.JButton();
@@ -930,6 +647,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnExcluir = new javax.swing.JButton();
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        btnSeleccionaArticuloVenta = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
 
@@ -983,14 +701,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(txtNombre, gridBagConstraints);
 
-        jLabel11.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel11.setText("Stock Disponible");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        jPanel8.add(jLabel11, gridBagConstraints);
-
         jlbCodigo.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jlbCodigo.setText("Código del Articulo");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1010,119 +720,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(jLabel7, gridBagConstraints);
 
-        txtCantidad.setEditable(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel8.add(txtCantidad, gridBagConstraints);
-
-        txtCodigo.setEditable(false);
-        txtCodigo.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        txtCodigo.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtCodigoFocusLost(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 200;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel8.add(txtCodigo, gridBagConstraints);
-
-        jTabbedPane1.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-
-        jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel5.setLayout(new java.awt.GridBagLayout());
-
-        jLabel6.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel6.setText("Valor Venta (Imp. Incl.)");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(jLabel6, gridBagConstraints);
-
-        txtValorVenta.setEditable(false);
-        txtValorVenta.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(txtValorVenta, gridBagConstraints);
-
-        jLabel5.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel5.setText("Ganancia (%)");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(jLabel5, gridBagConstraints);
-
-        txtGanancia.setEditable(false);
-        txtGanancia.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(txtGanancia, gridBagConstraints);
-
-        jLabel8.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel8.setText("Valor con Descuento (Imp Incl.)");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(jLabel8, gridBagConstraints);
-
-        txtDescuento.setEditable(false);
-        txtDescuento.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(txtDescuento, gridBagConstraints);
-
-        jLabel12.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel12.setText("Ganancia con descuento (%)");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 2;
-        jPanel5.add(jLabel12, gridBagConstraints);
-
-        txtGananciaDescuento.setEditable(false);
-        txtGananciaDescuento.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel5.add(txtGananciaDescuento, gridBagConstraints);
-
-        jTabbedPane1.addTab("Datos Venta", jPanel5);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel8.add(jTabbedPane1, gridBagConstraints);
-
         jLabel16.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jLabel16.setText("Categoría del Articulo");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1136,25 +733,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jPanel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         jPanel7.setLayout(new java.awt.GridBagLayout());
 
-        jLabel17.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel17.setText("Valor Compra (Sin Imp.)");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel7.add(jLabel17, gridBagConstraints);
-
-        txtValor_CompraSinImp.setEditable(false);
-        txtValor_CompraSinImp.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 50;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel7.add(txtValor_CompraSinImp, gridBagConstraints);
-
         jLabel13.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jLabel13.setText("I.V.A. %");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -1164,12 +742,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jPanel7.add(jLabel13, gridBagConstraints);
 
         cbIva.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        cbIva.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "22" }));
+        cbIva.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "21" }));
         cbIva.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel7.add(cbIva, gridBagConstraints);
 
@@ -1177,7 +755,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jLabel18.setText("Valor Compra (Imp. Incl.)");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel7.add(jLabel18, gridBagConstraints);
@@ -1186,18 +764,50 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtValor_CompraConImp.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 50;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel7.add(txtValor_CompraConImp, gridBagConstraints);
 
-        jTabbedPane3.addTab("Datos compra", jPanel7);
-
+        jLabel6.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jLabel6.setText("Valor Venta (Imp. Incl.)");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridy = 2;
+        jPanel7.add(jLabel6, gridBagConstraints);
+
+        txtValorVenta.setEditable(false);
+        txtValorVenta.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel7.add(txtValorVenta, gridBagConstraints);
+
+        jLabel11.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jLabel11.setText("Stock Disponible");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        jPanel7.add(jLabel11, gridBagConstraints);
+
+        txtCantidad.setEditable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel7.add(txtCantidad, gridBagConstraints);
+
+        jTabbedPane3.addTab("Valores", jPanel7);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 6;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -1266,6 +876,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(txtDescripcion, gridBagConstraints);
+
+        txtCodigo.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel8.add(txtCodigo, gridBagConstraints);
 
         jTabbedPane4.addTab("Información Principal", jPanel8);
 
@@ -1337,16 +955,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         jPanel9.add(jScrollPane4, gridBagConstraints);
-
-        dpFechaInicial.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 60;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel9.add(dpFechaInicial, gridBagConstraints);
-
-        dpFechaFinal.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -1443,16 +1057,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         jPanel10.add(jScrollPane5, gridBagConstraints);
-
-        dpFechaInicial1.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 60;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel10.add(dpFechaInicial1, gridBagConstraints);
-
-        dpFechaFinal1.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -1497,53 +1107,15 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         tblArticulos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Nro.", "Código", "Nombre", "Cantidad en Stock", "Precio con Descuento", "Ganancia", "Valor Compra", "Precio Normal", "Descripcion", "Ganancia Descuento", "Categoria", "Iva", "Compra con Impuestos", "Unidad"
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                true, false, false, false, false, false, false, false, true, true, true, true, true, true
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        ));
         tblArticulos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(tblArticulos);
-        tblArticulos.getColumnModel().getColumn(5).setMinWidth(0);
-        tblArticulos.getColumnModel().getColumn(5).setPreferredWidth(0);
-        tblArticulos.getColumnModel().getColumn(5).setMaxWidth(0);
-        tblArticulos.getColumnModel().getColumn(6).setMinWidth(0);
-        tblArticulos.getColumnModel().getColumn(6).setPreferredWidth(0);
-        tblArticulos.getColumnModel().getColumn(6).setMaxWidth(0);
-        tblArticulos.getColumnModel().getColumn(8).setMinWidth(0);
-        tblArticulos.getColumnModel().getColumn(8).setPreferredWidth(0);
-        tblArticulos.getColumnModel().getColumn(8).setMaxWidth(0);
-        tblArticulos.getColumnModel().getColumn(9).setMinWidth(0);
-        tblArticulos.getColumnModel().getColumn(9).setPreferredWidth(0);
-        tblArticulos.getColumnModel().getColumn(9).setMaxWidth(0);
-        tblArticulos.getColumnModel().getColumn(10).setMinWidth(0);
-        tblArticulos.getColumnModel().getColumn(10).setPreferredWidth(0);
-        tblArticulos.getColumnModel().getColumn(10).setMaxWidth(0);
-        tblArticulos.getColumnModel().getColumn(11).setMinWidth(0);
-        tblArticulos.getColumnModel().getColumn(11).setPreferredWidth(0);
-        tblArticulos.getColumnModel().getColumn(11).setMaxWidth(0);
-        tblArticulos.getColumnModel().getColumn(12).setMinWidth(0);
-        tblArticulos.getColumnModel().getColumn(12).setPreferredWidth(0);
-        tblArticulos.getColumnModel().getColumn(12).setMaxWidth(0);
-        tblArticulos.getColumnModel().getColumn(13).setMinWidth(0);
-        tblArticulos.getColumnModel().getColumn(13).setPreferredWidth(0);
-        tblArticulos.getColumnModel().getColumn(13).setMaxWidth(0);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1613,7 +1185,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        btnDetalles.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        btnDetalles.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         btnDetalles.setMnemonic('D');
         btnDetalles.setText("Exibir/Ocultar Detalles");
         btnDetalles.addActionListener(new java.awt.event.ActionListener() {
@@ -1623,7 +1195,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnDetalles);
 
-        btnListado.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        btnListado.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         btnListado.setMnemonic('L');
         btnListado.setText("Listado de Articulos");
         btnListado.addActionListener(new java.awt.event.ActionListener() {
@@ -1633,7 +1205,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnListado);
 
-        btnNovo.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        btnNovo.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         btnNovo.setMnemonic('N');
         btnNovo.setText("Nuevo");
         btnNovo.addActionListener(new java.awt.event.ActionListener() {
@@ -1643,7 +1215,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnNovo);
 
-        btnAlterar.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        btnAlterar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         btnAlterar.setMnemonic('E');
         btnAlterar.setText("Editar");
         btnAlterar.addActionListener(new java.awt.event.ActionListener() {
@@ -1653,7 +1225,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnAlterar);
 
-        btnExcluir.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        btnExcluir.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         btnExcluir.setText("Excluir");
         btnExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1662,7 +1234,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnExcluir);
 
-        btnSalvar.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        btnSalvar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         btnSalvar.setMnemonic('S');
         btnSalvar.setText("Salvar");
         btnSalvar.setEnabled(false);
@@ -1673,7 +1245,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnSalvar);
 
-        btnCancelar.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        btnCancelar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         btnCancelar.setMnemonic('C');
         btnCancelar.setText("Cancelar");
         btnCancelar.setEnabled(false);
@@ -1683,6 +1255,17 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             }
         });
         jPanel4.add(btnCancelar);
+
+        btnSeleccionaArticuloVenta.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        btnSeleccionaArticuloVenta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/images.jpg"))); // NOI18N
+        btnSeleccionaArticuloVenta.setMnemonic('A');
+        btnSeleccionaArticuloVenta.setText("Selecciona Articulo");
+        btnSeleccionaArticuloVenta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSeleccionaArticuloVentaActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnSeleccionaArticuloVenta);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1717,7 +1300,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
 
-
         List ListVerificaCompras = new DAOGenerico().buscarPor(ArticulosCompra.class, "id_articulo", txtCodigo.getText());
 
         List ListVerificaVentas = new DAOGenerico().buscarPor(ArticulosVenta.class, "id_articulo", txtCodigo.getText());
@@ -1731,7 +1313,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         }
 
-        if (tblArticulos.getSelectedRow() != -1) {
+        if (tblArticulos.getSelectedRow()
+                != -1) {
             jPanel2.setVisible(true);
             habilitaBotoes();
             habilitaCampos();
@@ -1755,8 +1338,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un cliente de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        actualizaTable(Filtro);
-        //muestraContenidoTabla();
+        txtCodigo.setText("");
+        filtros();
         limpiaCampos();
 
     }//GEN-LAST:event_btnExcluirActionPerformed
@@ -1783,35 +1366,18 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     private void txtFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFiltroActionPerformed
 
-        if (rbCodigo.isSelected() == true) {
-
-            if (txtFiltro.getText().equals("")) {
-                Filtro = "from Articulos";
-            } else {
-                Filtro = "from Articulos where id like '%" + txtFiltro.getText() + "%'";
-            }
-            actualizaTable(Filtro);
-            //muestraContenidoTabla();
-        } else if (rbNombre.isSelected() == true) {
-            Filtro = "from Articulos where nombre like '%" + txtFiltro.getText() + "%'";
-            actualizaTable(Filtro);
-            //muestraContenidoTabla();
-        } else if (rbDescripcion.isSelected() == true) {
-            Filtro = "from Articulos where descripcion like '%" + txtFiltro.getText() + "%'";
-            actualizaTable(Filtro);
-            //muestraContenidoTabla();
-        }
+        filtros();
     }//GEN-LAST:event_txtFiltroActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
 
-        consultaCompras();
+       // consultaCompras();
 
   }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnBuscarVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarVentasActionPerformed
 
-        consultaVentas();
+        // consultaVentas();
     }//GEN-LAST:event_btnBuscarVentasActionPerformed
 
     private void btnSelecionaCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaCategoriaActionPerformed
@@ -1821,20 +1387,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         categorias.setVisible(true);
         categorias.toFront();
     }//GEN-LAST:event_btnSelecionaCategoriaActionPerformed
-
-    private void txtCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodigoFocusLost
-        try {
-            Articulo articulo = new ArticuloDAO().buscaArtUnicoPorIDStr(txtCodigo.getText());
-            if ((articulo != null && txtNombre.getText().equals(""))) {
-                JOptionPane.showMessageDialog(null, "El código ingresado ya existe en la base de datos", "Error de código", JOptionPane.ERROR_MESSAGE);
-                txtCodigo.requestFocus();
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error al buscar articulo " + ex);
-            ex.printStackTrace();
-        }
-
-    }//GEN-LAST:event_txtCodigoFocusLost
 
     private void btnSelecionaUnidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaUnidadActionPerformed
 
@@ -1846,7 +1398,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnSelecionaUnidadActionPerformed
 
     private void btnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetallesActionPerformed
-
 
         switch (panelVisible) {
             case 0:
@@ -1860,6 +1411,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         }
 
     }//GEN-LAST:event_btnDetallesActionPerformed
+
+    private void btnSeleccionaArticuloVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaArticuloVentaActionPerformed
+
+        seleccionaArticulo();
+    }//GEN-LAST:event_btnSeleccionaArticuloVentaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnBuscar;
@@ -1870,6 +1427,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnListado;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JButton btnSeleccionaArticuloVenta;
     private javax.swing.JButton btnSelecionaCategoria;
     private javax.swing.JButton btnSelecionaUnidad;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -1883,22 +1441,18 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
@@ -1907,14 +1461,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTextField jTextField1;
@@ -1928,18 +1480,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JTable tblCompras;
     private javax.swing.JTable tblVentas;
     private javax.swing.JFormattedTextField txtCantidad;
-    private javax.swing.JFormattedTextField txtCodigo;
+    private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDescripcion;
-    private javax.swing.JFormattedTextField txtDescuento;
     private javax.swing.JTextField txtFiltro;
-    private javax.swing.JFormattedTextField txtGanancia;
-    private javax.swing.JTextField txtGananciaDescuento;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtTotalCompras;
     private javax.swing.JTextField txtTotalVentas;
     private javax.swing.JFormattedTextField txtValorVenta;
     private javax.swing.JFormattedTextField txtValor_CompraConImp;
-    private javax.swing.JFormattedTextField txtValor_CompraSinImp;
     // End of variables declaration//GEN-END:variables
 
     public Categoria getCategoria() {

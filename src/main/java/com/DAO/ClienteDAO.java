@@ -4,11 +4,10 @@
  */
 package com.DAO;
 
-import Utilidades.HibernateUtil;
-import com.Beans.Articulo;
+import com.Beans.Cliente;
+import java.util.List;
+import javax.swing.JOptionPane;
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  *
@@ -16,21 +15,31 @@ import org.hibernate.Transaction;
  */
 public class ClienteDAO extends DAOGenerico<Object> {
 
-    private final Session seccion;
-    Transaction transacion = null;
-    private Object objeto;
-
     public ClienteDAO() {
 
-        this.seccion = HibernateUtil.getSeccion();
+    }
+
+    public ClienteDAO(Cliente objeto) {
+
+        super.objeto = objeto;
 
     }
 
-    public ClienteDAO(Object objeto) {
+    public List buscarCliente(String filtro) {
 
-        this.seccion = HibernateUtil.getSeccion();
-        this.objeto = objeto;
+        List objetos = null;
+        try {
+
+            transacion = seccion.beginTransaction();
+
+            Query query = seccion.createQuery("from Cliente where nombre like '%" + filtro + "%' or razon_social like'%" + filtro + "%'");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al traer todos los registros" + e);
+        }
+        return objetos;
 
     }
-
 }

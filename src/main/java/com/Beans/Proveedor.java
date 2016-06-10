@@ -9,6 +9,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 import javax.persistence.*;
 
 /**
@@ -18,185 +19,137 @@ import javax.persistence.*;
 @Entity
 @Table(name = "proveedor")
 public class Proveedor implements Serializable {
-   
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    
+
     @Column(name = "id")
     private Integer id;
     @Column(name = "nombre")
     private String nombre;
-    @Column(name = "razon_social")
-    private String Razon_social;
-    @Column(name = "rut")
-    private String rut;
-    @Column(name = "tel")
-    private String tel;
-    @Column(name = "cel")
-    private String cel;
-    @Column(name = "email")
-    private String email;
     @Column(name = "direccion")
     private String direccion;
     @Column(name = "ciudad")
     private String ciudad;
     @Column(name = "pais")
     private String pais;
-    
-    
-    
-    
+    @Column(name = "telefono")
+    private String telefono;
+    @Column(name = "cel")
+    private String cel;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "razon_social")
+    private String razon_social;
+    @Column(name = "documento")
+    private String documento;
+    @Column(name = "fecha_ingreso")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date Fecha_ingreso;
+    @Enumerated(EnumType.STRING)
+    private CondicionImpositiva condicionImpositiva;
 
     public Proveedor() {
     }
 
-    /**
-     * @return the id
-     */
     public Integer getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(Integer id) {
-        Integer oldId = this.id;
         this.id = id;
     }
 
-    /**
-     * @return the nombre
-     */
     public String getNombre() {
         return nombre;
     }
 
-    /**
-     * @param nombre the nombre to set
-     */
     public void setNombre(String nombre) {
-        String oldNombre = this.nombre;
         this.nombre = nombre;
     }
 
-    /**
-     * @return the Razon_social
-     */
-    public String getRazon_social() {
-        return Razon_social;
-    }
-
-    /**
-     * @param Razon_social the Razon_social to set
-     */
-    public void setRazon_social(String Razon_social) {
-        String oldRazon_social = this.Razon_social;
-        this.Razon_social = Razon_social;
-    }
-
-    /**
-     * @return the rut
-     */
-    public String getRut() {
-        return rut;
-    }
-
-    /**
-     * @param rut the rut to set
-     */
-    public void setRut(String rut) {
-        String oldRut = this.rut;
-        this.rut = rut;
-    }
-
-    /**
-     * @return the tel
-     */
-    public String getTel() {
-        return tel;
-    }
-
-    /**
-     * @param tel the tel to set
-     */
-    public void setTel(String tel) {
-        String oldTel = this.tel;
-        this.tel = tel;
-    }
-
-    /**
-     * @return the cel
-     */
-    public String getCel() {
-        return cel;
-    }
-
-    /**
-     * @param cel the cel to set
-     */
-    public void setCel(String cel) {
-        String oldCel = this.cel;
-        this.cel = cel;
-    }
-
-    /**
-     * @return the email
-     */
-    public String getEmail() {
-        return email;
-    }
-
-    /**
-     * @param email the email to set
-     */
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * @return the direccion
-     */
     public String getDireccion() {
         return direccion;
     }
 
-    /**
-     * @param direccion the direccion to set
-     */
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
 
-   public String getCiudad() {
+    public String getCiudad() {
         return ciudad;
     }
 
-    /**
-     * @param ciudad the ciudad to set
-     */
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
     }
 
-    /**
-     * @return the pais
-     */
     public String getPais() {
         return pais;
     }
 
-    /**
-     * @param pais the pais to set
-     */
     public void setPais(String pais) {
-        String oldPais = this.pais;
         this.pais = pais;
     }
 
-    public String toString(){
-        return nombre;
+    public String getTelefono() {
+        return telefono;
     }
 
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCel() {
+        return cel;
+    }
+
+    public void setCel(String cel) {
+        this.cel = cel;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getRazon_social() {
+        return razon_social;
+    }
+
+    public void setRazon_social(String razon_social) {
+        this.razon_social = razon_social;
+    }
+
+    public String getDocumento() {
+        return documento;
+    }
+
+    public void setDocumento(String documento) {
+        this.documento = documento;
+    }
+
+    public Date getFecha_ingreso() {
+        return Fecha_ingreso;
+    }
+
+    public void setFecha_ingreso(Date Fecha_ingreso) {
+        this.Fecha_ingreso = Fecha_ingreso;
+    }
+
+    public CondicionImpositiva getCondicionImpositiva() {
+        return condicionImpositiva;
+    }
+
+    public void setCondicionImpositiva(CondicionImpositiva condicionImpositiva) {
+        this.condicionImpositiva = condicionImpositiva;
+    }
+
+    public String toString() {
+        return nombre;
+    }
 
 }

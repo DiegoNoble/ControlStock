@@ -3,12 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.Pedidos;
+package com.Remito;
 
-import com.Beans.Cliente;
-import com.Beans.SituacionPedido;
 import com.Beans.Pedido;
-import com.Beans.Vendedor;
+import com.Beans.Remito;
 import java.util.Date;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -17,14 +15,14 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Diego Noble
  */
-public class PedidosTableModel extends AbstractTableModel {
+public class RemitoTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Situción", "Cod.", "Fecha", "Cliente", "Vendedor", "Importe pendiente"};
+    private final String[] colunas = new String[]{"Cód.", "Fecha", "Importe", "Pedido"};
     //lista para a manipulacao do objeto
-    private List<Pedido> list;
+    private List<Remito> list;
 
-    public PedidosTableModel(List<Pedido> list) {
+    public RemitoTableModel(List<Remito> list) {
         this.list = list;
     }
 
@@ -43,21 +41,16 @@ public class PedidosTableModel extends AbstractTableModel {
     //define o que cada coluna conterï¿½ do objeto
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Pedido c = list.get(rowIndex);
+        Remito c = list.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return c.getEstadoPedido();
-            case 1:
                 return c.getId();
-            case 2:
+            case 1:
                 return c.getFecha();
+            case 2:
+                return c.getImporteAtendido();
             case 3:
-                return c.getCliente();
-            case 4:
-                return c.getVendedor();
-            case 5:
-                return c.getImportePendiente();
-
+                return c.getPedido();
             default:
                 return null;
         }
@@ -74,17 +67,13 @@ public class PedidosTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return SituacionPedido.class;
-            case 1:
                 return Integer.class;
-            case 2:
+            case 1:
                 return Date.class;
-            case 3:
-                return Cliente.class;
-            case 4:
-                return Vendedor.class;
-            case 5:
+            case 2:
                 return Double.class;
+            case 3:
+                return Pedido.class;
 
             default:
                 return null;
@@ -96,15 +85,14 @@ public class PedidosTableModel extends AbstractTableModel {
         return false;
     }
 
-    public void agregar(Pedido pedidos) {
+    public void agregar(Remito pedidos) {
         list.add(pedidos);
 
         this.fireTableRowsInserted(list.size() - 1, list.size() - 1);
     }
 
-    public void agregar(List<Pedido> pedidos) {
+    public void agregar(List<Remito> pedidos) {
         list.clear();
-
         list.addAll(pedidos);
 
         this.fireTableDataChanged();
@@ -115,12 +103,12 @@ public class PedidosTableModel extends AbstractTableModel {
         this.fireTableRowsDeleted(row, row);
     }
 
-    public void atualizar(int row, Pedido pedidos) {
+    public void atualizar(int row, Remito pedidos) {
         list.set(row, pedidos);
         this.fireTableRowsUpdated(row, row);
     }
 
-    public Pedido getCliente(int row) {
+    public Remito getCliente(int row) {
         return list.get(row);
     }
 

@@ -4,36 +4,41 @@
  */
 package com.DAO;
 
-import Utilidades.HibernateUtil;
-import com.Beans.Proveedor;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  *
  * @author Diego
  */
 public class ProveedorDAO extends DAOGenerico<Object> {
-    
-    private final Session seccion;
-    Transaction transacion = null;
-    private Object objeto;
-    
+
     public ProveedorDAO(Object objeto) {
 
-        this.seccion = HibernateUtil.getSeccion();
-        this.objeto = objeto;
+        super.objeto = objeto;
 
     }
+
     public ProveedorDAO() {
 
-        this.seccion = HibernateUtil.getSeccion();
-        
     }
-    
-   
 
-    
+     public List buscarProveedor(String filtro) {
+
+        List objetos = null;
+        try {
+
+            transacion = seccion.beginTransaction();
+
+            Query query = seccion.createQuery("from Proveedor where nombre like '%" + filtro + "%' or razon_social like'%" + filtro + "%'");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al traer todos los registros" + e);
+        }
+        return objetos;
+
+    }
 }

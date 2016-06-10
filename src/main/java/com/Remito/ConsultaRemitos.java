@@ -1,14 +1,16 @@
-package com.Pedidos;
+package com.Remito;
 
-import com.Beans.Pedido;
 import com.Beans.Articulo;
-import com.Beans.Cliente;
-import com.Beans.Vendedor;
+import com.Beans.ArticulosPedido;
+import com.Beans.MovStock;
+import com.Beans.Pedido;
+import com.Beans.Remito;
+import com.Beans.SituacionPedido;
 import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;
-import com.DAO.ClienteDAO;
+import com.DAO.MovStockDAO;
 import com.DAO.PedidoDAO;
-import com.DAO.VendedorDAO;
+import com.DAO.RemitoDAO;
 import com.Renderers.MeDateCellRenderer;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -19,123 +21,177 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-public final class ConsultaPedidos extends javax.swing.JInternalFrame {
+public final class ConsultaRemitos extends javax.swing.JInternalFrame {
 
-    List<Cliente> listClientes;
-    List<Vendedor> listVendedores;
-    List<Articulo> listArticulos;
-    PedidosTableModel tableModel;
-    List<Pedido> listPedidos;
-    Pedido pedidoSeleccionado;
-    static Pedido pedidoSingleton;
-    ArticuloDAO articulosDAO;
-    ClienteDAO clienteDAO;
-    VendedorDAO vendedorDAO;
-    ArticulosPedidoDAO articulosPedidoDAO;
+    RemitoTableModel tableModel;
+    List<Remito> listRemitos;
+    Remito remitoSeleccionado;
+    RemitoDAO remitoDAO;
     PedidoDAO pedidoDAO;
+    ArticulosPedidoDAO articulosPedidoDAO;
+    ArticuloDAO articulosDAO;
 
-    public ConsultaPedidos() {
+    public ConsultaRemitos() {
         initComponents();
 
         defineModelo();
+        buscarPorFechas();
+        btnImprimirRemito.setEnabled(false);
+        btnAnular.setVisible(false);
+    }
+
+    public void buscar() {
+        remitoDAO = new RemitoDAO();
+        if (rbCodRemito.isSelected()) {
+            try {
+                tableModel.agregar(remitoDAO.buscarPor(Remito.class, "id", txtFiltroCod.getText()));
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(null, "Los codigos deben ser numéricos", "Error", JOptionPane.ERROR_MESSAGE);
+                exception.printStackTrace();
+            }
+        } else if (rbCodPedido.isSelected()) {
+            try {
+                tableModel.agregar(remitoDAO.buscarPor(Remito.class, "remito.id", txtFiltroCod.getText()));
+            } catch (Exception exception) {
+                JOptionPane.showMessageDialog(null, "Los codigos deben ser numéricos", "Error", JOptionPane.ERROR_MESSAGE);
+                exception.printStackTrace();
+            }
+
+        }
+    }
+
+    private void buscarPorFechas() {
+        remitoDAO = new RemitoDAO();
+        tableModel.agregar(remitoDAO.buscaEntreFechas(dpDesde.getDate(), dpHasta.getDate()));
+    }
+
+    private void defineModelo() {
         dpDesde.setDate(new Date());
         dpHasta.setDate(new Date());
         dpDesde.setFormats("dd/MM/yyyy");
         dpHasta.setFormats("dd/MM/yyyy");
-        buscarEntreFechas();
-        btnAtenderPedido.setEnabled(false);
-    }
 
-    public static Pedido getInstance() {
+        ((DefaultTableCellRenderer) tblRemitos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+        listRemitos = new ArrayList<Remito>();
+        tableModel = new RemitoTableModel(listRemitos);
+        tblRemitos.setModel(tableModel);
+        tblRemitos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
+        int[] anchos = {20, 20, 20, 20};
 
-        if (pedidoSingleton == null) {
-            pedidoSingleton = new Pedido();
-        }
+        for (int i = 0; i < tblRemitos.getColumnCount(); i++) {
 
-        return pedidoSingleton;
-    }
-
-    void buscarEntreFechas() {
-        pedidoDAO = new PedidoDAO();
-        tableModel.agregar(pedidoDAO.buscaEntreFechas(dpDesde.getDate(), dpHasta.getDate()));
-    }
-
-    public void buscar() {
-        pedidoDAO = new PedidoDAO();
-        if (rbCodPedido.isSelected()) {
-            listPedidos.clear();
-            listPedidos.addAll(pedidoDAO.buscarPor(Pedido.class, "id", txtFiltroCod.getText()));
-            tableModel.fireTableDataChanged();
-        } else if (rbCliente.isSelected()) {
-            listPedidos.clear();
-            listPedidos.addAll(pedidoDAO.buscarPor(Pedido.class, "cliente.nombre", txtFiltroCod.getText()));
-            tableModel.fireTableDataChanged();
-        } else if (rbVendedor.isSelected()) {
-            listPedidos.clear();
-            listPedidos.addAll(pedidoDAO.buscarPor(Pedido.class, "vendedor.nombre", txtFiltroCod.getText()));
-            tableModel.fireTableDataChanged();
-        }
-
-    }
-
-    private void defineModelo() {
-        ((DefaultTableCellRenderer) tblPedidos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-        listPedidos = new ArrayList<Pedido>();
-        tableModel = new PedidosTableModel(listPedidos);
-        tblPedidos.setModel(tableModel);
-        tblPedidos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
-        int[] anchos = {20, 20, 20, 100, 100, 20};
-
-        for (int i = 0; i < tblPedidos.getColumnCount(); i++) {
-
-            tblPedidos.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+            tblRemitos.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
 
         }
 
-        ListSelectionModel listModel = tblPedidos.getSelectionModel();
+        ListSelectionModel listModel = tblRemitos.getSelectionModel();
         listModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent lse) {
-                if (tblPedidos.getSelectedRow() != -1) {
-                    btnAtenderPedido.setEnabled(true);
-                    pedidoSeleccionado = listPedidos.get(tblPedidos.getSelectedRow());
+                if (tblRemitos.getSelectedRow() != -1) {
+                    btnImprimirRemito.setEnabled(true);
+                    remitoSeleccionado = listRemitos.get(tblRemitos.getSelectedRow());
                 } else {
-                    btnAtenderPedido.setEnabled(false);
-                    pedidoSeleccionado = null;
+                    btnImprimirRemito.setEnabled(false);
+                    remitoSeleccionado = null;
                 }
             }
         });
 
-        tblPedidos.addMouseListener(new MouseAdapter() {
+        tblRemitos.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent me) {
 
                 if (me.getClickCount() == 2) {
-                    atenderPedido();
+                    imprimirRemito();
                 }
             }
         });
 
     }
 
-    private void atenderPedido() {
+    private void imprimirRemito() {
 
         try {
-            if (pedidoSeleccionado == null) {
-                JOptionPane.showMessageDialog(this, "Seleccione un pedido", "Error", JOptionPane.ERROR_MESSAGE);
+            if (remitoSeleccionado == null) {
+                JOptionPane.showMessageDialog(this, "Seleccione un remito", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                AtenderPedido atenderPedido = new AtenderPedido(this, pedidoSeleccionado);
-                super.getDesktopPane().add(atenderPedido);
-                atenderPedido.setVisible(true);
-                atenderPedido.toFront();
-                buscar();
+                remitoDAO = new RemitoDAO();
+                remitoDAO.imprimeRemito(remitoSeleccionado);
             }
 
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
+        }
+    }
+
+    private void anular() {
+
+        try {
+
+            Pedido pedido = remitoSeleccionado.getPedido();
+
+            MovStockDAO movStockDAO = new MovStockDAO();
+
+            List<MovStock> listMovStock = movStockDAO.buscarPor(MovStock.class, "remito.id", remitoSeleccionado.getId());
+
+            for (ArticulosPedido articulosPedido : pedido.getArticulosPedido()) {
+                MovStock movStockAnular = listMovStock.get(listMovStock.indexOf(articulosPedido.getArticulo()));
+                Double importeAnular = movStockAnular.getArticulo().getValor_venta() * (movStockAnular.getCantidadMov() * -1);
+                Double cantidadAnular = movStockAnular.getCantidadMov();
+
+                articulosPedido.setCantAtendida(articulosPedido.getCantAtendida() - cantidadAnular);
+                articulosPedido.setCantPedida(articulosPedido.getCantPedida() + cantidadAnular);
+                articulosPedido.setCantPendiente(articulosPedido.getCantPendiente() + cantidadAnular);
+
+                articulosPedido.setImporteAtendido(articulosPedido.getImporteAtendido() - importeAnular);
+                articulosPedido.setImportePedido(articulosPedido.getImportePedido() - cantidadAnular);
+                articulosPedido.setImportePendiente(importeAnular);
+
+                articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
+                articulosPedidoDAO.actualiza();
+
+                MovStock movStock = new MovStock();
+                movStock.setArticulo(movStockAnular.getArticulo());
+                movStock.setCantidadMov(movStockAnular.getCantidadMov() * -1);
+                movStock.setSaldoStock(articulosPedido.getArticulo().getCantidad() + (movStockAnular.getCantidadMov() * -1));
+                movStock.setFecha(new Date());
+                listMovStock.add(movStock);
+            }
+            //pedido.setImportePendiente(pedido.getImporteTotal() - importeRemito);
+            pedido.setEstadoPedido(SituacionPedido.REMITO_ANULADO);
+            pedido.setImporteAtendido(pedido.getImporteAtendido() - remitoSeleccionado.getImporteAtendido());
+            pedido.setImportePendiente(pedido.getImportePendiente() + remitoSeleccionado.getImporteAtendido());
+
+            pedidoDAO = new PedidoDAO(pedido);
+            pedidoDAO.actualiza();
+
+            remitoSeleccionado.setImporteRemito(0.0);
+            remitoSeleccionado.setPedido(pedido);
+            remitoDAO = new RemitoDAO(remitoSeleccionado);
+            remitoDAO.actualiza();
+
+            for (MovStock movStock : listMovStock) {
+                movStock.setRemito(remitoSeleccionado);
+                movStockDAO = new MovStockDAO(movStock);
+                movStockDAO.actualiza();
+
+                Articulo articulo = movStock.getArticulo();
+                articulo.setCantidad(movStock.getSaldoStock());
+                articulosDAO = new ArticuloDAO(articulo);
+                articulosDAO.actualiza();
+
+            }
+            JOptionPane.showMessageDialog(this, "Remito anulado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+            buscar();
+
+            
+        } catch (Exception ex) {
+
+            JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
+            ex.printStackTrace();
         }
     }
 
@@ -152,13 +208,12 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         jPanel11 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         txtFiltroCod = new javax.swing.JTextField();
+        rbCodRemito = new javax.swing.JRadioButton();
         rbCodPedido = new javax.swing.JRadioButton();
-        rbCliente = new javax.swing.JRadioButton();
-        rbVendedor = new javax.swing.JRadioButton();
         btnBuscar = new javax.swing.JButton();
         jPanel12 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblPedidos = new javax.swing.JTable();
+        tblRemitos = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         btnBuscarPorFechas = new javax.swing.JButton();
         dpHasta = new org.jdesktop.swingx.JXDatePicker();
@@ -166,7 +221,8 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         dpDesde = new org.jdesktop.swingx.JXDatePicker();
         jLabel2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        btnAtenderPedido = new javax.swing.JButton();
+        btnImprimirRemito = new javax.swing.JButton();
+        btnAnular = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
 
@@ -175,7 +231,7 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         setMaximizable(true);
         setResizable(true);
         setTitle("Sistema de control comercial - D.N.Soft .-");
-        setPreferredSize(new java.awt.Dimension(1024, 600));
+        setPreferredSize(new java.awt.Dimension(600, 600));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
@@ -183,7 +239,7 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Pedidos");
+        jLabel1.setText("Consulta Remitos");
         jPanel1.add(jLabel1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -202,7 +258,7 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         jLabel7.setText("Buscar por:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel11.add(jLabel7, gridBagConstraints);
 
@@ -212,42 +268,36 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.ipadx = 120;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel11.add(txtFiltroCod, gridBagConstraints);
 
+        buttonGroup1.add(rbCodRemito);
+        rbCodRemito.setSelected(true);
+        rbCodRemito.setText("Cod remito");
+        rbCodRemito.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbCodRemitoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        jPanel11.add(rbCodRemito, gridBagConstraints);
+
         buttonGroup1.add(rbCodPedido);
-        rbCodPedido.setSelected(true);
-        rbCodPedido.setText("Cod Pedido");
+        rbCodPedido.setText("Cod pedido");
         rbCodPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 rbCodPedidoActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
         jPanel11.add(rbCodPedido, gridBagConstraints);
-
-        buttonGroup1.add(rbCliente);
-        rbCliente.setText("Cliente");
-        rbCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbClienteActionPerformed(evt);
-            }
-        });
-        jPanel11.add(rbCliente, new java.awt.GridBagConstraints());
-
-        buttonGroup1.add(rbVendedor);
-        rbVendedor.setText("Vendedor");
-        rbVendedor.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbVendedorActionPerformed(evt);
-            }
-        });
-        jPanel11.add(rbVendedor, new java.awt.GridBagConstraints());
 
         btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/search.png"))); // NOI18N
         btnBuscar.setBorder(null);
@@ -257,20 +307,21 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
         jPanel11.add(btnBuscar, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         jPanel3.add(jPanel11, gridBagConstraints);
 
         jPanel12.setLayout(new java.awt.GridBagLayout());
 
-        tblPedidos.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        tblPedidos.setModel(new javax.swing.table.DefaultTableModel(
+        tblRemitos.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        tblRemitos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -280,8 +331,8 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3"
             }
         ));
-        tblPedidos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(tblPedidos);
+        tblRemitos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tblRemitos);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -360,16 +411,27 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        btnAtenderPedido.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        btnAtenderPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/pedido.png"))); // NOI18N
-        btnAtenderPedido.setMnemonic('R');
-        btnAtenderPedido.setText("Atender pedido");
-        btnAtenderPedido.addActionListener(new java.awt.event.ActionListener() {
+        btnImprimirRemito.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btnImprimirRemito.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/printer.png"))); // NOI18N
+        btnImprimirRemito.setMnemonic('R');
+        btnImprimirRemito.setText("Imprimir");
+        btnImprimirRemito.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtenderPedidoActionPerformed(evt);
+                btnImprimirRemitoActionPerformed(evt);
             }
         });
-        jPanel4.add(btnAtenderPedido);
+        jPanel4.add(btnImprimirRemito);
+
+        btnAnular.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btnAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/delete_32.png"))); // NOI18N
+        btnAnular.setMnemonic('R');
+        btnAnular.setText("Anuar");
+        btnAnular.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAnularActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnAnular);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -380,18 +442,14 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void rbCodRemitoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbCodRemitoActionPerformed
+
+    }//GEN-LAST:event_rbCodRemitoActionPerformed
+
     private void rbCodPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbCodPedidoActionPerformed
 
+
     }//GEN-LAST:event_rbCodPedidoActionPerformed
-
-    private void rbClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbClienteActionPerformed
-
-
-    }//GEN-LAST:event_rbClienteActionPerformed
-
-    private void rbVendedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbVendedorActionPerformed
-
-    }//GEN-LAST:event_rbVendedorActionPerformed
 
     private void txtFiltroCodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFiltroCodActionPerformed
         buscar();
@@ -401,20 +459,25 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         buscar();
     }//GEN-LAST:event_btnBuscarActionPerformed
 
-    private void btnAtenderPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtenderPedidoActionPerformed
+    private void btnImprimirRemitoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirRemitoActionPerformed
 
-        atenderPedido();
-    }//GEN-LAST:event_btnAtenderPedidoActionPerformed
+        imprimirRemito();
+    }//GEN-LAST:event_btnImprimirRemitoActionPerformed
 
     private void btnBuscarPorFechasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarPorFechasActionPerformed
 
-        buscarEntreFechas();
+        buscarPorFechas();
     }//GEN-LAST:event_btnBuscarPorFechasActionPerformed
 
+    private void btnAnularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnularActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAnularActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAtenderPedido;
+    private javax.swing.JButton btnAnular;
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnBuscarPorFechas;
+    private javax.swing.JButton btnImprimirRemito;
     private javax.swing.ButtonGroup buttonGroup1;
     private org.jdesktop.swingx.JXDatePicker dpDesde;
     private org.jdesktop.swingx.JXDatePicker dpHasta;
@@ -430,10 +493,9 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JRadioButton rbCliente;
     private javax.swing.JRadioButton rbCodPedido;
-    private javax.swing.JRadioButton rbVendedor;
-    private javax.swing.JTable tblPedidos;
+    private javax.swing.JRadioButton rbCodRemito;
+    private javax.swing.JTable tblRemitos;
     private javax.swing.JTextField txtFiltroCod;
     // End of variables declaration//GEN-END:variables
 

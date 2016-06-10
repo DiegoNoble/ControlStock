@@ -15,7 +15,6 @@ import com.DAO.ArticulosCompraDAO;
 import com.DAO.CotizacionDAO;
 import com.DAO.FacturaCompraDAO;
 import com.Beans.Proveedor;
-import com.Proveedores.ProveedorFrame;
 import com.Renderers.MyDefaultCellRenderer;
 import com.usuarios.frameLogin;
 import java.util.ArrayList;
@@ -677,10 +676,10 @@ public class RegistraCompraFrame extends javax.swing.JInternalFrame {
 
     private void btnSelecionaProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaProveedorActionPerformed
 
-        ProveedorFrame proveedor = new ProveedorFrame(this);
+/*        ProveedorFrame proveedor = new ProveedorFrame(this);
         this.getDesktopPane().add(proveedor);
         proveedor.setVisible(true);
-        proveedor.toFront();
+        proveedor.toFront();*/
     }//GEN-LAST:event_btnSelecionaProveedorActionPerformed
 
     private void btnRetirarArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRetirarArticuloActionPerformed

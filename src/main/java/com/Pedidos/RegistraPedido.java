@@ -13,6 +13,7 @@ import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;
 import com.DAO.ClienteDAO;
 import com.DAO.PedidoDAO;
+import com.DAO.RemitoDAO;
 import com.DAO.VendedorDAO;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +38,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     VendedorDAO vendedorDAO;
     ArticulosPedidoDAO articulosPedidoDAO;
     PedidoDAO pedidoDAO;
+    RemitoDAO remitoDAO;
     double subTotal;
     double IVA;
     double redondeo;
@@ -167,12 +169,16 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(this, "Seleccione un articulo", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
 
-                pedido = new Pedido(dpFecha.getDate(), Double.parseDouble(txtTotal.getText()), (Cliente) cbCliente.getSelectedItem(),
+                pedido = new Pedido(dpFecha.getDate(), (Cliente) cbCliente.getSelectedItem(),
                         (Vendedor) cbVendedor.getSelectedItem(), SituacionPedido.NUEVO, listArticulosPedido);
+                pedido.setObservaciones(txtObservaciones.getText());
+                Double total = 0.0;
                 for (ArticulosPedido articulosPedido : listArticulosPedido) {
                     articulosPedido.setPedido(pedido);
+                    total = total + articulosPedido.getImportePedido();
                 }
-
+                pedido.setImporteTotal(total);
+                pedido.setImportePendiente(total);
                 pedidoDAO = new PedidoDAO(pedido);
                 pedidoDAO.guardar();
 
@@ -183,6 +189,12 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
         }
+    }
+
+    void limbiaCampo() {
+        txtCantidad.setText("");
+        txtTotal.setText("");
+        txtObservaciones.setText("");
     }
 
     private void retirarArticulo() {
@@ -261,6 +273,9 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         txtTotal = new javax.swing.JFormattedTextField();
         jPanel4 = new javax.swing.JPanel();
         btnRegistraVenta = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtObservaciones = new javax.swing.JTextArea();
 
         jTextField1.setText("jTextField1");
 
@@ -283,6 +298,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         getContentPane().add(jPanel1, gridBagConstraints);
@@ -493,6 +509,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanel3, gridBagConstraints);
@@ -507,12 +524,12 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         txtTotal.setEnabled(false);
         txtTotal.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.ipadx = 140;
         gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
         jPanel8.add(txtTotal, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         getContentPane().add(jPanel8, gridBagConstraints);
@@ -531,10 +548,31 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         jPanel4.add(btnRegistraVenta);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         getContentPane().add(jPanel4, gridBagConstraints);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), "Observaciones", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 12))); // NOI18N
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        txtObservaciones.setColumns(20);
+        txtObservaciones.setRows(5);
+        jScrollPane2.setViewportView(txtObservaciones);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel2.add(jScrollPane2, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(jPanel2, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -553,6 +591,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         confirmaPedido();
         listArticulosPedido.clear();
         tableModel.fireTableDataChanged();
+
 
     }//GEN-LAST:event_btnRegistraVentaActionPerformed
 
@@ -613,13 +652,16 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tblArticulosPedido;
     private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextArea txtObservaciones;
     private javax.swing.JFormattedTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 

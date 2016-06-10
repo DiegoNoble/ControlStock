@@ -31,20 +31,18 @@ public class Pedido implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private SituacionPedido estadoPedido;
-    
+
     private String observaciones;
 
     public Pedido() {
 
     }
 
-    public Pedido(Date fecha, Double importeTotal, Cliente cliente, Vendedor vendedor, SituacionPedido estadoPedido, List<ArticulosPedido> articulosPedido) {
+    public Pedido(Date fecha, Cliente cliente, Vendedor vendedor, SituacionPedido estadoPedido, List<ArticulosPedido> articulosPedido) {
         this.fecha = fecha;
-        this.importeTotal = importeTotal;
         this.cliente = cliente;
         this.vendedor = vendedor;
         this.estadoPedido = estadoPedido;
-        this.importePendiente = importeTotal;
         this.articulosPedido = articulosPedido;
     }
 
@@ -128,5 +126,9 @@ public class Pedido implements Serializable {
         this.observaciones = observaciones;
     }
 
-    
+    @Override
+    public String toString() {
+        return id.toString();
+    }
+
 }

@@ -36,10 +36,8 @@ public class Cliente implements Serializable {
     private String cel;
     @Column(name = "email")
     private String email;
-    @Column(name = "ci")
-    private String ci;
     @Column(name = "razon_social")
-    private String Razon_social;
+    private String razon_social;
     @Column(name = "documento")
     private String documento;
     @Column(name = "fecha_ingreso")
@@ -163,32 +161,15 @@ public class Cliente implements Serializable {
         this.email = email;
     }
 
-    /**
-     * @return the ci
-     */
-    public String getCi() {
-        return ci;
-    }
-
-    /**
-     * @param ci the ci to set
-     */
-    public void setCi(String ci) {
-        this.ci = ci;
-    }
-
-    /**
-     * @return the Razon_social
-     */
     public String getRazon_social() {
-        return Razon_social;
+        return razon_social;
     }
 
     /**
      * @param Razon_social the Razon_social to set
      */
     public void setRazon_social(String Razon_social) {
-        this.Razon_social = Razon_social;
+        this.razon_social = Razon_social;
     }
 
     /**
@@ -232,5 +213,4 @@ public class Cliente implements Serializable {
         this.condicionImpositiva = condicionImpositiva;
     }
 
-    
 }

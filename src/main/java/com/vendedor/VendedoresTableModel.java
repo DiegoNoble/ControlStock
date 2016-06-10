@@ -3,13 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.Pedidos;
+package com.vendedor;
 
-import com.Beans.Cliente;
-import com.Beans.SituacionPedido;
-import com.Beans.Pedido;
 import com.Beans.Vendedor;
-import java.util.Date;
+import com.Beans.CondicionImpositiva;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
@@ -17,14 +14,14 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Diego Noble
  */
-public class PedidosTableModel extends AbstractTableModel {
+public class VendedoresTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Situción", "Cod.", "Fecha", "Cliente", "Vendedor", "Importe pendiente"};
+    private final String[] colunas = new String[]{"Cód", "Nombre", "Tel", "Cel"};
     //lista para a manipulacao do objeto
-    private List<Pedido> list;
+    private List<Vendedor> list;
 
-    public PedidosTableModel(List<Pedido> list) {
+    public VendedoresTableModel(List<Vendedor> list) {
         this.list = list;
     }
 
@@ -43,21 +40,16 @@ public class PedidosTableModel extends AbstractTableModel {
     //define o que cada coluna conterï¿½ do objeto
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Pedido c = list.get(rowIndex);
+        Vendedor c = list.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return c.getEstadoPedido();
-            case 1:
                 return c.getId();
+            case 1:
+                return c.getNombre();
             case 2:
-                return c.getFecha();
+                return c.getTelefono();
             case 3:
-                return c.getCliente();
-            case 4:
-                return c.getVendedor();
-            case 5:
-                return c.getImportePendiente();
-
+                return c.getCel();
             default:
                 return null;
         }
@@ -74,17 +66,13 @@ public class PedidosTableModel extends AbstractTableModel {
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return SituacionPedido.class;
-            case 1:
                 return Integer.class;
+            case 1:
+                return String.class;
             case 2:
-                return Date.class;
+                return String.class;
             case 3:
-                return Cliente.class;
-            case 4:
-                return Vendedor.class;
-            case 5:
-                return Double.class;
+                return String.class;
 
             default:
                 return null;
@@ -96,17 +84,15 @@ public class PedidosTableModel extends AbstractTableModel {
         return false;
     }
 
-    public void agregar(Pedido pedidos) {
-        list.add(pedidos);
+    public void agregar(Vendedor vendedores) {
+        list.add(vendedores);
 
         this.fireTableRowsInserted(list.size() - 1, list.size() - 1);
     }
 
-    public void agregar(List<Pedido> pedidos) {
+    public void agregar(List<Vendedor> vendedores) {
         list.clear();
-
-        list.addAll(pedidos);
-
+        list.addAll(vendedores);
         this.fireTableDataChanged();
     }
 
@@ -115,12 +101,12 @@ public class PedidosTableModel extends AbstractTableModel {
         this.fireTableRowsDeleted(row, row);
     }
 
-    public void atualizar(int row, Pedido pedidos) {
-        list.set(row, pedidos);
+    public void atualizar(int row, Vendedor vendedores) {
+        list.set(row, vendedores);
         this.fireTableRowsUpdated(row, row);
     }
 
-    public Pedido getCliente(int row) {
+    public Vendedor getVendedor(int row) {
         return list.get(row);
     }
 

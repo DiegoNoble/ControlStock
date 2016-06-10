@@ -7,6 +7,8 @@ package com.Pedidos;
 
 import com.Beans.Articulo;
 import com.Beans.ArticulosPedido;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
@@ -140,8 +142,11 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
                 total = total + articulosPedido.getImportePedido();
             }
         }
+        //BigDecimal to = new BigDecimal
 
-        txtTotal.setText(total.toString());
+        //DecimalFormat formato = new DecimalFormat("#,##");
+        //formato.setRoundingMode(RoundingMode.CEILING);
+        txtTotal.setText(String.format("%.2f", total));
 
     }
 }

@@ -276,21 +276,7 @@ public class frameLogin extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnCambiarContraseñaActionPerformed
 
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                try {
-                    //setLogs();
-                    
-                    UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-                    new frameLogin().setVisible(true);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCambiarContraseña;
     private javax.swing.JButton btnOk;

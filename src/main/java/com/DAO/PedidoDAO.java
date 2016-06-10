@@ -5,9 +5,19 @@
 package com.DAO;
 
 import com.Beans.Pedido;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.JOptionPane;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
 import org.hibernate.Query;
+import org.hibernate.jdbc.Work;
 
 /**
  *
@@ -40,5 +50,24 @@ public class PedidoDAO extends DAOGenerico<Object> {
         return ids;
 
     }
+    
+     public List buscaEntreFechas(Date desde, Date hasta) {
+
+        List objetos = null;
+        try {
+            SimpleDateFormat formatoBD = new SimpleDateFormat("yyyy-MM-dd");
+            transacion = seccion.beginTransaction();
+            Query query = seccion.createQuery("from Pedido where fecha >= '" + formatoBD.format(desde) + "' and fecha <='" + formatoBD.format(hasta) + "'order by id desc");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al traer todos los registros" + e);
+        }
+        return objetos;
+
+    }
+    
+    
 
 }

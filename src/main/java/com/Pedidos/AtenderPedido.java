@@ -39,6 +39,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
     RemitoDAO remitoDAO;
     MovStockDAO movStockDAO;
     ConsultaPedidos consultaPedido;
+    Remito remito = new Remito();
 
     public AtenderPedido(ConsultaPedidos consultaPedido, Pedido pedido) {
         initComponents();
@@ -113,14 +114,13 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                     }
                 }
                 pedido.setImportePendiente(pedido.getImporteTotal() - importeRemito);
-                if (pedido.getImportePendiente() != pedido.getImporteTotal()) {
+                if (pedido.getImportePendiente() - pedido.getImporteTotal() != 0) {
                     pedido.setEstadoPedido(SituacionPedido.ATENDIDO);
                     pedido.setImporteAtendido(pedido.getImporteAtendido() + importeRemito);
 
                     pedidoDAO = new PedidoDAO(pedido);
                     pedidoDAO.actualiza();
 
-                    Remito remito = new Remito();
                     remito.setFecha(new Date());
                     remito.setImporteRemito(importeRemito);
                     remito.setPedido(pedido);
@@ -136,13 +136,18 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                         articulo.setCantidad(movStock.getSaldoStock());
                         articulosDAO = new ArticuloDAO(articulo);
                         articulosDAO.actualiza();
+
                     }
+                    JOptionPane.showMessageDialog(this, "Remito generado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                    this.consultaPedido.buscar();
+                    this.dispose();
+                    remitoDAO = new RemitoDAO();
+                    remitoDAO.imprimeRemito(remito);
                 } else {
-                    JOptionPane.showMessageDialog(null, "No se atendio ninguna posición del pedido", "Atención", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "El pedido no tenia posiciones pendientes", "Atención", JOptionPane.ERROR_MESSAGE);
                 }
 
             }
-            JOptionPane.showMessageDialog(this, "Remito generado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (Exception ex) {
 
@@ -407,8 +412,6 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
     private void btnRegistraVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistraVentaActionPerformed
 
         atenderPedido();
-        this.consultaPedido.buscar();
-        this.dispose();
 
     }//GEN-LAST:event_btnRegistraVentaActionPerformed
 

@@ -4,11 +4,9 @@
  */
 package com.DAO;
 
-import Utilidades.HibernateUtil;
-import com.Beans.Articulo;
+import java.util.List;
+import javax.swing.JOptionPane;
 import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 /**
  *
@@ -16,21 +14,31 @@ import org.hibernate.Transaction;
  */
 public class VendedorDAO extends DAOGenerico<Object> {
 
-    private final Session seccion;
-    Transaction transacion = null;
-    private Object objeto;
-
     public VendedorDAO() {
-
-        this.seccion = HibernateUtil.getSeccion();
 
     }
 
     public VendedorDAO(Object objeto) {
 
-        this.seccion = HibernateUtil.getSeccion();
-        this.objeto = objeto;
+        super.objeto = objeto;
 
     }
 
+    public List buscarVendedor(String filtro) {
+
+        List objetos = null;
+        try {
+
+            transacion = seccion.beginTransaction();
+
+            Query query = seccion.createQuery("from Vendedor where nombre like '%" + filtro + "%'");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al traer todos los registros" + e);
+        }
+        return objetos;
+
+    }
 }

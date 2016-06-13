@@ -19,6 +19,9 @@ public class Remito implements Serializable {
     @ManyToOne(targetEntity = Pedido.class)
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
+    @Enumerated(EnumType.STRING)
+    private TipoRemito tipoRemito;
+    private Boolean anulado = false;
 
     public Remito() {
     }
@@ -53,6 +56,22 @@ public class Remito implements Serializable {
 
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
+    }
+
+    public TipoRemito getTipoRemito() {
+        return tipoRemito;
+    }
+
+    public void setTipoRemito(TipoRemito tipoRemito) {
+        this.tipoRemito = tipoRemito;
+    }
+
+    public Boolean getAnulado() {
+        return anulado;
+    }
+
+    public void setAnulado(Boolean anulado) {
+        this.anulado = anulado;
     }
 
 }

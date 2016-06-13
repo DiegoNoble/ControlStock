@@ -2,7 +2,6 @@ package com.Beans;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import org.hibernate.annotations.Cascade;
 
 @Entity
 @Table(name = "articulos_compra")
@@ -12,9 +11,10 @@ public class ArticulosCompra implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
-    @Column(name = "valorConIva")
-    private Double valorConIva;
+
+    private Integer posicion;
+    @Column(name = "valor")
+    private Double valor;
 
     @Column(name = "cantidad")
     private Double cantidad;
@@ -22,16 +22,19 @@ public class ArticulosCompra implements Serializable {
     @ManyToOne(targetEntity = Articulo.class)
     @JoinColumn(name = "id_articulo")
     private Articulo articulo;
-    @ManyToOne(targetEntity = FacturaCompra.class)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @JoinColumn(name = "id_factura")
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_factura_compra")
     private FacturaCompra facturaCompra;
 
     public ArticulosCompra() {
     }
 
-    public ArticulosCompra(Integer id) {
-        this.id = id;
+    public ArticulosCompra(Integer posicion, Double valor, Double cantidad, Articulo articulo) {
+        this.posicion = posicion;
+        this.valor = valor;
+        this.cantidad = cantidad;
+        this.articulo = articulo;
     }
 
     public Integer getId() {
@@ -42,12 +45,12 @@ public class ArticulosCompra implements Serializable {
         this.id = id;
     }
 
-    public Articulo getArticulo() {
-        return articulo;
+    public Double getValor() {
+        return valor;
     }
 
-    public void setArticulo(Articulo articulo) {
-        this.articulo = articulo;
+    public void setValor(Double valor) {
+        this.valor = valor;
     }
 
     public Double getCantidad() {
@@ -58,29 +61,28 @@ public class ArticulosCompra implements Serializable {
         this.cantidad = cantidad;
     }
 
-    /**
-     * @return the facturaCompra
-     */
+    public Articulo getArticulo() {
+        return articulo;
+    }
+
+    public void setArticulo(Articulo articulo) {
+        this.articulo = articulo;
+    }
+
     public FacturaCompra getFacturaCompra() {
         return facturaCompra;
     }
 
-    /**
-     * @param facturaCompra the facturaCompra to set
-     */
     public void setFacturaCompra(FacturaCompra facturaCompra) {
         this.facturaCompra = facturaCompra;
     }
 
-    public Double getValorConIva() {
-        return valorConIva;
+    public Integer getPosicion() {
+        return posicion;
     }
 
-    /**
-     * @param valorConIva the valorConIva to set
-     */
-    public void setValorConIva(Double valorConIva) {
-        this.valorConIva = valorConIva;
+    public void setPosicion(Integer posicion) {
+        this.posicion = posicion;
     }
 
 }

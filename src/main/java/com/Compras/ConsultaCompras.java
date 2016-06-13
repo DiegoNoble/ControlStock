@@ -1,5 +1,6 @@
-package com.Remito;
+package com.Compras;
 
+import com.Remito.*;
 import com.Beans.Articulo;
 import com.Beans.ArticulosPedido;
 import com.Beans.MovStock;
@@ -23,7 +24,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 
-public final class ConsultaRemitos extends javax.swing.JInternalFrame {
+public final class ConsultaCompras extends javax.swing.JInternalFrame {
 
     RemitoTableModel tableModel;
     List<Remito> listRemitos;
@@ -34,7 +35,7 @@ public final class ConsultaRemitos extends javax.swing.JInternalFrame {
     ArticuloDAO articulosDAO;
     MovStockDAO movStockDAO;
 
-    public ConsultaRemitos() {
+    public ConsultaCompras() {
         initComponents();
 
         defineModelo();

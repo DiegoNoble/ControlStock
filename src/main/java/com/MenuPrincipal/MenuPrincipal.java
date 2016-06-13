@@ -2,13 +2,9 @@ package com.MenuPrincipal;
 
 import Utilidades.DesktopPaneImagem;
 import com.Articulos.ArticulosFrame;
-import com.Beans.FacturaCompra;
 import com.CategoriaArticulos.CategoriaFrame;
 import com.Clientes.ClienteFrame;
-import com.Compras.ConsultaCompraFrame;
-import com.Compras.RegistraCompraFrame;
-import com.CuentasPagar.FrameRecordatorioCuentasPagar;
-import com.DAO.FacturaCompraDAO;
+import com.Compras.RegistraCompra;
 import com.Pedidos.ConsultaPedidos;
 import com.Pedidos.RegistraPedido;
 import com.Proveedores.ProveedoresFrame;
@@ -18,7 +14,6 @@ import com.usuarios.frameLogin;
 import com.usuarios.registroUsuarios;
 import com.vendedor.VendedorFrame;
 import com.view.FrameRegistraCotizacion;
-import java.util.List;
 import javax.swing.*;
 
 public final class MenuPrincipal extends javax.swing.JFrame {
@@ -86,11 +81,11 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         mnuItemRegistrarVentas3 = new javax.swing.JMenuItem();
         mnuVentas1 = new javax.swing.JMenu();
         mnuItemRegistrarVentas5 = new javax.swing.JMenuItem();
-        mnuAyuda = new javax.swing.JMenu();
-        mnuItemConsultaCuentasProveedores1 = new javax.swing.JMenuItem();
         mnuCompras = new javax.swing.JMenu();
         mnuItemRegistrarVentas1 = new javax.swing.JMenuItem();
         mnuItemConsultarVendas1 = new javax.swing.JMenuItem();
+        mnuAyuda = new javax.swing.JMenu();
+        mnuItemConsultaCuentasProveedores1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sistema de control comercial - D.N.Soft .-");
@@ -309,25 +304,6 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
         jMenuBar1.add(mnuVentas1);
 
-        mnuAyuda.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        mnuAyuda.setText("  Ayuda  ");
-        mnuAyuda.setBorderPainted(true);
-        mnuAyuda.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        mnuAyuda.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-
-        mnuItemConsultaCuentasProveedores1.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        mnuItemConsultaCuentasProveedores1.setText("  Sobre  ");
-        mnuItemConsultaCuentasProveedores1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        mnuItemConsultaCuentasProveedores1.setBorderPainted(true);
-        mnuItemConsultaCuentasProveedores1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnuItemConsultaCuentasProveedores1ActionPerformed(evt);
-            }
-        });
-        mnuAyuda.add(mnuItemConsultaCuentasProveedores1);
-
-        jMenuBar1.add(mnuAyuda);
-
         mnuCompras.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         mnuCompras.setText("  Compras  ");
         mnuCompras.setBorderPainted(true);
@@ -357,6 +333,25 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         mnuCompras.add(mnuItemConsultarVendas1);
 
         jMenuBar1.add(mnuCompras);
+
+        mnuAyuda.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuAyuda.setText("  Ayuda  ");
+        mnuAyuda.setBorderPainted(true);
+        mnuAyuda.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        mnuAyuda.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+
+        mnuItemConsultaCuentasProveedores1.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemConsultaCuentasProveedores1.setText("  Sobre  ");
+        mnuItemConsultaCuentasProveedores1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuItemConsultaCuentasProveedores1.setBorderPainted(true);
+        mnuItemConsultaCuentasProveedores1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemConsultaCuentasProveedores1ActionPerformed(evt);
+            }
+        });
+        mnuAyuda.add(mnuItemConsultaCuentasProveedores1);
+
+        jMenuBar1.add(mnuAyuda);
 
         setJMenuBar(jMenuBar1);
 
@@ -400,7 +395,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
     private void mnuItemRegistrarVentas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemRegistrarVentas1ActionPerformed
 
-        RegistraCompraFrame registraCompra = new RegistraCompraFrame();
+        RegistraCompra registraCompra = new RegistraCompra();
         desktopPane.add(registraCompra);
         centralizaJanela(registraCompra);
         registraCompra.setVisible(true);
@@ -410,12 +405,12 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
     private void mnuItemConsultarVendas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultarVendas1ActionPerformed
 
-        ConsultaCompraFrame consultaCompra = new ConsultaCompraFrame();
+       /* ConsultaCompraFrame consultaCompra = new ConsultaCompraFrame();
         desktopPane.add(consultaCompra);
         centralizaJanela(consultaCompra);
         consultaCompra.setVisible(true);
         consultaCompra.toFront();
-
+*/
     }//GEN-LAST:event_mnuItemConsultarVendas1ActionPerformed
 
     private void mnuItemUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemUsuariosActionPerformed

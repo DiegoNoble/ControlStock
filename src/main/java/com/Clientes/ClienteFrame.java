@@ -5,23 +5,18 @@ import javax.swing.JOptionPane;
 import com.Beans.CondicionImpositiva;
 import com.DAO.ClienteDAO;
 import com.Pedidos.RegistraPedido;
-import com.Ventas.RegistraVentaFrame;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.text.MaskFormatter;
 
 public class ClienteFrame extends javax.swing.JInternalFrame {
 
-
-    private RegistraVentaFrame seteaClienteVenta;
     private RegistraPedido seteaClientePedido;
     private Cliente clienteSeleccionado;
     ClientesTableModel tableModel;
@@ -37,14 +32,6 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         btnSeleccionaCliente.setVisible(false);
 
         btnExcluir.setVisible(false);
-    }
-
-    public ClienteFrame(RegistraVentaFrame seteaCliente) {
-        initComponents();
-
-        btnExcluir.setVisible(false);
-        defineModelo();
-        this.seteaClienteVenta = seteaCliente;
     }
 
     public ClienteFrame(RegistraPedido seteaClientePedido) {
@@ -777,14 +764,10 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             Cliente cliente = new Cliente();
             cliente.setId_cliente(Integer.parseInt(tblCliente.getValueAt(filaSeleccionada, 0).toString()));
             cliente.setNombre(tblCliente.getValueAt(filaSeleccionada, 1).toString());
-            if (seteaClienteVenta == null) {
+            if (seteaClientePedido == null) {
                 seteaClientePedido.agregarCliente(cliente);
                 this.dispose();
                 seteaClientePedido.toFront();
-            } else if (seteaClientePedido == null) {
-                seteaClienteVenta.setClie(cliente);
-                this.dispose();
-                seteaClienteVenta.toFront();
             }
 
         }

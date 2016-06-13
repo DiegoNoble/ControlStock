@@ -19,7 +19,7 @@ public class Articulo implements Serializable {
     @Column(name = "valor_venta")
     private Double valor_venta;
     @Column(name = "valor_compra")
-    private Double valorCompraConImpuesto;
+    private Double valor_compra;
     @Column(name = "cantidad")
     private Double cantidad;
     @Column(name = "descripcion")
@@ -130,15 +130,15 @@ public class Articulo implements Serializable {
     /**
      * @return the valor_compra_impuesto
      */
-    public Double getValor_compra_impuesto() {
-        return valorCompraConImpuesto;
+    public Double getValor_compra() {
+        return valor_compra;
     }
 
     /**
      * @param valor_compra_impuesto the valor_compra_impuesto to set
      */
-    public void setValor_compra_impuesto(Double valor_compra_impuesto) {
-        this.valorCompraConImpuesto = valor_compra_impuesto;
+    public void setValor_compra(Double valor_compra_impuesto) {
+        this.valor_compra = valor_compra_impuesto;
     }
 
     /**

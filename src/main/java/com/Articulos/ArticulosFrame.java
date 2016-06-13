@@ -2,36 +2,31 @@ package com.Articulos;
 
 import com.Beans.Articulo;
 import com.DAO.DAOGenerico;
-import Utilidades.Utilidades;
 import com.Beans.Categoria;
 import com.CategoriaArticulos.CategoriaFrame;
 import com.Beans.ArticulosCompra;
 import com.Beans.Unidad;
 import com.Unidades.UnidadFrame;
 import com.Beans.ArticulosVenta;
-import com.Compras.RegistraCompraFrame;
+import com.Compras.RegistraCompra;
 import com.DAO.ArticuloDAO;
 import com.Pedidos.RegistraPedido;
 import com.usuarios.frameLogin;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     int edicion = 0;
-    RegistraCompraFrame registraCompraFrame;
+    RegistraCompra registraCompra;
     RegistraPedido registraPedido;
     private ArticulosTableModel tableModelArticulos;
     private ListSelectionModel listModelArticulos;
-    private DefaultTableModel tableModelCompras;
-    private DefaultTableModel tableModelVentas;
     private Categoria categoria;
     private Unidad unidad;
     int panelVisible = 0;
@@ -62,23 +57,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         AutoCompleteDecorator.decorate(cbUnidad);
         actualizaCbUnidad();
 
-        Date hoy = new Date();
-        dpFechaInicial.setFormats("dd/MM/yyyy");
-        dpFechaFinal.setFormats("dd/MM/yyyy");
-        dpFechaInicial.setDate(Utilidades.fechaPantalla(hoy));
-        dpFechaFinal.setDate(Utilidades.fechaPantalla(hoy));
-
-        dpFechaInicial1.setFormats("dd/MM/yyyy");
-        dpFechaFinal1.setFormats("dd/MM/yyyy");
-        dpFechaInicial1.setDate(Utilidades.fechaPantalla(hoy));
-        dpFechaFinal1.setDate(Utilidades.fechaPantalla(hoy));
-
         jPanel2.setVisible(false);
     }
 
-    public ArticulosFrame(RegistraCompraFrame registraCompraFrame) {
+    public ArticulosFrame(RegistraCompra registraCompra) {
         initComponents();
-        this.registraCompraFrame = registraCompraFrame;
+        this.registraCompra = registraCompra;
         btnSeleccionaArticuloVenta.setVisible(true);
         defineModelo();
         filtros();
@@ -96,17 +80,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         actualizaCbCategoria();
         AutoCompleteDecorator.decorate(cbUnidad);
         actualizaCbUnidad();
-
-        Date hoy = new Date();
-        dpFechaInicial.setFormats("dd/MM/yyyy");
-        dpFechaFinal.setFormats("dd/MM/yyyy");
-        dpFechaInicial.setDate(Utilidades.fechaPantalla(hoy));
-        dpFechaFinal.setDate(Utilidades.fechaPantalla(hoy));
-
-        dpFechaInicial1.setFormats("dd/MM/yyyy");
-        dpFechaFinal1.setFormats("dd/MM/yyyy");
-        dpFechaInicial1.setDate(Utilidades.fechaPantalla(hoy));
-        dpFechaFinal1.setDate(Utilidades.fechaPantalla(hoy));
 
         jPanel2.setVisible(false);
     }
@@ -131,17 +104,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         actualizaCbCategoria();
         AutoCompleteDecorator.decorate(cbUnidad);
         actualizaCbUnidad();
-
-        Date hoy = new Date();
-        dpFechaInicial.setFormats("dd/MM/yyyy");
-        dpFechaFinal.setFormats("dd/MM/yyyy");
-        dpFechaInicial.setDate(Utilidades.fechaPantalla(hoy));
-        dpFechaFinal.setDate(Utilidades.fechaPantalla(hoy));
-
-        dpFechaInicial1.setFormats("dd/MM/yyyy");
-        dpFechaFinal1.setFormats("dd/MM/yyyy");
-        dpFechaInicial1.setDate(Utilidades.fechaPantalla(hoy));
-        dpFechaFinal1.setDate(Utilidades.fechaPantalla(hoy));
 
         jPanel2.setVisible(false);
     }
@@ -190,8 +152,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         if (registraPedido != null) {
             registraPedido.agregarArticuloPedido(articuloSeleccionado);
-        } else if (registraCompraFrame != null) {
-            registraCompraFrame.setArticulo(articuloSeleccionado);
+        } else if (registraCompra != null) {
+            registraCompra.agregarArticuloCompra(articuloSeleccionado);
 
         }
     }
@@ -211,9 +173,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         listArticulos.addAll(articuloDAO.BuscaTodos(Articulo.class));
         tableModelArticulos.fireTableDataChanged();
 
-        tableModelCompras = (DefaultTableModel) tblCompras.getModel();
-        tableModelVentas = (DefaultTableModel) tblVentas.getModel();
-
         listModelArticulos = tblArticulos.getSelectionModel();
         listModelArticulos.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
@@ -230,22 +189,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 }
             }
         });
-
-        ((DefaultTableCellRenderer) tblArticulos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-        ((DefaultTableCellRenderer) tblCompras.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-        ((DefaultTableCellRenderer) tblVentas.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-
-        tblCompras.getColumn("Factura").setPreferredWidth(10); //------> Ajusta el tamaño de las columnas
-        tblCompras.getColumn("Fecha").setPreferredWidth(20);
-        tblCompras.getColumn("Precio Compra IVA Incl.").setPreferredWidth(20);
-        tblCompras.getColumn("Unidades").setPreferredWidth(10);
-        tblCompras.getColumn("Proveedor").setPreferredWidth(30);
-
-        tblVentas.getColumn("Factura").setPreferredWidth(10); //------> Ajusta el tamaño de las columnas
-        tblVentas.getColumn("Fecha").setPreferredWidth(20);
-        tblVentas.getColumn("Precio Venta IVA Incl.").setPreferredWidth(20);
-        tblVentas.getColumn("Unidades").setPreferredWidth(10);
-        tblVentas.getColumn("Cliente").setPreferredWidth(30);
 
     }
 
@@ -273,7 +216,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 articulo.setUnidad(unidadSeleccionada.get(0));
 
                 articulo.setIva(Double.parseDouble(String.valueOf(cbIva.getSelectedItem())));
-                articulo.setValor_compra_impuesto(Double.parseDouble(txtValor_CompraConImp.getText()));
+                articulo.setValor_compra(Double.parseDouble(txtValor_CompraConImp.getText()));
 
                 DAOGenerico dao = new DAOGenerico(articulo);
                 dao.guardar();
@@ -313,7 +256,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             articulo.setUnidad(unidadSeleccionada.get(0));
 
             articulo.setIva(Double.parseDouble(String.valueOf(cbIva.getSelectedItem())));
-            articulo.setValor_compra_impuesto(Double.parseDouble(txtValor_CompraConImp.getText()));
+            articulo.setValor_compra(Double.parseDouble(txtValor_CompraConImp.getText()));
 
             DAOGenerico dao = new DAOGenerico(articulo);
             dao.registraOActualiza();
@@ -334,7 +277,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     }
 
     void buscarTodos() {
-         articuloDAO = new ArticuloDAO();
+        articuloDAO = new ArticuloDAO();
         listArticulos.clear();
         listArticulos.addAll(articuloDAO.BuscaTodos(Articulo.class));
         tableModelArticulos.fireTableDataChanged();
@@ -375,104 +318,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         }
     }
 
-    private void consultaCompras() {
-
-        String articuloSeleccionado = tblArticulos.getValueAt(tblArticulos.getSelectedRow(), 1).toString();
-
-        if (tblArticulos.getSelectedRow() != -1) {
-
-            List<ArticulosCompra> listaCompras = new ArrayList<>();
-
-            String fechaInicial = Utilidades.fechaBD(dpFechaInicial.getDate());
-            String fechaFinal = Utilidades.fechaBD(dpFechaFinal.getDate());
-            DAOGenerico dao = new DAOGenerico();
-            listaCompras = dao.buscaCompras(articuloSeleccionado, fechaInicial, fechaFinal);
-
-            remueveCompras();
-            for (int i = 0; i < listaCompras.size(); i++) {
-
-                Date fecha = listaCompras.get(i).getFacturaCompra().getFecha();
-
-                tableModelCompras.insertRow(i, new Object[]{listaCompras.get(i).getFacturaCompra().getIdfactura(),
-                    Utilidades.fechaPantallaString(fecha), listaCompras.get(i).getValorConIva(),
-                    listaCompras.get(i).getCantidad(), listaCompras.get(i).getFacturaCompra().getProveedor().getNombre()});
-
-            }
-            try {
-                Integer total = 0;
-                for (int i = 0; i < tblCompras.getRowCount(); i++) {
-                    String unidad = tblCompras.getValueAt(i, 3).toString();
-                    Integer valor = Integer.parseInt(unidad);
-                    total += valor;
-                }
-                txtTotalCompras.setText(String.valueOf(total));
-
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
-            }
-        } else {
-            remueveCompras();
-        }
-
-    }
-
-    private void consultaVentas() {
-
-        String articuloSeleccionado = tblArticulos.getValueAt(tblArticulos.getSelectedRow(), 1).toString();
-
-        if (tblArticulos.getSelectedRow() != -1) {
-
-            List<ArticulosVenta> listaVentas = new ArrayList<>();
-
-            String fechaInicial = Utilidades.fechaBD(dpFechaInicial1.getDate());
-            String fechaFinal = Utilidades.fechaBD(dpFechaFinal1.getDate());
-            DAOGenerico dao = new DAOGenerico();
-            listaVentas = dao.buscaVentas(articuloSeleccionado, fechaInicial, fechaFinal);
-
-            remueveVentas();
-            for (int i = 0; i < listaVentas.size(); i++) {
-
-                Date fecha = listaVentas.get(i).getFactura().getFecha();
-
-                tableModelVentas.insertRow(i, new Object[]{listaVentas.get(i).getFactura().getIdfactura(),
-                    Utilidades.fechaPantallaString(fecha), listaVentas.get(i).getValorConIva(),
-                    listaVentas.get(i).getCantidad(), listaVentas.get(i).getFactura().getCliente().getNombre()});
-
-            }
-            try {
-                Integer total = 0;
-                for (int i = 0; i < tblVentas.getRowCount(); i++) {
-                    String unidad = tblVentas.getValueAt(i, 3).toString();
-                    Integer valor = Integer.parseInt(unidad);
-                    total += valor;
-                }
-                txtTotalVentas.setText(String.valueOf(total));
-
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, e);
-            }
-        } else {
-            remueveVentas();
-        }
-
-    }
-
-    private void remueveCompras() {
-        tableModelCompras = (DefaultTableModel) tblCompras.getModel();
-        int numeroLineas = tblCompras.getRowCount();
-        for (int i = 0; i < numeroLineas; i++) {
-            tableModelCompras.removeRow(0);
-        }
-    }
-
-    private void remueveVentas() {
-        tableModelVentas = (DefaultTableModel) tblVentas.getModel();
-        int numeroLineas = tblVentas.getRowCount();
-        for (int i = 0; i < numeroLineas; i++) {
-            tableModelVentas.removeRow(0);
-        }
-    }
-
     private void eliminaProducto() {
 
         Articulo articulo = new Articulo();
@@ -496,7 +341,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 txtDescripcion.setText(articuloSeleccionado.getDescripcion());
                 txtNombre.setText(articuloSeleccionado.getNombre());
                 txtValorVenta.setText(articuloSeleccionado.getValor_venta().toString());
-                txtValor_CompraConImp.setText(articuloSeleccionado.getValor_compra_impuesto().toString());
+                txtValor_CompraConImp.setText(articuloSeleccionado.getValor_compra().toString());
 
             } catch (Exception error) {
                 JOptionPane.showMessageDialog(null, "Error al mostrar detalles", "Error", JOptionPane.ERROR_MESSAGE);
@@ -611,26 +456,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnSelecionaUnidad = new javax.swing.JButton();
         txtDescripcion = new javax.swing.JTextField();
         txtCodigo = new javax.swing.JTextField();
-        jPanel9 = new javax.swing.JPanel();
-        jLabel10 = new javax.swing.JLabel();
-        btnBuscar = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        tblCompras = new javax.swing.JTable();
-        dpFechaInicial = new org.jdesktop.swingx.JXDatePicker();
-        dpFechaFinal = new org.jdesktop.swingx.JXDatePicker();
-        txtTotalCompras = new javax.swing.JTextField();
-        jLabel14 = new javax.swing.JLabel();
-        jPanel10 = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
-        btnBuscarVentas = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        tblVentas = new javax.swing.JTable();
-        dpFechaInicial1 = new org.jdesktop.swingx.JXDatePicker();
-        dpFechaFinal1 = new org.jdesktop.swingx.JXDatePicker();
-        txtTotalVentas = new javax.swing.JTextField();
-        jLabel19 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblArticulos = new javax.swing.JTable();
@@ -886,210 +711,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jPanel8.add(txtCodigo, gridBagConstraints);
 
         jTabbedPane4.addTab("Información Principal", jPanel8);
-
-        jPanel9.setLayout(new java.awt.GridBagLayout());
-
-        jLabel10.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel10.setText("Total de compras en el período");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel9.add(jLabel10, gridBagConstraints);
-
-        btnBuscar.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        btnBuscar.setText("Consultar");
-        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 80;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(1, 1, 1, 1);
-        jPanel9.add(btnBuscar, gridBagConstraints);
-
-        jLabel2.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel2.setText("Fecha Inicial");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel9.add(jLabel2, gridBagConstraints);
-
-        tblCompras.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        tblCompras.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Factura", "Fecha", "Precio Compra IVA Incl.", "Unidades", "Proveedor"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, true, true, true
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane4.setViewportView(tblCompras);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel9.add(jScrollPane4, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 60;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel9.add(dpFechaInicial, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 60;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel9.add(dpFechaFinal, gridBagConstraints);
-
-        txtTotalCompras.setEditable(false);
-        txtTotalCompras.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 60;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel9.add(txtTotalCompras, gridBagConstraints);
-
-        jLabel14.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel14.setText("Fecha Final");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel9.add(jLabel14, gridBagConstraints);
-
-        jTabbedPane4.addTab("Compras del Articulo", jPanel9);
-
-        jPanel10.setLayout(new java.awt.GridBagLayout());
-
-        jLabel15.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel15.setText("Total de ventas en el período");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel10.add(jLabel15, gridBagConstraints);
-
-        btnBuscarVentas.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        btnBuscarVentas.setText("Consultar");
-        btnBuscarVentas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarVentasActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 80;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
-        gridBagConstraints.insets = new java.awt.Insets(1, 1, 1, 1);
-        jPanel10.add(btnBuscarVentas, gridBagConstraints);
-
-        jLabel4.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel4.setText("Fecha Inicial");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel10.add(jLabel4, gridBagConstraints);
-
-        tblVentas.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        tblVentas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Factura", "Fecha", "Precio Venta IVA Incl.", "Unidades", "Cliente"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, true, true, true
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane5.setViewportView(tblVentas);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        jPanel10.add(jScrollPane5, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 60;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel10.add(dpFechaInicial1, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 60;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel10.add(dpFechaFinal1, gridBagConstraints);
-
-        txtTotalVentas.setEditable(false);
-        txtTotalVentas.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 60;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel10.add(txtTotalVentas, gridBagConstraints);
-
-        jLabel19.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel19.setText("Fecha Final");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel10.add(jLabel19, gridBagConstraints);
-
-        jTabbedPane4.addTab("Ventas del Articulo", jPanel10);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -1369,34 +990,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         filtros();
     }//GEN-LAST:event_txtFiltroActionPerformed
 
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-
-       // consultaCompras();
-
-  }//GEN-LAST:event_btnBuscarActionPerformed
-
-    private void btnBuscarVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarVentasActionPerformed
-
-        // consultaVentas();
-    }//GEN-LAST:event_btnBuscarVentasActionPerformed
-
-    private void btnSelecionaCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaCategoriaActionPerformed
-
-        CategoriaFrame categorias = new CategoriaFrame(this);
-        this.getDesktopPane().add(categorias);
-        categorias.setVisible(true);
-        categorias.toFront();
-    }//GEN-LAST:event_btnSelecionaCategoriaActionPerformed
-
-    private void btnSelecionaUnidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaUnidadActionPerformed
-
-        UnidadFrame unidades = new UnidadFrame(this);
-        this.getDesktopPane().add(unidades);
-        unidades.setVisible(true);
-        unidades.toFront();
-
-    }//GEN-LAST:event_btnSelecionaUnidadActionPerformed
-
     private void btnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetallesActionPerformed
 
         switch (panelVisible) {
@@ -1417,10 +1010,24 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         seleccionaArticulo();
     }//GEN-LAST:event_btnSeleccionaArticuloVentaActionPerformed
 
+    private void btnSelecionaUnidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaUnidadActionPerformed
+
+        UnidadFrame unidades = new UnidadFrame(this);
+        this.getDesktopPane().add(unidades);
+        unidades.setVisible(true);
+        unidades.toFront();
+    }//GEN-LAST:event_btnSelecionaUnidadActionPerformed
+
+    private void btnSelecionaCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaCategoriaActionPerformed
+
+        CategoriaFrame categorias = new CategoriaFrame(this);
+        this.getDesktopPane().add(categorias);
+        categorias.setVisible(true);
+        categorias.toFront();
+    }//GEN-LAST:event_btnSelecionaCategoriaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterar;
-    private javax.swing.JButton btnBuscar;
-    private javax.swing.JButton btnBuscarVentas;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnDetalles;
     private javax.swing.JButton btnExcluir;
@@ -1434,28 +1041,17 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox cbCategoria;
     private javax.swing.JComboBox cbIva;
     private javax.swing.JComboBox cbUnidad;
-    private org.jdesktop.swingx.JXDatePicker dpFechaFinal;
-    private org.jdesktop.swingx.JXDatePicker dpFechaFinal1;
-    private org.jdesktop.swingx.JXDatePicker dpFechaInicial;
-    private org.jdesktop.swingx.JXDatePicker dpFechaInicial1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
@@ -1463,10 +1059,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTextField jTextField1;
@@ -1477,15 +1070,11 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JRadioButton rbDescripcion;
     private javax.swing.JRadioButton rbNombre;
     private javax.swing.JTable tblArticulos;
-    private javax.swing.JTable tblCompras;
-    private javax.swing.JTable tblVentas;
     private javax.swing.JFormattedTextField txtCantidad;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDescripcion;
     private javax.swing.JTextField txtFiltro;
     private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtTotalCompras;
-    private javax.swing.JTextField txtTotalVentas;
     private javax.swing.JFormattedTextField txtValorVenta;
     private javax.swing.JFormattedTextField txtValor_CompraConImp;
     // End of variables declaration//GEN-END:variables

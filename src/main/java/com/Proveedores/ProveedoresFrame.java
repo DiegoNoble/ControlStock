@@ -3,9 +3,9 @@ package com.Proveedores;
 import com.Beans.Proveedor;
 import javax.swing.JOptionPane;
 import com.Beans.CondicionImpositiva;
+import com.Compras.RegistraCompra;
 import com.DAO.ProveedorDAO;
 import com.Pedidos.RegistraPedido;
-import com.Ventas.RegistraVentaFrame;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,13 +18,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class ProveedoresFrame extends javax.swing.JInternalFrame {
 
-    private RegistraVentaFrame seteaProveedorVenta;
-    private RegistraPedido seteaProveedorPedido;
     private Proveedor proveedorSeleccionado;
     ProveedoresTableModel tableModel;
     List<Proveedor> listProveedors;
     ProveedorDAO proveedorDAO;
     Proveedor proveedor;
+    RegistraCompra registraCompra;
 
     public ProveedoresFrame() {
         initComponents();
@@ -35,20 +34,13 @@ public class ProveedoresFrame extends javax.swing.JInternalFrame {
         btnExcluir.setVisible(false);
     }
 
-    public ProveedoresFrame(RegistraVentaFrame seteaProveedor) {
+    public ProveedoresFrame(RegistraCompra registraCompra) {
         initComponents();
 
         btnExcluir.setVisible(false);
         defineModelo();
-        this.seteaProveedorVenta = seteaProveedor;
-    }
-
-    public ProveedoresFrame(RegistraPedido seteaProveedorPedido) {
-        initComponents();
-
-        btnExcluir.setVisible(false);
-        defineModelo();
-        this.seteaProveedorPedido = seteaProveedorPedido;
+         buscaTodos();
+        this.registraCompra = registraCompra;
     }
 
     public Proveedor getClie() {
@@ -82,10 +74,12 @@ public class ProveedoresFrame extends javax.swing.JInternalFrame {
                         proveedorSeleccionado = listProveedors.get(tblProveedor.getSelectedRow());
                         btnExcluir.setEnabled(true);
                         btnAlterar.setEnabled(true);
+                        btnSeleccionaProveedor.setEnabled(true);
                         muestraDetalle();
 
                     } else {
                         proveedorSeleccionado = null;
+                        btnSeleccionaProveedor.setEnabled(false);
                         btnExcluir.setEnabled(false);
                         btnAlterar.setEnabled(false);
                     }
@@ -765,26 +759,7 @@ public class ProveedoresFrame extends javax.swing.JInternalFrame {
 
     private void btnSeleccionaProveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaProveedorActionPerformed
 
-        /*int filaSeleccionada = tblProveedor.getSelectedRow();
-         if (filaSeleccionada == -1) {
-         JOptionPane.showMessageDialog(null, "Seleccione un proveedor en la tabla!", "Error", JOptionPane.ERROR_MESSAGE);
-         } else {
-
-         Proveedor proveedor = new Proveedor();
-         proveedor.setId_proveedor(Integer.parseInt(tblProveedor.getValueAt(filaSeleccionada, 0).toString()));
-         proveedor.setNombre(tblProveedor.getValueAt(filaSeleccionada, 1).toString());
-         if (seteaProveedorVenta == null) {
-         seteaProveedorPedido.agregarProveedor(proveedor);
-         this.dispose();
-         seteaProveedorPedido.toFront();
-         } else if (seteaProveedorPedido == null) {
-         seteaProveedorVenta.setClie(proveedor);
-         this.dispose();
-         seteaProveedorVenta.toFront();
-         }
-
-         }
-         */
+        this.registraCompra.agregarProveedor(proveedorSeleccionado);
 
     }//GEN-LAST:event_btnSeleccionaProveedorActionPerformed
 

@@ -4,7 +4,6 @@ import com.Beans.Vendedor;
 import javax.swing.JOptionPane;
 import com.DAO.VendedorDAO;
 import com.Pedidos.RegistraPedido;
-import com.Ventas.RegistraVentaFrame;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,9 +15,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 public class VendedorFrame extends javax.swing.JInternalFrame {
 
-    private RegistraVentaFrame seteaVendedorVenta;
-    private RegistraPedido seteaVendedorPedido;
     private Vendedor vendedorSeleccionado;
+    RegistraPedido seteaVendedorPedido;
     VendedoresTableModel tableModel;
     List<Vendedor> listVendedores;
     VendedorDAO vendedorDAO;
@@ -34,13 +32,7 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
         btnExcluir.setVisible(false);
     }
 
-    public VendedorFrame(RegistraVentaFrame seteaVendedor) {
-        initComponents();
-
-        btnExcluir.setVisible(false);
-        defineModelo();
-        this.seteaVendedorVenta = seteaVendedor;
-    }
+   
 
     public VendedorFrame(RegistraPedido seteaVendedorPedido) {
         initComponents();

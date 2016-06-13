@@ -59,6 +59,29 @@ public class RemitoDAO extends DAOGenerico<Object> {
         });
         transacion.commit();
     }
+    
+    public void imprimeContraRemito(final Remito remito) {
+
+        transacion = seccion.beginTransaction();
+        seccion.doWork(new Work() {
+
+            @Override
+            public void execute(Connection cnctn) throws SQLException {
+                try {
+                    BufferedImage logo = ImageIO.read(getClass().getResource("/com/imagenes/logo.png"));
+                    HashMap parametros = new HashMap();
+                    parametros.put("idRemito", remito.getId());
+                    parametros.put("logo", logo);
+                    InputStream resource = getClass().getResourceAsStream("/com/Informes/Contra_Remito.jasper");
+                    JasperPrint jasperPrint = JasperFillManager.fillReport(resource, parametros, cnctn);
+                    JasperViewer.viewReport(jasperPrint, false);
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, ex);
+                }
+            }
+        });
+        transacion.commit();
+    }
 
     public List buscaEntreFechas(Date desde, Date hasta) {
 

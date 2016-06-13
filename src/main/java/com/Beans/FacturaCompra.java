@@ -1,91 +1,45 @@
-
 package com.Beans;
 
-import com.Beans.EstadoEnum;
-import com.Beans.MonedaEnum;
-import com.Beans.TipoDocumentoEnum;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
-
 
 @Entity
 @Table(name = "factura_compra")
 public class FacturaCompra implements Serializable {
-   
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idfactura")
-    private Integer idfactura;
+    @Column(name = "id")
+    private Integer id;
+
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    @Column(name = "fechaVencimiento")
-    @Temporal(TemporalType.DATE)
-    private Date fechaVencimiento;
+
     @Column(name = "Total")
     private Double total;
-    @ManyToOne (targetEntity=Proveedor.class)
-    @JoinColumn(name="id_proveedor")
+    private Double subtotal;
+    private Double iva;
+
+    @ManyToOne(targetEntity = Proveedor.class)
+    @JoinColumn(name = "id_proveedor")
     private Proveedor proveedor;
     @Enumerated(EnumType.STRING)
-    @Column(name="tipo")
-    private TipoDocumentoEnum tipo;
-    @Column(name ="nro")
-    private Integer nroFactura;
-    @Column(name ="serie")
-    private String serieFactura;
-    @Column(name="moneda")
-    @Enumerated(EnumType.STRING)
-    private MonedaEnum moneda;
-    @Column(name="estado")
-    @Enumerated(EnumType.STRING)
-    private EstadoEnum estado;
 
-    public EstadoEnum getEstado() {
-        return estado;
-    }
+    @Column(name = "nroDocumento")
+    private String nroDocumento;
 
-    public void setEstado(EstadoEnum estado) {
-        this.estado = estado;
-    }
-
-    public MonedaEnum getMoneda() {
-        return moneda;
-    }
-
-    public void setMoneda(MonedaEnum moneda) {
-        this.moneda = moneda;
-    }
+    @OneToMany(mappedBy = "facturaCompra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ArticulosCompra> articulosCompra;
     
-    public Integer getNroFactura() {
-        return nroFactura;
+    public Integer getId() {
+        return id;
     }
 
-    public void setNroFactura(Integer nroFactura) {
-        this.nroFactura = nroFactura;
-    }
-
-    public String getSerieFactura() {
-        return serieFactura;
-    }
-
-    public void setSerieFactura(String serieFactura) {
-        this.serieFactura = serieFactura;
-    }
-    public FacturaCompra() {
-    }
-
-    public FacturaCompra(Integer idfactura) {
-        this.idfactura = idfactura;
-    }
-
-    public Integer getIdfactura() {
-        return idfactura;
-    }
-
-    public void setIdfactura(Integer idfactura) {
-        this.idfactura = idfactura;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Date getFecha() {
@@ -94,15 +48,6 @@ public class FacturaCompra implements Serializable {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
-    }
-    
-    
-    public Date getFechaVencimiento() {
-        return fechaVencimiento;
-    }
-
-    public void setFechaVencimiento(Date fechaVencimiento) {
-        this.fechaVencimiento = fechaVencimiento;
     }
 
     public Double getTotal() {
@@ -113,33 +58,44 @@ public class FacturaCompra implements Serializable {
         this.total = total;
     }
 
-    /**
-     * @return the proveedor
-     */
     public Proveedor getProveedor() {
         return proveedor;
     }
 
-    /**
-     * @param proveedor the proveedor to set
-     */
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
     }
 
-    /**
-     * @return the tipo
-     */
-    public TipoDocumentoEnum getTipo() {
-        return tipo;
+    public String getNroDocumento() {
+        return nroDocumento;
     }
 
-    /**
-     * @param tipo the tipo to set
-     */
-    public void setTipo(TipoDocumentoEnum tipo) {
-        this.tipo = tipo;
+    public void setNroDocumento(String nroDocumento) {
+        this.nroDocumento = nroDocumento;
     }
 
-   
+    public Double getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(Double subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public Double getIva() {
+        return iva;
+    }
+
+    public void setIva(Double iva) {
+        this.iva = iva;
+    }
+
+    public List<ArticulosCompra> getArticulosCompra() {
+        return articulosCompra;
+    }
+
+    public void setArticulosCompra(List<ArticulosCompra> articulosCompra) {
+        this.articulosCompra = articulosCompra;
+    }
+
 }

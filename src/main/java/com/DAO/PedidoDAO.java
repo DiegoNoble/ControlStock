@@ -5,19 +5,11 @@
 package com.DAO;
 
 import com.Beans.Pedido;
-import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import javax.swing.JOptionPane;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.view.JasperViewer;
 import org.hibernate.Query;
-import org.hibernate.jdbc.Work;
 
 /**
  *

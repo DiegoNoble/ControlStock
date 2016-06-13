@@ -7,6 +7,7 @@ import com.Beans.Cliente;
 import com.Beans.MovStock;
 import com.Beans.Remito;
 import com.Beans.SituacionPedido;
+import com.Beans.TipoRemito;
 import com.Beans.Vendedor;
 import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;
@@ -124,6 +125,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                     remito.setFecha(new Date());
                     remito.setImporteRemito(importeRemito);
                     remito.setPedido(pedido);
+                    remito.setTipoRemito(TipoRemito.REMITO);
                     remitoDAO = new RemitoDAO(remito);
                     remitoDAO.guardar();
 

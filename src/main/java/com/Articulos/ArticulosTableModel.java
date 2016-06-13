@@ -51,7 +51,7 @@ public class ArticulosTableModel extends AbstractTableModel {
             case 1:
                 return c.getNombre();
             case 2:
-                return c.getValor_compra_impuesto();
+                return c.getValor_compra();
             case 3:
                 return c.getValor_venta();
             case 4:

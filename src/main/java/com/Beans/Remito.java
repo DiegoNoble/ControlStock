@@ -16,7 +16,7 @@ public class Remito implements Serializable {
     private Date fecha;
     private Double importeRemito;
 
-    @ManyToOne(targetEntity = Pedido.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
     @Enumerated(EnumType.STRING)

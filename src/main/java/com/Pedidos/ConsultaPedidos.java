@@ -19,7 +19,6 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
-import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public final class ConsultaPedidos extends javax.swing.JInternalFrame {
 
@@ -29,7 +28,6 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
     PedidosTableModel tableModel;
     List<Pedido> listPedidos;
     Pedido pedidoSeleccionado;
-    static Pedido pedidoSingleton;
     ArticuloDAO articulosDAO;
     ClienteDAO clienteDAO;
     VendedorDAO vendedorDAO;
@@ -46,15 +44,6 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         dpHasta.setFormats("dd/MM/yyyy");
         buscarEntreFechas();
         btnAtenderPedido.setEnabled(false);
-    }
-
-    public static Pedido getInstance() {
-
-        if (pedidoSingleton == null) {
-            pedidoSingleton = new Pedido();
-        }
-
-        return pedidoSingleton;
     }
 
     void buscarEntreFechas() {

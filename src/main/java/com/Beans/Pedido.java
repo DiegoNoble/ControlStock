@@ -18,11 +18,11 @@ public class Pedido implements Serializable {
     private Double importeTotal;
     private Double importePendiente = importeTotal;
 
-    @ManyToOne(targetEntity = Cliente.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
-    @ManyToOne(targetEntity = Vendedor.class)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_vendedor")
     private Vendedor vendedor;
 

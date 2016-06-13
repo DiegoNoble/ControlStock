@@ -1,18 +1,11 @@
 package com.Compras;
 
-import com.Remito.*;
-import com.Beans.Articulo;
-import com.Beans.ArticulosPedido;
-import com.Beans.MovStock;
-import com.Beans.Pedido;
-import com.Beans.Remito;
-import com.Beans.SituacionPedido;
-import com.Beans.TipoRemito;
+import com.Beans.ArticulosCompra;
+import com.Beans.FacturaCompra;
 import com.DAO.ArticuloDAO;
-import com.DAO.ArticulosPedidoDAO;
+import com.DAO.ArticulosCompraDAO;
 import com.DAO.MovStockDAO;
-import com.DAO.PedidoDAO;
-import com.DAO.RemitoDAO;
+import com.DAO.FacturaCompraDAO;
 import com.Renderers.MeDateCellRenderer;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,12 +19,13 @@ import javax.swing.table.*;
 
 public final class ConsultaCompras extends javax.swing.JInternalFrame {
 
-    RemitoTableModel tableModel;
-    List<Remito> listRemitos;
-    Remito remitoSeleccionado;
-    RemitoDAO remitoDAO;
-    PedidoDAO pedidoDAO;
-    ArticulosPedidoDAO articulosPedidoDAO;
+    ComprasTableModel tableModelCompras;
+    ArticulosCompraTableModel tableModelArticulos;
+    List<FacturaCompra> listCompras;
+    List<ArticulosCompra> listArticulosCompra;
+    FacturaCompra remitoSeleccionado;
+    FacturaCompraDAO facturaCompraDAO;
+    ArticulosCompraDAO articulosCompraDAO;
     ArticuloDAO articulosDAO;
     MovStockDAO movStockDAO;
 
@@ -40,23 +34,22 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
 
         defineModelo();
         buscarPorFechas();
-        btnImprimirRemito.setEnabled(false);
         //btnAnular.setVisible(false);
         btnAnular.setEnabled(false);
     }
 
     public void buscar() {
-        remitoDAO = new RemitoDAO();
-        if (rbCodRemito.isSelected()) {
+        facturaCompraDAO = new FacturaCompraDAO();
+        if (rbNroDocumento.isSelected()) {
             try {
-                tableModel.agregar(remitoDAO.buscarPor(Remito.class, "id", txtFiltroCod.getText()));
+                tableModelCompras.agregar(facturaCompraDAO.buscarPor(FacturaCompra.class, "nroDocumento", txtFiltroCod.getText()));
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(null, "Los codigos deben ser numéricos", "Error", JOptionPane.ERROR_MESSAGE);
                 exception.printStackTrace();
             }
-        } else if (rbCodPedido.isSelected()) {
+        } else if (rbproveedor.isSelected()) {
             try {
-                tableModel.agregar(remitoDAO.buscarPor(Remito.class, "remito.id", txtFiltroCod.getText()));
+                tableModelCompras.agregar(facturaCompraDAO.buscarPor(FacturaCompra.class, "provedor.razonSocial", txtFiltroCod.getText()));
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(null, "Los codigos deben ser numéricos", "Error", JOptionPane.ERROR_MESSAGE);
                 exception.printStackTrace();
@@ -66,8 +59,13 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
     }
 
     private void buscarPorFechas() {
-        remitoDAO = new RemitoDAO();
-        tableModel.agregar(remitoDAO.buscaEntreFechas(dpDesde.getDate(), dpHasta.getDate()));
+        facturaCompraDAO = new FacturaCompraDAO();
+        tableModelCompras.agregar(facturaCompraDAO.buscaEntreFechas(dpDesde.getDate(), dpHasta.getDate()));
+    }
+
+    private void buscaArticulos(FacturaCompra facturaCompra) {
+        articulosCompraDAO = new ArticulosCompraDAO();
+        tableModelArticulos.agregar(articulosCompraDAO.buscarPor(ArticulosCompra.class, "facturaCompra.id", facturaCompra.getId()));
     }
 
     private void defineModelo() {
@@ -76,146 +74,113 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
         dpDesde.setFormats("dd/MM/yyyy");
         dpHasta.setFormats("dd/MM/yyyy");
 
-        ((DefaultTableCellRenderer) tblRemitos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-        listRemitos = new ArrayList<Remito>();
-        tableModel = new RemitoTableModel(listRemitos);
-        tblRemitos.setModel(tableModel);
-        tblRemitos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
+        ((DefaultTableCellRenderer) tblArticulosCompra.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+        listArticulosCompra = new ArrayList<>();
+        tableModelArticulos = new ArticulosCompraTableModel(listArticulosCompra);
+        tblArticulosCompra.setModel(tableModelArticulos);
+
+        ((DefaultTableCellRenderer) tblCompras.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+        listCompras = new ArrayList<FacturaCompra>();
+        tableModelCompras = new ComprasTableModel(listCompras);
+        tblCompras.setModel(tableModelCompras);
+        tblCompras.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
         int[] anchos = {20, 20, 20, 20, 20};
 
-        for (int i = 0; i < tblRemitos.getColumnCount(); i++) {
+        for (int i = 0; i < tblCompras.getColumnCount(); i++) {
 
-            tblRemitos.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+            tblCompras.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
 
         }
 
-        ListSelectionModel listModel = tblRemitos.getSelectionModel();
+        ListSelectionModel listModel = tblCompras.getSelectionModel();
         listModel.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent lse) {
-                if (tblRemitos.getSelectedRow() != -1) {
-                    btnImprimirRemito.setEnabled(true);
-                    remitoSeleccionado = listRemitos.get(tblRemitos.getSelectedRow());
-                    if (remitoSeleccionado.getAnulado() == false) {
-                        btnAnular.setEnabled(true);
-                    } else {
-                        btnAnular.setEnabled(false);
-                    }
+                if (tblCompras.getSelectedRow() != -1) {
+                    remitoSeleccionado = listCompras.get(tblCompras.getSelectedRow());
+                    buscaArticulos(remitoSeleccionado);
                 } else {
-                    btnImprimirRemito.setEnabled(false);
                     remitoSeleccionado = null;
                     btnAnular.setEnabled(false);
                 }
             }
         });
 
-        tblRemitos.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent me) {
-
-                if (me.getClickCount() == 2) {
-                    imprimirRemito();
-                }
-            }
-        });
-
     }
 
-    private void imprimirRemito() {
+    /*  private void anularFacturaCompra() {
 
-        try {
-            if (remitoSeleccionado == null) {
-                JOptionPane.showMessageDialog(this, "Seleccione un remito", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                if (remitoSeleccionado.getTipoRemito() == TipoRemito.REMITO) {
-                    remitoDAO = new RemitoDAO();
-                    remitoDAO.imprimeRemito(remitoSeleccionado);
-                } else {
-                    remitoDAO = new RemitoDAO();
-                    remitoDAO.imprimeContraRemito(remitoSeleccionado);
-                }
-            }
+     try {
+     Double mov = 0.0;
+     Double valorUnitario = 0.0;
+     Double importeFacturaCompra = 0.0;
+     List<MovStock> listMovStock = new ArrayList<>();
+     Pedido pedido = remitoSeleccionado.getPedido();
+     for (ArticulosPedido articulosPedido : pedido.getArticulosPedido()) {
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
-        }
-    }
+     if (articulosPedido.getCantPendiente() - articulosPedido.getCantPedida() != 0) {
+     mov = (articulosPedido.getCantPedida() * -1);
 
-    private void anularRemito() {
+     valorUnitario = articulosPedido.getArticulo().getValor_venta();
+     importeFacturaCompra = importeFacturaCompra + valorUnitario * mov;
+     articulosPedido.setCantAtendida(articulosPedido.getCantPedida() + mov);
+     articulosPedido.setCantPendiente(articulosPedido.getCantPedida());
 
-        try {
-            Double mov = 0.0;
-            Double valorUnitario = 0.0;
-            Double importeRemito = 0.0;
-            List<MovStock> listMovStock = new ArrayList<>();
-            Pedido pedido = remitoSeleccionado.getPedido();
-            for (ArticulosPedido articulosPedido : pedido.getArticulosPedido()) {
+     articulosPedido.setImportePendiente(articulosPedido.getImportePedido());
+     articulosPedido.setImporteAtendido(articulosPedido.getImporteAtendido() - articulosPedido.getImportePedido());
+     articulosCompraDAO = new ArticulosPedidoDAO(articulosPedido);
+     articulosCompraDAO.actualiza();
 
-                if (articulosPedido.getCantPendiente() - articulosPedido.getCantPedida() != 0) {
-                    mov = (articulosPedido.getCantPedida() * -1);
+     MovStock movStock = new MovStock();
+     movStock.setArticulo(articulosPedido.getArticulo());
+     movStock.setCantidadMov(-mov);
+     movStock.setSaldoStock(articulosPedido.getArticulo().getCantidad() + (-mov));
+     movStock.setFecha(new Date());
+     listMovStock.add(movStock);
+     }
+     }
+     pedido.setImportePendiente(pedido.getImporteTotal());
+     pedido.setEstadoPedido(SituacionPedido.CON_REMITO_ANULADO);
+     pedido.setImporteAtendido(pedido.getImporteAtendido() + importeFacturaCompra);
 
-                    valorUnitario = articulosPedido.getArticulo().getValor_venta();
-                    importeRemito = importeRemito + valorUnitario * mov;
-                    articulosPedido.setCantAtendida(articulosPedido.getCantPedida() + mov);
-                    articulosPedido.setCantPendiente(articulosPedido.getCantPedida());
+     pedidoDAO = new PedidoDAO(pedido);
+     pedidoDAO.actualiza();
 
-                    articulosPedido.setImportePendiente(articulosPedido.getImportePedido());
-                    articulosPedido.setImporteAtendido(articulosPedido.getImporteAtendido() - articulosPedido.getImportePedido());
-                    articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
-                    articulosPedidoDAO.actualiza();
+     FacturaCompra remito = new FacturaCompra();
+     remito.setFecha(new Date());
+     remito.setImporteFacturaCompra(importeFacturaCompra);
+     remito.setPedido(pedido);
+     remito.setTipoFacturaCompra(TipoFacturaCompra.CONTRA_REMITO);
+     remito.setAnulado(true);
+     facturaCompraDAO = new FacturaCompraDAO(remito);
+     facturaCompraDAO.guardar();
+     remitoSeleccionado.setAnulado(true);
+     facturaCompraDAO = new FacturaCompraDAO(remitoSeleccionado);
+     facturaCompraDAO.actualiza();
 
-                    MovStock movStock = new MovStock();
-                    movStock.setArticulo(articulosPedido.getArticulo());
-                    movStock.setCantidadMov(-mov);
-                    movStock.setSaldoStock(articulosPedido.getArticulo().getCantidad() + (-mov));
-                    movStock.setFecha(new Date());
-                    listMovStock.add(movStock);
-                }
-            }
-            pedido.setImportePendiente(pedido.getImporteTotal());
-            pedido.setEstadoPedido(SituacionPedido.CON_REMITO_ANULADO);
-            pedido.setImporteAtendido(pedido.getImporteAtendido() + importeRemito);
+     for (MovStock movStock : listMovStock) {
+     movStock.setFacturaCompra(remito);
+     movStockDAO = new MovStockDAO(movStock);
+     movStockDAO.guardar();
 
-            pedidoDAO = new PedidoDAO(pedido);
-            pedidoDAO.actualiza();
+     Articulo articulo = movStock.getArticulo();
+     articulo.setCantidad(movStock.getSaldoStock());
+     articulosDAO = new ArticuloDAO(articulo);
+     articulosDAO.actualiza();
 
-            Remito remito = new Remito();
-            remito.setFecha(new Date());
-            remito.setImporteRemito(importeRemito);
-            remito.setPedido(pedido);
-            remito.setTipoRemito(TipoRemito.CONTRA_REMITO);
-            remito.setAnulado(true);
-            remitoDAO = new RemitoDAO(remito);
-            remitoDAO.guardar();
-            remitoSeleccionado.setAnulado(true);
-            remitoDAO = new RemitoDAO(remitoSeleccionado);
-            remitoDAO.actualiza();
+     }
+     JOptionPane.showMessageDialog(this, "FacturaCompra generado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+     //this.consultaPedido.buscar();
+     //this.dispose();
+     facturaCompraDAO = new FacturaCompraDAO();
+     facturaCompraDAO.imprimeContraFacturaCompra(remito);
 
-            for (MovStock movStock : listMovStock) {
-                movStock.setRemito(remito);
-                movStockDAO = new MovStockDAO(movStock);
-                movStockDAO.guardar();
+     } catch (Exception ex) {
 
-                Articulo articulo = movStock.getArticulo();
-                articulo.setCantidad(movStock.getSaldoStock());
-                articulosDAO = new ArticuloDAO(articulo);
-                articulosDAO.actualiza();
-
-            }
-            JOptionPane.showMessageDialog(this, "Remito generado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-            //this.consultaPedido.buscar();
-            //this.dispose();
-            remitoDAO = new RemitoDAO();
-            remitoDAO.imprimeContraRemito(remito);
-
-        } catch (Exception ex) {
-
-            JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
-            ex.printStackTrace();
-        }
-    }
-
+     JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
+     ex.printStackTrace();
+     }
+     }*/
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -229,12 +194,14 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
         jPanel11 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         txtFiltroCod = new javax.swing.JTextField();
-        rbCodRemito = new javax.swing.JRadioButton();
-        rbCodPedido = new javax.swing.JRadioButton();
+        rbNroDocumento = new javax.swing.JRadioButton();
+        rbproveedor = new javax.swing.JRadioButton();
         btnBuscar = new javax.swing.JButton();
         jPanel12 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblRemitos = new javax.swing.JTable();
+        tblCompras = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblArticulosCompra = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         btnBuscarPorFechas = new javax.swing.JButton();
         dpHasta = new org.jdesktop.swingx.JXDatePicker();
@@ -242,7 +209,6 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
         dpDesde = new org.jdesktop.swingx.JXDatePicker();
         jLabel2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        btnImprimirRemito = new javax.swing.JButton();
         btnAnular = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
@@ -260,7 +226,7 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Consulta Remitos");
+        jLabel1.setText("Consulta Compras");
         jPanel1.add(jLabel1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -295,30 +261,30 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel11.add(txtFiltroCod, gridBagConstraints);
 
-        buttonGroup1.add(rbCodRemito);
-        rbCodRemito.setSelected(true);
-        rbCodRemito.setText("Cod remito");
-        rbCodRemito.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup1.add(rbNroDocumento);
+        rbNroDocumento.setSelected(true);
+        rbNroDocumento.setText("Nro Documento");
+        rbNroDocumento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbCodRemitoActionPerformed(evt);
+                rbNroDocumentoActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
-        jPanel11.add(rbCodRemito, gridBagConstraints);
+        jPanel11.add(rbNroDocumento, gridBagConstraints);
 
-        buttonGroup1.add(rbCodPedido);
-        rbCodPedido.setText("Cod pedido");
-        rbCodPedido.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup1.add(rbproveedor);
+        rbproveedor.setText("Proveedor");
+        rbproveedor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbCodPedidoActionPerformed(evt);
+                rbproveedorActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
-        jPanel11.add(rbCodPedido, gridBagConstraints);
+        jPanel11.add(rbproveedor, gridBagConstraints);
 
         btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/search.png"))); // NOI18N
         btnBuscar.setBorder(null);
@@ -341,8 +307,8 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
 
         jPanel12.setLayout(new java.awt.GridBagLayout());
 
-        tblRemitos.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
-        tblRemitos.setModel(new javax.swing.table.DefaultTableModel(
+        tblCompras.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        tblCompras.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -352,8 +318,31 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3"
             }
         ));
-        tblRemitos.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(tblRemitos);
+        tblCompras.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tblCompras);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        jPanel12.add(jScrollPane1, gridBagConstraints);
+
+        tblArticulosCompra.setFont(new java.awt.Font("Verdana", 0, 12)); // NOI18N
+        tblArticulosCompra.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3"
+            }
+        ));
+        tblArticulosCompra.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(tblArticulosCompra);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -362,7 +351,7 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        jPanel12.add(jScrollPane1, gridBagConstraints);
+        jPanel12.add(jScrollPane2, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -432,17 +421,6 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        btnImprimirRemito.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
-        btnImprimirRemito.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/printer.png"))); // NOI18N
-        btnImprimirRemito.setMnemonic('R');
-        btnImprimirRemito.setText("Imprimir");
-        btnImprimirRemito.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnImprimirRemitoActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnImprimirRemito);
-
         btnAnular.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         btnAnular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/delete_32.png"))); // NOI18N
         btnAnular.setMnemonic('R');
@@ -463,14 +441,14 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void rbCodRemitoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbCodRemitoActionPerformed
+    private void rbNroDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNroDocumentoActionPerformed
 
-    }//GEN-LAST:event_rbCodRemitoActionPerformed
+    }//GEN-LAST:event_rbNroDocumentoActionPerformed
 
-    private void rbCodPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbCodPedidoActionPerformed
+    private void rbproveedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbproveedorActionPerformed
 
 
-    }//GEN-LAST:event_rbCodPedidoActionPerformed
+    }//GEN-LAST:event_rbproveedorActionPerformed
 
     private void txtFiltroCodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFiltroCodActionPerformed
         buscar();
@@ -480,25 +458,18 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
         buscar();
     }//GEN-LAST:event_btnBuscarActionPerformed
 
-    private void btnImprimirRemitoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirRemitoActionPerformed
-
-        imprimirRemito();
-    }//GEN-LAST:event_btnImprimirRemitoActionPerformed
-
     private void btnBuscarPorFechasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarPorFechasActionPerformed
 
         buscarPorFechas();
     }//GEN-LAST:event_btnBuscarPorFechasActionPerformed
 
     private void btnAnularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnularActionPerformed
-        anularRemito();
     }//GEN-LAST:event_btnAnularActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnular;
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnBuscarPorFechas;
-    private javax.swing.JButton btnImprimirRemito;
     private javax.swing.ButtonGroup buttonGroup1;
     private org.jdesktop.swingx.JXDatePicker dpDesde;
     private org.jdesktop.swingx.JXDatePicker dpHasta;
@@ -513,10 +484,12 @@ public final class ConsultaCompras extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JRadioButton rbCodPedido;
-    private javax.swing.JRadioButton rbCodRemito;
-    private javax.swing.JTable tblRemitos;
+    private javax.swing.JRadioButton rbNroDocumento;
+    private javax.swing.JRadioButton rbproveedor;
+    private javax.swing.JTable tblArticulosCompra;
+    private javax.swing.JTable tblCompras;
     private javax.swing.JTextField txtFiltroCod;
     // End of variables declaration//GEN-END:variables
 

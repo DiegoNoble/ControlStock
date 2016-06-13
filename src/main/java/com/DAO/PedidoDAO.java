@@ -49,7 +49,7 @@ public class PedidoDAO extends DAOGenerico<Object> {
         try {
             SimpleDateFormat formatoBD = new SimpleDateFormat("yyyy-MM-dd");
             transacion = seccion.beginTransaction();
-            Query query = seccion.createQuery("from Pedido where fecha >= '" + formatoBD.format(desde) + "' and fecha <='" + formatoBD.format(hasta) + "'order by id desc");
+            Query query = seccion.createQuery("select p from Pedido p where fecha >= '" + formatoBD.format(desde) + "' and fecha <='" + formatoBD.format(hasta) + "'order by id desc");
             objetos = query.list();
             transacion.commit();
 

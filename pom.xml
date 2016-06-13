@@ -60,6 +60,7 @@
             <version>4.1.4.Final</version>
             <type>jar</type>
         </dependency>
+    
         <dependency>
             <groupId>org.swinglabs.swingx</groupId>
             <artifactId>swingx-all</artifactId>
@@ -92,6 +93,11 @@
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>1.8.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.6</version>
         </dependency>
     </dependencies>
     

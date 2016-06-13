@@ -4,6 +4,7 @@ import Utilidades.DesktopPaneImagem;
 import com.Articulos.ArticulosFrame;
 import com.CategoriaArticulos.CategoriaFrame;
 import com.Clientes.ClienteFrame;
+import com.Compras.ConsultaCompras;
 import com.Compras.RegistraCompra;
 import com.Pedidos.ConsultaPedidos;
 import com.Pedidos.RegistraPedido;
@@ -405,12 +406,12 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
     private void mnuItemConsultarVendas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultarVendas1ActionPerformed
 
-       /* ConsultaCompraFrame consultaCompra = new ConsultaCompraFrame();
+        ConsultaCompras consultaCompra = new ConsultaCompras();
         desktopPane.add(consultaCompra);
         centralizaJanela(consultaCompra);
         consultaCompra.setVisible(true);
         consultaCompra.toFront();
-*/
+
     }//GEN-LAST:event_mnuItemConsultarVendas1ActionPerformed
 
     private void mnuItemUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemUsuariosActionPerformed

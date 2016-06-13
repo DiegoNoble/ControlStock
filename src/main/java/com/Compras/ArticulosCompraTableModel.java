@@ -7,6 +7,7 @@ package com.Compras;
 
 import com.Beans.Articulo;
 import com.Beans.ArticulosCompra;
+import com.Beans.FacturaCompra;
 import java.util.List;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
@@ -25,6 +26,11 @@ public class ArticulosCompraTableModel extends AbstractTableModel {
     JTextField txtSubTotal;
     JTextField txtIVA;
 
+    public ArticulosCompraTableModel(List<ArticulosCompra> list) {
+        this.list = list;
+    }
+
+    
     public ArticulosCompraTableModel(List<ArticulosCompra> list, JTextField txtTotal, JTextField txtSubTotal, JTextField txtIVA) {
         this.txtTotal = txtTotal;
         this.txtSubTotal = txtSubTotal;
@@ -119,6 +125,13 @@ public class ArticulosCompraTableModel extends AbstractTableModel {
 
         this.fireTableRowsInserted(list.size() - 1, list.size() - 1);
         CalculaTotal();
+    }
+     public void agregar(List<ArticulosCompra> articulosCompras) {
+        list.clear();
+
+        list.addAll(articulosCompras);
+
+        this.fireTableDataChanged();
     }
 
     public void eliminar(int row) {

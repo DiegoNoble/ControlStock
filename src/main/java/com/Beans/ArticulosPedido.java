@@ -2,9 +2,16 @@ package com.Beans;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 @Entity
 @Table(name = "articulos_pedido")
+@XmlRootElement(name = "articuloPedido")
+@XmlType(propOrder = {"posicion", "cantPedida", "importePedido", "articulo"})
 public class ArticulosPedido implements Serializable {
 
     @Id
@@ -18,7 +25,9 @@ public class ArticulosPedido implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_pedido", nullable = false)
     private Pedido pedido;
-    
+
+    private Double bonificacion = 0.0;
+
     private Integer posicion;
     private Double cantPedida;
     private Double cantAtendida = 0.0;
@@ -49,7 +58,7 @@ public class ArticulosPedido implements Serializable {
         this.importePedido = importePedido;
         this.importePendiente = importePedido;
     }
-
+@XmlTransient
     public Integer getId() {
         return id;
     }
@@ -66,6 +75,7 @@ public class ArticulosPedido implements Serializable {
         this.articulo = articulo;
     }
 
+    @XmlTransient
     public Pedido getPedido() {
         return pedido;
     }
@@ -90,6 +100,7 @@ public class ArticulosPedido implements Serializable {
         this.cantPedida = cantPedida;
     }
 
+    @XmlTransient
     public Double getCantAtendida() {
         return cantAtendida;
     }
@@ -98,6 +109,7 @@ public class ArticulosPedido implements Serializable {
         this.cantAtendida = cantAtendida;
     }
 
+    @XmlTransient
     public Double getCantPendiente() {
         return cantPendiente;
     }
@@ -114,6 +126,7 @@ public class ArticulosPedido implements Serializable {
         this.importePedido = importePedido;
     }
 
+    @XmlTransient
     public Double getImporteAtendido() {
         return importeAtendido;
     }
@@ -122,6 +135,7 @@ public class ArticulosPedido implements Serializable {
         this.importeAtendido = importeAtendido;
     }
 
+    @XmlTransient
     public Double getImportePendiente() {
         return importePendiente;
     }
@@ -130,6 +144,13 @@ public class ArticulosPedido implements Serializable {
         this.importePendiente = importePendiente;
     }
 
-   
+    @XmlTransient
+    public Double getBonificacion() {
+        return bonificacion;
+    }
+
+    public void setBonificacion(Double bonificacion) {
+        this.bonificacion = bonificacion;
+    }
 
 }

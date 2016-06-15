@@ -20,7 +20,7 @@ import javax.swing.table.AbstractTableModel;
 public class PedidosTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Situción", "Cod.", "Fecha", "Cliente", "Vendedor", "Importe pendiente"};
+    private final String[] colunas = new String[]{"Situción", "Cod.", "Fecha", "Cliente", "Ciudad", "Vendedor", "Importe atendido","Total pedido"};
     //lista para a manipulacao do objeto
     private List<Pedido> list;
 
@@ -54,10 +54,13 @@ public class PedidosTableModel extends AbstractTableModel {
             case 3:
                 return c.getCliente().getNombre();
             case 4:
-                return c.getVendedor();
+                return c.getCliente().getCiudad();
             case 5:
-                return c.getImportePendiente();
-
+                return c.getVendedor();
+            case 6:
+                return c.getImporteAtendido();
+            case 7:
+                return c.getImporteTotal();
             default:
                 return null;
         }
@@ -82,8 +85,12 @@ public class PedidosTableModel extends AbstractTableModel {
             case 3:
                 return String.class;
             case 4:
-                return Vendedor.class;
+                return String.class;
             case 5:
+                return Vendedor.class;
+            case 6:
+                return Double.class;
+            case 7:
                 return Double.class;
 
             default:

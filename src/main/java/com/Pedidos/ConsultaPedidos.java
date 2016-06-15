@@ -3,6 +3,7 @@ package com.Pedidos;
 import com.Beans.Pedido;
 import com.Beans.Articulo;
 import com.Beans.Cliente;
+import com.Beans.SituacionPedido;
 import com.Beans.Vendedor;
 import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;
@@ -77,7 +78,7 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         tblPedidos.setModel(tableModel);
         tblPedidos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
         tblPedidos.getColumn("Situción").setCellRenderer(new TableRendererColorPedido(0));
-        int[] anchos = {20, 20, 20, 100, 100, 20};
+        int[] anchos = {10, 10, 20, 100,70, 100, 20,20};
 
         for (int i = 0; i < tblPedidos.getColumnCount(); i++) {
 
@@ -90,8 +91,10 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
             @Override
             public void valueChanged(ListSelectionEvent lse) {
                 if (tblPedidos.getSelectedRow() != -1) {
-                    btnAtenderPedido.setEnabled(true);
                     pedidoSeleccionado = listPedidos.get(tblPedidos.getSelectedRow());
+                    if (pedidoSeleccionado.getEstadoPedido() == SituacionPedido.NUEVO) {
+                        btnAtenderPedido.setEnabled(true);
+                    }
                 } else {
                     btnAtenderPedido.setEnabled(false);
                     pedidoSeleccionado = null;

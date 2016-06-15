@@ -24,6 +24,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.*;
 
 public class AtenderPedido extends javax.swing.JInternalFrame {
@@ -59,20 +61,26 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
     }
 
     private void defineModelo() {
-        Character chs[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'};
-        txtDescuento.setDocument(new ControlarEntradaTexto(10, chs));
+        // Character chs[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'};
+        //txtTotal.setDocument(new ControlarEntradaTexto(10, chs));
         ((DefaultTableCellRenderer) tblArticulosPedido.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
-        tableModel = new AtencionArticulosPedidoTableModel(listArticulosPedido);
+        tableModel = new AtencionArticulosPedidoTableModel(listArticulosPedido, txtTotal);
         tblArticulosPedido.setModel(tableModel);
-        
 
-        int[] anchos = {5, 100, 200, 20, 20, 20};
+        int[] anchos = {5, 100, 200, 20, 20, 20, 20, 20};
 
         for (int i = 0; i < tblArticulosPedido.getColumnCount(); i++) {
 
             tblArticulosPedido.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
 
         }
+        tableModel.addTableModelListener(new TableModelListener() {
+
+            @Override
+            public void tableChanged(TableModelEvent tme) {
+                tableModel.CalculaTotalPedido();
+            }
+        });
 
         ListSelectionModel listModel = tblArticulosPedido.getSelectionModel();
         listModel.addListSelectionListener(new ListSelectionListener() {
@@ -88,29 +96,23 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
 
     private void atenderPedido() {
 
-        Double descuento = 0.0;
-        if (!txtDescuento.getText().equals("")) {
-            descuento = Double.valueOf(txtDescuento.getText());
-        }
         try {
             if (listArticulosPedido.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Seleccione un articulo", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 Double mov = 0.0;
-                Double valorUnitario = 0.0;
                 Double importeRemito = 0.0;
                 List<MovStock> listMovStock = new ArrayList<>();
                 for (ArticulosPedido articulosPedido : listArticulosPedido) {
 
                     if (articulosPedido.getCantPendiente() - articulosPedido.getCantPedida() != 0) {
-                        mov = articulosPedido.getCantPedida() - articulosPedido.getCantPendiente() - articulosPedido.getCantAtendida();
+                        mov = articulosPedido.getCantAtendida();
 
-                        valorUnitario = articulosPedido.getArticulo().getValor_venta();
-                        importeRemito = importeRemito + valorUnitario * mov;
-                        articulosPedido.setCantAtendida(articulosPedido.getCantPedida() - articulosPedido.getCantPendiente());
+                        importeRemito = importeRemito + articulosPedido.getImporteAtendido();
+                        //articulosPedido.setCantp(articulosPedido.getCantPedida() - articulosPedido.getCantPendiente());
 
-                        articulosPedido.setImportePendiente(articulosPedido.getCantPendiente() * valorUnitario);
-                        articulosPedido.setImporteAtendido(articulosPedido.getCantAtendida() * valorUnitario);
+                       articulosPedido.setImportePendiente(articulosPedido.getImportePendiente() - articulosPedido.getImporteAtendido());
+                        //articulosPedido.setImporteAtendido(articulosPedido.getCantAtendida() * valorUnitario);
                         articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
                         articulosPedidoDAO.actualiza();
 
@@ -123,40 +125,39 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                     }
                 }
                 pedido.setImportePendiente(pedido.getImporteTotal() - importeRemito);
-                if (pedido.getImportePendiente() - pedido.getImporteTotal() != 0) {
-                    pedido.setEstadoPedido(SituacionPedido.ATENDIDO);
-                    pedido.setImporteAtendido(pedido.getImporteAtendido() + importeRemito);
+                //if (pedido.getImportePendiente() - pedido.getImporteTotal() != 0) {
+                pedido.setEstadoPedido(SituacionPedido.ATENDIDO);
+                pedido.setImporteAtendido(pedido.getImporteAtendido() + importeRemito);
 
-                    pedidoDAO = new PedidoDAO(pedido);
-                    pedidoDAO.actualiza();
+                pedidoDAO = new PedidoDAO(pedido);
+                pedidoDAO.actualiza();
 
-                    remito.setFecha(new Date());
-                    remito.setImporteRemito(importeRemito - descuento);
-                    remito.setDescuento(descuento);
-                    remito.setPedido(pedido);
-                    remito.setTipoRemito(TipoRemito.REMITO);
-                    remitoDAO = new RemitoDAO(remito);
-                    remitoDAO.guardar();
+                remito.setFecha(new Date());
+                remito.setImporteRemito(importeRemito);
+                remito.setPedido(pedido);
+                remito.setTipoRemito(TipoRemito.REMITO);
+                remitoDAO = new RemitoDAO(remito);
+                remitoDAO.guardar();
 
-                    for (MovStock movStock : listMovStock) {
-                        movStock.setRemito(remito);
-                        movStockDAO = new MovStockDAO(movStock);
-                        movStockDAO.guardar();
+                for (MovStock movStock : listMovStock) {
+                    movStock.setRemito(remito);
+                    movStockDAO = new MovStockDAO(movStock);
+                    movStockDAO.guardar();
 
-                        Articulo articulo = movStock.getArticulo();
-                        articulo.setCantidad(movStock.getSaldoStock());
-                        articulosDAO = new ArticuloDAO(articulo);
-                        articulosDAO.actualiza();
+                    Articulo articulo = movStock.getArticulo();
+                    articulo.setCantidad(movStock.getSaldoStock());
+                    articulosDAO = new ArticuloDAO(articulo);
+                    articulosDAO.actualiza();
 
-                    }
-                    JOptionPane.showMessageDialog(this, "Remito generado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-                    this.consultaPedido.buscar();
-                    this.dispose();
-                    remitoDAO = new RemitoDAO();
-                    remitoDAO.imprimeRemito(remito);
-                } else {
-                    JOptionPane.showMessageDialog(null, "El pedido no tenia posiciones pendientes", "Atención", JOptionPane.ERROR_MESSAGE);
                 }
+                JOptionPane.showMessageDialog(this, "Remito generado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
+                this.consultaPedido.buscar();
+                this.dispose();
+                remitoDAO = new RemitoDAO();
+                remitoDAO.imprimeRemito(remito);
+                /*} else {
+                 JOptionPane.showMessageDialog(null, "El pedido no tenia posiciones pendientes", "Atención", JOptionPane.ERROR_MESSAGE);
+                 }*/
 
             }
 
@@ -214,7 +215,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
         jPanel4 = new javax.swing.JPanel();
         btnRegistraVenta = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
-        txtDescuento = new javax.swing.JTextField();
+        txtTotal = new javax.swing.JTextField();
 
         jTextField1.setText("jTextField1");
 
@@ -407,24 +408,28 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         jPanel4.add(btnRegistraVenta, gridBagConstraints);
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel9.setText("Importe descuento");
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel9.setText("Total remito");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel4.add(jLabel9, gridBagConstraints);
 
-        txtDescuento.setText("0.0");
+        txtTotal.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        txtTotal.setText("0.0");
+        txtTotal.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 80;
+        gridBagConstraints.ipadx = 120;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel4.add(txtDescuento, gridBagConstraints);
+        jPanel4.add(txtTotal, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -452,8 +457,11 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnSelecionaCliente1ActionPerformed
 
     private void btnTotalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTotalesActionPerformed
+
         for (ArticulosPedido articulosPedido : listArticulosPedido) {
             articulosPedido.setCantPendiente(0.0);
+            articulosPedido.setCantAtendida(articulosPedido.getCantPedida());
+            articulosPedido.setImporteAtendido(articulosPedido.getArticulo().getValor_venta() * articulosPedido.getCantAtendida());
 
         }
         tableModel.fireTableDataChanged();
@@ -484,7 +492,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tblArticulosPedido;
-    private javax.swing.JTextField txtDescuento;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 
 }

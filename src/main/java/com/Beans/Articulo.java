@@ -2,6 +2,7 @@ package com.Beans;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -51,7 +52,7 @@ public class Articulo implements Serializable {
 
     /**
      * @return the nombre
-     */
+     */@XmlTransient
     public String getNombre() {
         return nombre;
     }
@@ -63,7 +64,7 @@ public class Articulo implements Serializable {
         this.nombre = nombre;
     }
 
-   
+   @XmlTransient
     public Double getValor_venta() {
         return valor_venta;
     }
@@ -75,7 +76,7 @@ public class Articulo implements Serializable {
         this.valor_venta = valor_venta;
     }
 
- 
+ @XmlTransient
     public Double getCantidad() {
         return cantidad;
     }
@@ -89,7 +90,7 @@ public class Articulo implements Serializable {
 
     /**
      * @return the descripcion
-     */
+     */@XmlTransient
     public String getDescripcion() {
         return descripcion;
     }
@@ -101,7 +102,7 @@ public class Articulo implements Serializable {
         this.descripcion = descripcion;
     }
 
- 
+ @XmlTransient
     public Categoria getCategoria() {
         return categoria;
     }
@@ -115,7 +116,7 @@ public class Articulo implements Serializable {
 
     /**
      * @return the iva
-     */
+     */@XmlTransient
     public Double getIva() {
         return iva;
     }
@@ -129,7 +130,7 @@ public class Articulo implements Serializable {
 
     /**
      * @return the valor_compra_impuesto
-     */
+     */@XmlTransient
     public Double getValor_compra() {
         return valor_compra;
     }
@@ -143,7 +144,7 @@ public class Articulo implements Serializable {
 
     /**
      * @return the unidad
-     */
+     */@XmlTransient
     public Unidad getUnidad() {
         return unidad;
     }

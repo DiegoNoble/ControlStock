@@ -18,12 +18,12 @@ import javax.swing.table.AbstractTableModel;
 public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Pos", "Cod.", "Nombre", "Pedido", "Pendiente"};
+    private final String[] colunas = new String[]{"Pos", "Cod.", "Nombre", "Cant pedida", "Cant atendida", "Unitario", "% Bonif", "Sub Total"};
     //lista para a manipulacao do objeto
     private List<ArticulosPedido> list;
     JTextField txtTotal;
 
-    public AtencionArticulosPedidoTableModel(List<ArticulosPedido> list) {
+    public AtencionArticulosPedidoTableModel(List<ArticulosPedido> list, JTextField txtTotal) {
         this.txtTotal = txtTotal;
         this.list = list;
     }
@@ -56,7 +56,13 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
             case 3:
                 return c.getCantPedida();
             case 4:
-                return c.getCantPendiente();
+                return c.getCantAtendida();
+            case 5:
+                return c.getArticulo().getValor_venta();
+            case 6:
+                return c.getBonificacion();
+            case 7:
+                return c.getImporteAtendido();
 
             default:
                 return null;
@@ -83,22 +89,41 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
                 return Double.class;
             case 4:
                 return Double.class;
+            case 5:
+                return Double.class;
+            case 6:
+                return Double.class;
+            case 7:
+                return Double.class;
 
             default:
                 return null;
         }
     }
 
+    Double calculaTotalAtendido(ArticulosPedido a) {
+
+        Double total = a.getArticulo().getValor_venta() * a.getCantAtendida();
+        Double totalBonificado = total - (total * (a.getBonificacion() / 100));
+        return totalBonificado;
+    }
+
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         ArticulosPedido c = list.get(rowIndex);
+
         switch (columnIndex) {
 
             case 4:
-                if (c.getCantPendiente() > ((Double) aValue)&&(((Double) aValue)>=0)) {
-                    c.setCantPendiente((Double) aValue);
-                    break;
-                }
+                c.setCantAtendida((Double) aValue);
+                c.setImporteAtendido(calculaTotalAtendido(c));
+                break;
+
+            case 6:
+
+                c.setBonificacion((Double) aValue);
+                c.setImporteAtendido(calculaTotalAtendido(c));
+                break;
 
         }
         fireTableCellUpdated(rowIndex, columnIndex); //To change body of generated methods, choose Tools | Templates.
@@ -107,27 +132,51 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 4;
+        if (columnIndex == 4) {
+            return true;
+        } else if (columnIndex == 6) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     public void agregar(ArticulosPedido articulosPedidos) {
         list.add(articulosPedidos);
-
         this.fireTableRowsInserted(list.size() - 1, list.size() - 1);
+        CalculaTotalPedido();
     }
 
     public void eliminar(int row) {
         list.remove(row);
         this.fireTableRowsDeleted(row, row);
+        CalculaTotalPedido();
     }
 
     public void atualizar(int row, ArticulosPedido articulosPedidos) {
         list.set(row, articulosPedidos);
         this.fireTableRowsUpdated(row, row);
+        CalculaTotalPedido();
     }
 
     public ArticulosPedido getCliente(int row) {
         return list.get(row);
+    }
+
+    public void CalculaTotalPedido() {
+        Double total = 0.0;
+        for (ArticulosPedido articulosPedido : list) {
+            if (articulosPedido.getImportePedido() != null) {
+                total = total + articulosPedido.getImporteAtendido();
+            }
+        }
+        //BigDecimal to = new BigDecimal
+
+        //DecimalFormat formato = new DecimalFormat("#,##");
+        //formato.setRoundingMode(RoundingMode.CEILING);
+        txtTotal.setText(String.format("%.2f", total));
+
     }
 
 }

@@ -4,9 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 @Entity
 @Table(name = "pedido")
+@XmlRootElement(name = "pedido")
+@XmlType(propOrder ={"id","fecha","estadoPedido","importeAtendido","importePendiente","importeTotal","observaciones","cliente","vendedor","articulosPedido"} )
 public class Pedido implements Serializable {
 
     @Id
@@ -18,6 +24,7 @@ public class Pedido implements Serializable {
     private Double importeTotal;
     private Double importePendiente = importeTotal;
 
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
@@ -26,6 +33,7 @@ public class Pedido implements Serializable {
     @JoinColumn(name = "id_vendedor")
     private Vendedor vendedor;
 
+    
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ArticulosPedido> articulosPedido;
 
@@ -86,6 +94,7 @@ public class Pedido implements Serializable {
         this.importeTotal = importeTotal;
     }
 
+    
     public Cliente getCliente() {
         return cliente;
     }
@@ -110,6 +119,8 @@ public class Pedido implements Serializable {
         this.estadoPedido = estadoPedido;
     }
 
+    @XmlElementWrapper(name = "articulosPedido")
+    @XmlElement(name = "articuloPedido")
     public List<ArticulosPedido> getArticulosPedido() {
         return articulosPedido;
     }

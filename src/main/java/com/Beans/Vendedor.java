@@ -7,6 +7,7 @@ package com.Beans;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -53,7 +54,7 @@ public class Vendedor implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-
+@XmlTransient
     public String getNombre() {
         return nombre;
     }
@@ -61,7 +62,7 @@ public class Vendedor implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
+@XmlTransient
     public String getDireccion() {
         return direccion;
     }
@@ -69,7 +70,7 @@ public class Vendedor implements Serializable {
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
-
+@XmlTransient
     public String getCiudad() {
         return ciudad;
     }
@@ -77,7 +78,7 @@ public class Vendedor implements Serializable {
     public void setCiudad(String ciudad) {
         this.ciudad = ciudad;
     }
-
+@XmlTransient
     public String getPais() {
         return pais;
     }
@@ -85,7 +86,7 @@ public class Vendedor implements Serializable {
     public void setPais(String pais) {
         this.pais = pais;
     }
-
+@XmlTransient
     public String getTelefono() {
         return telefono;
     }
@@ -93,7 +94,7 @@ public class Vendedor implements Serializable {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
-
+@XmlTransient
     public String getCel() {
         return cel;
     }
@@ -101,7 +102,7 @@ public class Vendedor implements Serializable {
     public void setCel(String cel) {
         this.cel = cel;
     }
-
+@XmlTransient
     public String getEmail() {
         return email;
     }
@@ -109,7 +110,7 @@ public class Vendedor implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
-
+@XmlTransient
     public String getCi() {
         return ci;
     }
@@ -117,7 +118,7 @@ public class Vendedor implements Serializable {
     public void setCi(String ci) {
         this.ci = ci;
     }
-
+@XmlTransient
     public Date getFecha_ingreso() {
         return Fecha_ingreso;
     }

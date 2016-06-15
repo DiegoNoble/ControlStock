@@ -7,6 +7,10 @@ package com.Beans;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -14,12 +18,14 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "cliente")
-
+@XmlRootElement(name = "cliente")
+//@XmlType(propOrder = {"Id_cliente", "razon_social"})
 public class Cliente implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
+
     @Column(name = "id_cliente")
     private Integer Id_cliente;
     @Column(name = "nombre")
@@ -66,6 +72,7 @@ public class Cliente implements Serializable {
     /**
      * @return the nombre
      */
+    @XmlTransient
     public String getNombre() {
         return nombre;
     }
@@ -80,6 +87,7 @@ public class Cliente implements Serializable {
     /**
      * @return the direccion
      */
+    @XmlTransient
     public String getDireccion() {
         return direccion;
     }
@@ -94,6 +102,7 @@ public class Cliente implements Serializable {
     /**
      * @return the ciudad
      */
+    @XmlTransient
     public String getCiudad() {
         return ciudad;
     }
@@ -108,6 +117,7 @@ public class Cliente implements Serializable {
     /**
      * @return the pais
      */
+    @XmlTransient
     public String getPais() {
         return pais;
     }
@@ -122,6 +132,7 @@ public class Cliente implements Serializable {
     /**
      * @return the telefono
      */
+    @XmlTransient
     public String getTelefono() {
         return telefono;
     }
@@ -136,6 +147,7 @@ public class Cliente implements Serializable {
     /**
      * @return the cel
      */
+    @XmlTransient
     public String getCel() {
         return cel;
     }
@@ -150,6 +162,7 @@ public class Cliente implements Serializable {
     /**
      * @return the email
      */
+    @XmlTransient
     public String getEmail() {
         return email;
     }
@@ -161,6 +174,7 @@ public class Cliente implements Serializable {
         this.email = email;
     }
 
+    @XmlTransient
     public String getRazon_social() {
         return razon_social;
     }
@@ -175,6 +189,7 @@ public class Cliente implements Serializable {
     /**
      * @return the rut
      */
+    @XmlTransient
     public String getDocumento() {
         return documento;
     }
@@ -189,6 +204,7 @@ public class Cliente implements Serializable {
     /**
      * @return the Fecha_ingreso
      */
+    @XmlTransient
     public Date getFecha_ingreso() {
         return Fecha_ingreso;
     }
@@ -205,6 +221,7 @@ public class Cliente implements Serializable {
 
     }
 
+    @XmlTransient
     public CondicionImpositiva getCondicionImpositiva() {
         return condicionImpositiva;
     }

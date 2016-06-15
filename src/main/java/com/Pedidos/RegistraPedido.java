@@ -438,6 +438,12 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel13.add(cbArticulos, gridBagConstraints);
+
+        txtCantidad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCantidadActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
@@ -616,6 +622,16 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private void btnNuevo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevo1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnNuevo1ActionPerformed
+
+    private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
+
+        Articulo articulo = (Articulo) cbArticulos.getSelectedItem();
+        Double cantidad = Double.valueOf(txtCantidad.getText());
+        Double total = cantidad * articulo.getValor_venta();
+        tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articulo, cantidad, total));
+
+
+    }//GEN-LAST:event_txtCantidadActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;

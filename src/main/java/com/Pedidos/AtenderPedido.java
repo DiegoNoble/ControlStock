@@ -1,5 +1,6 @@
 package com.Pedidos;
 
+import Utilidades.ControlarEntradaTexto;
 import com.Beans.Pedido;
 import com.Beans.ArticulosPedido;
 import com.Beans.Articulo;
@@ -16,6 +17,7 @@ import com.DAO.MovStockDAO;
 import com.DAO.PedidoDAO;
 import com.DAO.RemitoDAO;
 import com.DAO.VendedorDAO;
+import com.Renderers.MeDateCellRenderer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,10 +59,12 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
     }
 
     private void defineModelo() {
-
+        Character chs[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'};
+        txtDescuento.setDocument(new ControlarEntradaTexto(10, chs));
         ((DefaultTableCellRenderer) tblArticulosPedido.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         tableModel = new AtencionArticulosPedidoTableModel(listArticulosPedido);
         tblArticulosPedido.setModel(tableModel);
+        
 
         int[] anchos = {5, 100, 200, 20, 20, 20};
 
@@ -84,6 +88,10 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
 
     private void atenderPedido() {
 
+        Double descuento = 0.0;
+        if (!txtDescuento.getText().equals("")) {
+            descuento = Double.valueOf(txtDescuento.getText());
+        }
         try {
             if (listArticulosPedido.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Seleccione un articulo", "Error", JOptionPane.ERROR_MESSAGE);
@@ -123,7 +131,8 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                     pedidoDAO.actualiza();
 
                     remito.setFecha(new Date());
-                    remito.setImporteRemito(importeRemito);
+                    remito.setImporteRemito(importeRemito - descuento);
+                    remito.setDescuento(descuento);
                     remito.setPedido(pedido);
                     remito.setTipoRemito(TipoRemito.REMITO);
                     remitoDAO = new RemitoDAO(remito);
@@ -204,6 +213,8 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         btnRegistraVenta = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        txtDescuento = new javax.swing.JTextField();
 
         jTextField1.setText("jTextField1");
 
@@ -384,7 +395,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanel3, gridBagConstraints);
 
-        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        jPanel4.setLayout(new java.awt.GridBagLayout());
 
         btnRegistraVenta.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
         btnRegistraVenta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/pedido.png"))); // NOI18N
@@ -395,12 +406,30 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                 btnRegistraVentaActionPerformed(evt);
             }
         });
-        jPanel4.add(btnRegistraVenta);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        jPanel4.add(btnRegistraVenta, gridBagConstraints);
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel9.setText("Importe descuento");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        jPanel4.add(jLabel9, gridBagConstraints);
+
+        txtDescuento.setText("0.0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 80;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(txtDescuento, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         getContentPane().add(jPanel4, gridBagConstraints);
 
         pack();
@@ -444,6 +473,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -454,6 +484,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tblArticulosPedido;
+    private javax.swing.JTextField txtDescuento;
     // End of variables declaration//GEN-END:variables
 
 }

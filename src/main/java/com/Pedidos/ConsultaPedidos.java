@@ -10,6 +10,7 @@ import com.DAO.ClienteDAO;
 import com.DAO.PedidoDAO;
 import com.DAO.VendedorDAO;
 import com.Renderers.MeDateCellRenderer;
+import com.Renderers.TableRendererColorPedido;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -75,6 +76,7 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         tableModel = new PedidosTableModel(listPedidos);
         tblPedidos.setModel(tableModel);
         tblPedidos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
+        tblPedidos.getColumn("Situción").setCellRenderer(new TableRendererColorPedido(0));
         int[] anchos = {20, 20, 20, 100, 100, 20};
 
         for (int i = 0; i < tblPedidos.getColumnCount(); i++) {

@@ -19,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 public class RemitoTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Tipo", "Cód.", "Fecha", "Importe", "Pedido"};
+    private final String[] colunas = new String[]{"Tipo", "Cód.", "Fecha", "Descuento","Importe", "Pedido"};
     //lista para a manipulacao do objeto
     private List<Remito> list;
 
@@ -51,8 +51,10 @@ public class RemitoTableModel extends AbstractTableModel {
             case 2:
                 return c.getFecha();
             case 3:
-                return c.getImporteAtendido();
+                return c.getDescuento();
             case 4:
+                return c.getImporteAtendido();
+            case 5:
                 return c.getPedido();
             default:
                 return null;
@@ -78,6 +80,8 @@ public class RemitoTableModel extends AbstractTableModel {
             case 3:
                 return Double.class;
             case 4:
+                return Double.class;
+            case 5:
                 return Pedido.class;
 
             default:

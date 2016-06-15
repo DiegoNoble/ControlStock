@@ -15,6 +15,7 @@ public class Remito implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fecha;
     private Double importeRemito;
+    private Double descuento =0.0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pedido")
@@ -73,5 +74,14 @@ public class Remito implements Serializable {
     public void setAnulado(Boolean anulado) {
         this.anulado = anulado;
     }
+
+    public Double getDescuento() {
+        return descuento;
+    }
+
+    public void setDescuento(Double descuento) {
+        this.descuento = descuento;
+    }
+    
 
 }

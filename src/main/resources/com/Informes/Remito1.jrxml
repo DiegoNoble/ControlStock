@@ -23,12 +23,13 @@
      articulos_pedido.`posicion` AS articulos_pedido_posicion,
      remito.`id` AS remito_id,
      pedido.`id_vendedor` AS pedido_id_vendedor,
-     articulo.`descripcion` AS articulo_descripcion,
-     articulo.`valor_venta` AS articulo_valor_venta,
+     articulo.`descripcion` AS articulo_descripcion, 
+    articulo.`valor_venta` AS articulo_valor_venta,
      cliente.`condicionImpositiva` AS cliente_condicionImpositiva,
      cliente.`documento` AS cliente_documento,
      articulo.`id` AS articulo_id,
      remito.`importeRemito` AS remito_importeRemito,
+     remito.`descuento` AS remito_descuento,
      pedido.`observaciones` AS pedido_observaciones,
      unidad.`DESCRIPCION` AS unidad_DESCRIPCION,
      articulo.`nombre` AS articulo_nombre,
@@ -43,7 +44,7 @@ FROM
 WHERE
      remito.`id` = $P{idRemito}]]>
 	</queryString>
-	<field name="remito_fecha" class="java.sql.Timestamp"/>
+	<field name="remito_fecha" class="java.sql.Date"/>
 	<field name="pedido_id" class="java.lang.Integer"/>
 	<field name="pedido_fecha" class="java.sql.Date"/>
 	<field name="cliente_id_cliente" class="java.lang.Integer"/>
@@ -65,10 +66,15 @@ WHERE
 	<field name="cliente_documento" class="java.lang.String"/>
 	<field name="articulo_id" class="java.lang.String"/>
 	<field name="remito_importeRemito" class="java.lang.Double"/>
+	<field name="remito_descuento" class="java.lang.Double"/>
 	<field name="pedido_observaciones" class="java.lang.String"/>
 	<field name="unidad_DESCRIPCION" class="java.lang.String"/>
 	<field name="articulo_nombre" class="java.lang.String"/>
 	<field name="vendedor_nombre" class="java.lang.String"/>
+	<variable name="suma" class="java.lang.Double" resetType="Column" calculation="Sum">
+		<variableExpression><![CDATA[$F{articulos_pedido_importeAtendido}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -330,7 +336,7 @@ WHERE
 				<textFieldExpression><![CDATA[$F{articulos_pedido_cantAtendida}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$ #,##0.00">
-				<reportElement x="341" y="1" width="40" height="20" uuid="359b1985-cd95-4ceb-91d5-e0a5b0ba4069"/>
+				<reportElement x="325" y="1" width="57" height="20" uuid="359b1985-cd95-4ceb-91d5-e0a5b0ba4069"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
@@ -342,24 +348,70 @@ WHERE
 		</band>
 	</detail>
 	<summary>
-		<band height="64" splitType="Stretch">
+		<band height="191" splitType="Stretch">
 			<rectangle>
-				<reportElement x="333" y="17" width="218" height="34" backcolor="#CCCCCC" uuid="d3084b29-dafb-47fc-88de-684068d2fb03"/>
+				<reportElement x="333" y="14" width="218" height="34" backcolor="#CCCCCC" uuid="7df92058-b0f3-4dea-a32e-6b7491f42207">
+					<printWhenExpression><![CDATA[new Boolean($F{remito_descuento}!=0.0)]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="333" y="48" width="218" height="34" backcolor="#CCCCCC" uuid="91d9be23-1d9f-4d50-a38e-cc899a5d8a76">
+					<printWhenExpression><![CDATA[new Boolean($F{remito_descuento}!=0.0)]]></printWhenExpression>
+				</reportElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="333" y="82" width="218" height="34" backcolor="#CCCCCC" uuid="d3084b29-dafb-47fc-88de-684068d2fb03"/>
 			</rectangle>
 			<textField pattern="$ #,##0.00">
-				<reportElement x="463" y="22" width="87" height="27" uuid="a2413eba-ed93-4f94-a801-7b599841c9fd"/>
+				<reportElement x="463" y="88" width="87" height="27" uuid="a2413eba-ed93-4f94-a801-7b599841c9fd"/>
 				<textElement>
 					<font size="18"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{remito_importeRemito}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="346" y="22" width="109" height="27" uuid="fe802998-735c-47ef-b4f1-9fc6070ea8b0"/>
+				<reportElement x="345" y="87" width="109" height="27" uuid="fe802998-735c-47ef-b4f1-9fc6070ea8b0"/>
 				<textElement>
 					<font size="18" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Total remito]]></text>
 			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="462" y="51" width="87" height="27" uuid="1d7c87e0-b0f8-4010-ae9a-f1a944a2c63a">
+					<printWhenExpression><![CDATA[new Boolean($F{remito_descuento}!=0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{remito_descuento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="346" y="52" width="109" height="27" uuid="eaf2b67b-4478-469c-8f2a-4ee4e047a3dd">
+					<printWhenExpression><![CDATA[new Boolean($F{remito_descuento}!=0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Descuentos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="346" y="18" width="109" height="27" uuid="b129f2bf-c918-4da5-bd00-469a7018e9b2">
+					<printWhenExpression><![CDATA[new Boolean($F{remito_descuento}!=0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="18" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sub Total]]></text>
+			</staticText>
+			<textField pattern="$ #,##0.00">
+				<reportElement x="462" y="17" width="87" height="27" uuid="bb2f7152-b292-4fab-8c47-313ec702c985">
+					<printWhenExpression><![CDATA[new Boolean($F{remito_descuento}!=0.0)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{suma}]]></textFieldExpression>
+			</textField>
 		</band>
 	</summary>
 </jasperReport>

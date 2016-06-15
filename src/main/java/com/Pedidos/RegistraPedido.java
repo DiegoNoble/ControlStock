@@ -32,7 +32,6 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     ArticulosPedidoTableModel tableModel;
     List<ArticulosPedido> listArticulosPedido;
     Pedido pedido;
-    static Pedido pedidoSingleton;
     ArticuloDAO articulosDAO;
     ClienteDAO clienteDAO;
     VendedorDAO vendedorDAO;
@@ -57,15 +56,6 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         cargaComboClientes();
         cargaComboVendedor();
 
-    }
-
-    public static Pedido getInstance() {
-
-        if (pedidoSingleton == null) {
-            pedidoSingleton = new Pedido();
-        }
-
-        return pedidoSingleton;
     }
 
     private void cargaComboClientes() {

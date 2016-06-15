@@ -80,7 +80,7 @@ public final class ConsultaRemitos extends javax.swing.JInternalFrame {
         tableModel = new RemitoTableModel(listRemitos);
         tblRemitos.setModel(tableModel);
         tblRemitos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
-        int[] anchos = {20, 20, 20, 20, 20};
+        int[] anchos = {20, 20, 20, 20,20, 20};
 
         for (int i = 0; i < tblRemitos.getColumnCount(); i++) {
 

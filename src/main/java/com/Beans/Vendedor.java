@@ -54,7 +54,7 @@ public class Vendedor implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-@XmlTransient
+
     public String getNombre() {
         return nombre;
     }

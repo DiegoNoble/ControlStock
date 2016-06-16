@@ -72,7 +72,7 @@ public class Cliente implements Serializable {
     /**
      * @return the nombre
      */
-    @XmlTransient
+    
     public String getNombre() {
         return nombre;
     }
@@ -102,7 +102,7 @@ public class Cliente implements Serializable {
     /**
      * @return the ciudad
      */
-    @XmlTransient
+    
     public String getCiudad() {
         return ciudad;
     }
@@ -174,7 +174,7 @@ public class Cliente implements Serializable {
         this.email = email;
     }
 
-    @XmlTransient
+   
     public String getRazon_social() {
         return razon_social;
     }
@@ -189,7 +189,7 @@ public class Cliente implements Serializable {
     /**
      * @return the rut
      */
-    @XmlTransient
+    
     public String getDocumento() {
         return documento;
     }

@@ -36,7 +36,7 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
     //numero de linhas
     @Override
     public int getRowCount() {
-        return 4;
+        return list.size();
     }
 
     //numero de colunas
@@ -127,6 +127,7 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
         list.addAll(listArticulosPedidos);
 
         this.fireTableRowsInserted(list.size() - 1, list.size() - 1);
+        CalculaTotalPedido();
     }
 
     public void eliminar(int row) {

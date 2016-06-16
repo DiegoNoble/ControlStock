@@ -1,5 +1,6 @@
 package com.Pedidos;
 
+import Utilidades.PedidoXML;
 import com.Beans.Pedido;
 import com.Beans.Articulo;
 import com.Beans.Cliente;
@@ -46,6 +47,8 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         dpHasta.setFormats("dd/MM/yyyy");
         buscarEntreFechas();
         btnAtenderPedido.setEnabled(false);
+        btnExportarPedidoXML.setEnabled(false);
+        btnConsultar.setEnabled(false);
     }
 
     void buscarEntreFechas() {
@@ -71,6 +74,15 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
 
     }
 
+    void consultarPedido() {
+
+        AtenderPedido atenderPedido = new AtenderPedido(pedidoSeleccionado);
+        super.getDesktopPane().add(atenderPedido);
+        atenderPedido.setVisible(true);
+        atenderPedido.toFront();
+
+    }
+
     private void defineModelo() {
         ((DefaultTableCellRenderer) tblPedidos.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
         listPedidos = new ArrayList<Pedido>();
@@ -78,7 +90,7 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         tblPedidos.setModel(tableModel);
         tblPedidos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
         tblPedidos.getColumn("Situción").setCellRenderer(new TableRendererColorPedido(0));
-        int[] anchos = {10, 10, 20, 100,70, 100, 20,20};
+        int[] anchos = {10, 10, 20, 100, 70, 100, 20, 20};
 
         for (int i = 0; i < tblPedidos.getColumnCount(); i++) {
 
@@ -92,12 +104,19 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
             public void valueChanged(ListSelectionEvent lse) {
                 if (tblPedidos.getSelectedRow() != -1) {
                     pedidoSeleccionado = listPedidos.get(tblPedidos.getSelectedRow());
+                    btnExportarPedidoXML.setEnabled(true);
+                    btnConsultar.setEnabled(true);
                     if (pedidoSeleccionado.getEstadoPedido() == SituacionPedido.NUEVO) {
                         btnAtenderPedido.setEnabled(true);
+
+                    } else {
+                        btnAtenderPedido.setEnabled(false);
                     }
                 } else {
                     btnAtenderPedido.setEnabled(false);
+                    btnExportarPedidoXML.setEnabled(false);
                     pedidoSeleccionado = null;
+                    btnConsultar.setEnabled(false);
                 }
             }
         });
@@ -107,7 +126,11 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
             public void mousePressed(MouseEvent me) {
 
                 if (me.getClickCount() == 2) {
-                    atenderPedido();
+                    if (pedidoSeleccionado.getEstadoPedido() == SituacionPedido.NUEVO) {
+                        atenderPedido();
+                    } else {
+                        consultarPedido();
+                    }
                 }
             }
         });
@@ -161,6 +184,8 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         btnAtenderPedido = new javax.swing.JButton();
+        btnExportarPedidoXML = new javax.swing.JButton();
+        btnConsultar = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
 
@@ -365,6 +390,28 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnAtenderPedido);
 
+        btnExportarPedidoXML.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btnExportarPedidoXML.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/images.jpg"))); // NOI18N
+        btnExportarPedidoXML.setMnemonic('R');
+        btnExportarPedidoXML.setText("Exportar pedido XML");
+        btnExportarPedidoXML.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportarPedidoXMLActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnExportarPedidoXML);
+
+        btnConsultar.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btnConsultar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/pedido.png"))); // NOI18N
+        btnConsultar.setMnemonic('R');
+        btnConsultar.setText("Consultar");
+        btnConsultar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConsultarActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnConsultar);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -405,10 +452,24 @@ public final class ConsultaPedidos extends javax.swing.JInternalFrame {
         buscarEntreFechas();
     }//GEN-LAST:event_btnBuscarPorFechasActionPerformed
 
+    private void btnExportarPedidoXMLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarPedidoXMLActionPerformed
+
+        PedidoXML pedidoXML = new PedidoXML();
+        pedidoXML.exportarPedidoXML(this, pedidoSeleccionado);
+
+    }//GEN-LAST:event_btnExportarPedidoXMLActionPerformed
+
+    private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarActionPerformed
+
+        consultarPedido();
+    }//GEN-LAST:event_btnConsultarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtenderPedido;
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnBuscarPorFechas;
+    private javax.swing.JButton btnConsultar;
+    private javax.swing.JButton btnExportarPedidoXML;
     private javax.swing.ButtonGroup buttonGroup1;
     private org.jdesktop.swingx.JXDatePicker dpDesde;
     private org.jdesktop.swingx.JXDatePicker dpHasta;

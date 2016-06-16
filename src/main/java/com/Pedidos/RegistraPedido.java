@@ -15,16 +15,31 @@ import com.DAO.ClienteDAO;
 import com.DAO.PedidoDAO;
 import com.DAO.RemitoDAO;
 import com.DAO.VendedorDAO;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-public class RegistraPedido extends javax.swing.JInternalFrame {
+public class RegistraPedido extends javax.swing.JInternalFrame  {
 
     List<Cliente> listClientes;
     List<Vendedor> listVendedores;
@@ -41,6 +56,8 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     double subTotal;
     double IVA;
     double redondeo;
+    private static String XML_PEDIDOS = "";
+    Cliente clienteSeleccionado;
 
     public RegistraPedido() {
         initComponents();
@@ -166,6 +183,8 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
                 for (ArticulosPedido articulosPedido : listArticulosPedido) {
                     articulosPedido.setPedido(pedido);
                     total = total + articulosPedido.getImportePedido();
+                    articulosPedido.setCantPendiente(articulosPedido.getCantPedida());
+                    articulosPedido.setImportePendiente(articulosPedido.getImportePedido());
                 }
                 pedido.setImporteTotal(total);
                 pedido.setImportePendiente(total);
@@ -225,6 +244,67 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
             cbCliente.setSelectedItem(cliente);
         }
     }
+/*
+    @Override
+    public void dragEnter(DropTargetDragEvent dtde) {
+    }
+
+    @Override
+    public void dragExit(DropTargetEvent dte) {
+    }
+
+    @Override
+    public void dragOver(DropTargetDragEvent dtde) {
+    }
+
+    @Override
+    public void dropActionChanged(DropTargetDragEvent dtde) {
+    }
+
+    @Override
+    public void drop(DropTargetDropEvent dtde) {
+        try {
+            Transferable tr = dtde.getTransferable();
+            DataFlavor[] flavors = tr.getTransferDataFlavors();
+            if (flavors.length > 0) {
+                if (flavors[0].isFlavorJavaFileListType()) {
+                    dtde.acceptDrop(DnDConstants.ACTION_COPY);
+                    java.util.List list = (java.util.List) tr.getTransferData(flavors[0]);
+                    if (!list.isEmpty()) { 
+
+                        File file = new File(list.get(0).toString());
+                        if (file.exists()) {
+                            if (file.getName().endsWith("xml")) {
+                                XML_PEDIDOS = txtRutaXML.getText();
+                                JAXBContext context = JAXBContext.newInstance(Pedido.class);
+                                System.out.println("Salida desde el fichero XML: ");
+                                Unmarshaller um = context.createUnmarshaller();
+                                Pedido pedidoXML = (Pedido) um.unmarshal(new FileReader(XML_PEDIDOS));
+
+                                clienteDAO = new ClienteDAO();
+                                cbCliente.setSelectedItem(clienteDAO.buscarPorID(Cliente.class, pedidoXML.getCliente().getId_cliente()));
+                                vendedorDAO = new VendedorDAO();
+                                cbVendedor.setSelectedItem(vendedorDAO.buscarPorID(Vendedor.class, pedidoXML.getVendedor().getId()));
+                                tableModel.agregar(pedidoXML.getArticulosPedido());
+
+                            } else {
+                                JOptionPane.showMessageDialog(null, "No es un archivo *.xml valido", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        } else {
+                            System.err.println("error archivo no existe ");
+                        }
+                    }
+                    dtde.dropComplete(true);
+                    return;
+                }
+            }
+            System.err.println("Drop failed: " + dtde);
+            dtde.rejectDrop();
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+            dtde.rejectDrop();
+        }
+    }*/
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -238,11 +318,14 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         jPanel3 = new javax.swing.JPanel();
         jPanel11 = new javax.swing.JPanel();
         btnSelecionaCliente1 = new javax.swing.JButton();
-        cbVendedor = new javax.swing.JComboBox();
-        btnSelecionaCliente = new javax.swing.JButton();
         cbCliente = new javax.swing.JComboBox();
-        jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        txtDocumento = new javax.swing.JTextField();
+        txtCiudad = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel12 = new javax.swing.JLabel();
+        txtRazonSocial = new javax.swing.JTextField();
         jPanel12 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblArticulosPedido = new javax.swing.JTable();
@@ -255,9 +338,17 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         jLabel5 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         btnNuevo1 = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        txtRutaXML = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
         jPanel10 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         dpFecha = new org.jdesktop.swingx.JXDatePicker();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        cbVendedor = new javax.swing.JComboBox();
+        btnSelecionaCliente = new javax.swing.JButton();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JFormattedTextField();
@@ -295,6 +386,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
+        jPanel11.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanel11.setLayout(new java.awt.GridBagLayout());
 
         btnSelecionaCliente1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/search.png"))); // NOI18N
@@ -305,60 +397,85 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel11.add(btnSelecionaCliente1, gridBagConstraints);
 
-        cbVendedor.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel11.add(cbVendedor, gridBagConstraints);
-
-        btnSelecionaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/search.png"))); // NOI18N
-        btnSelecionaCliente.setBorder(null);
-        btnSelecionaCliente.addActionListener(new java.awt.event.ActionListener() {
+        cbCliente.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        cbCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSelecionaClienteActionPerformed(evt);
+                cbClienteActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel11.add(btnSelecionaCliente, gridBagConstraints);
-
-        cbCliente.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel11.add(cbCliente, gridBagConstraints);
 
-        jLabel6.setText("Vendedor");
+        jLabel7.setText("Razon Social");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel11.add(jLabel6, gridBagConstraints);
+        jPanel11.add(jLabel7, gridBagConstraints);
 
-        jLabel7.setText("Cliente");
+        txtDocumento.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel11.add(txtDocumento, gridBagConstraints);
+
+        txtCiudad.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel11.add(txtCiudad, gridBagConstraints);
+
+        jLabel9.setText("Ciudad");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel11.add(jLabel9, gridBagConstraints);
+
+        jLabel11.setText("Cliente");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel11.add(jLabel7, gridBagConstraints);
+        jPanel11.add(jLabel11, gridBagConstraints);
+
+        jLabel12.setText("Documento");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel11.add(jLabel12, gridBagConstraints);
+
+        txtRazonSocial.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel11.add(txtRazonSocial, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.weightx = 1.0;
         jPanel3.add(jPanel11, gridBagConstraints);
 
         jPanel12.setLayout(new java.awt.GridBagLayout());
@@ -380,6 +497,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -481,10 +599,47 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         jPanel12.add(jPanel13, gridBagConstraints);
 
+        jPanel5.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel5.setLayout(new java.awt.GridBagLayout());
+
+        jButton1.setText("Buscar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(jButton1, gridBagConstraints);
+
+        txtRutaXML.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 200;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(txtRutaXML, gridBagConstraints);
+
+        jButton2.setText("Procesar Pedido XML");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(jButton2, gridBagConstraints);
+
+        jPanel12.add(jPanel5, new java.awt.GridBagConstraints());
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
@@ -501,6 +656,44 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
         jPanel3.add(jPanel10, gridBagConstraints);
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel6.setLayout(new java.awt.GridBagLayout());
+
+        jLabel6.setText("Vendedor");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel6.add(jLabel6, gridBagConstraints);
+
+        cbVendedor.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel6.add(cbVendedor, gridBagConstraints);
+
+        btnSelecionaCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/search.png"))); // NOI18N
+        btnSelecionaCliente.setBorder(null);
+        btnSelecionaCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelecionaClienteActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel6.add(btnSelecionaCliente, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        jPanel3.add(jPanel6, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -633,6 +826,57 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_txtCantidadActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+        try {
+            JFileChooser buscarFoto = new JFileChooser();
+            //buscarFoto.setCurrentDirectory(new File("C:/Fotos Socios/"));
+            buscarFoto.setDialogTitle("Cargar pedido XML");
+            buscarFoto.showOpenDialog(this);
+            //String foto = "C:/Fotos Socios/" + buscarFoto.getSelectedFile().getName();
+            txtRutaXML.setText(buscarFoto.getSelectedFile().getPath());
+
+        } catch (Exception error) {
+            JOptionPane.showMessageDialog(null, "No fue posible cargar la foto" + error);
+        }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+
+        try {
+            XML_PEDIDOS = txtRutaXML.getText();
+            JAXBContext context = JAXBContext.newInstance(Pedido.class
+            );
+            System.out.println(
+                    "Salida desde el fichero XML: ");
+            Unmarshaller um = context.createUnmarshaller();
+            //for (Pedido pedido : pedidos) {
+            Pedido pedidoXML = (Pedido) um.unmarshal(new FileReader(XML_PEDIDOS));
+
+            clienteDAO = new ClienteDAO();
+
+            cbCliente.setSelectedItem(clienteDAO.buscarPorID(Cliente.class, pedidoXML.getCliente().getId_cliente()));
+            vendedorDAO = new VendedorDAO();
+
+            cbVendedor.setSelectedItem(vendedorDAO.buscarPorID(Vendedor.class, pedidoXML.getVendedor().getId()));
+            tableModel.agregar(pedidoXML.getArticulosPedido());
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(RegistraPedido.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JAXBException ex) {
+            Logger.getLogger(RegistraPedido.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void cbClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbClienteActionPerformed
+
+        clienteSeleccionado = (Cliente) cbCliente.getSelectedItem();
+        txtDocumento.setText(clienteSeleccionado.getDocumento());
+        txtCiudad.setText(clienteSeleccionado.getCiudad());
+        txtRazonSocial.setText(clienteSeleccionado.getRazon_social());
+    }//GEN-LAST:event_cbClienteActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnEliminar;
@@ -646,13 +890,18 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox cbCliente;
     private javax.swing.JComboBox cbVendedor;
     private org.jdesktop.swingx.JXDatePicker dpFecha;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
@@ -661,13 +910,19 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tblArticulosPedido;
     private javax.swing.JTextField txtCantidad;
+    private javax.swing.JTextField txtCiudad;
+    private javax.swing.JTextField txtDocumento;
     private javax.swing.JTextArea txtObservaciones;
+    private javax.swing.JTextField txtRazonSocial;
+    private javax.swing.JTextField txtRutaXML;
     private javax.swing.JFormattedTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 

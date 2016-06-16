@@ -60,6 +60,23 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
 
     }
 
+    public AtenderPedido(Pedido pedido) {
+        initComponents();
+        this.pedido = pedido;
+        listArticulosPedido = pedido.getArticulosPedido();
+        dpFecha.setDate(pedido.getFecha());
+        cbCliente.addItem(pedido.getCliente());
+        cbCliente.setSelectedItem(pedido.getCliente());
+        cbVendedor.addItem(pedido.getVendedor());
+        cbVendedor.setSelectedItem(pedido.getVendedor());
+        btnRegistraVenta.setVisible(false);
+        jPanel13.setVisible(false);
+        defineModelo();
+        tableModel.CalculaTotalPedido();
+        jLabel1.setText("Consulta pedido seleccionado");
+
+    }
+
     private void defineModelo() {
         // Character chs[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.'};
         //txtTotal.setDocument(new ControlarEntradaTexto(10, chs));
@@ -111,7 +128,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                         importeRemito = importeRemito + articulosPedido.getImporteAtendido();
                         //articulosPedido.setCantp(articulosPedido.getCantPedida() - articulosPedido.getCantPendiente());
 
-                       articulosPedido.setImportePendiente(articulosPedido.getImportePendiente() - articulosPedido.getImporteAtendido());
+                        articulosPedido.setImportePendiente(articulosPedido.getImportePendiente() - articulosPedido.getImporteAtendido());
                         //articulosPedido.setImporteAtendido(articulosPedido.getCantAtendida() * valorUnitario);
                         articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
                         articulosPedidoDAO.actualiza();
@@ -151,7 +168,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
 
                 }
                 JOptionPane.showMessageDialog(this, "Remito generado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-                this.consultaPedido.buscar();
+                this.consultaPedido.buscarEntreFechas();
                 this.dispose();
                 remitoDAO = new RemitoDAO();
                 remitoDAO.imprimeRemito(remito);

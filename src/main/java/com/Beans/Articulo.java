@@ -52,7 +52,7 @@ public class Articulo implements Serializable {
 
     /**
      * @return the nombre
-     */@XmlTransient
+     */
     public String getNombre() {
         return nombre;
     }
@@ -64,7 +64,6 @@ public class Articulo implements Serializable {
         this.nombre = nombre;
     }
 
-   @XmlTransient
     public Double getValor_venta() {
         return valor_venta;
     }

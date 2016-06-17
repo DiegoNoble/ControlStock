@@ -31,7 +31,13 @@ public class Articulo implements Serializable {
     @ManyToOne(targetEntity = Unidad.class)
     @JoinColumn(name = "unidad")
     private Unidad unidad;
-    private Double iva;
+    private Double iva = 21.0;
+
+    @ManyToOne()
+    @JoinColumn(name = "unidad_mayor_id")
+    private Unidad unidad_mayor;
+    private Double factor_conversion;
+    private Double stock_mayor_unidad;
 
     public Articulo() {
     }
@@ -75,7 +81,7 @@ public class Articulo implements Serializable {
         this.valor_venta = valor_venta;
     }
 
- @XmlTransient
+    @XmlTransient
     public Double getCantidad() {
         return cantidad;
     }
@@ -85,11 +91,13 @@ public class Articulo implements Serializable {
      */
     public void setCantidad(Double cantidad) {
         this.cantidad = cantidad;
+        this.stock_mayor_unidad = cantidad / factor_conversion;
     }
 
     /**
      * @return the descripcion
-     */@XmlTransient
+     */
+    @XmlTransient
     public String getDescripcion() {
         return descripcion;
     }
@@ -101,7 +109,7 @@ public class Articulo implements Serializable {
         this.descripcion = descripcion;
     }
 
- @XmlTransient
+    @XmlTransient
     public Categoria getCategoria() {
         return categoria;
     }
@@ -115,7 +123,8 @@ public class Articulo implements Serializable {
 
     /**
      * @return the iva
-     */@XmlTransient
+     */
+    @XmlTransient
     public Double getIva() {
         return iva;
     }
@@ -129,7 +138,8 @@ public class Articulo implements Serializable {
 
     /**
      * @return the valor_compra_impuesto
-     */@XmlTransient
+     */
+    @XmlTransient
     public Double getValor_compra() {
         return valor_compra;
     }
@@ -143,7 +153,8 @@ public class Articulo implements Serializable {
 
     /**
      * @return the unidad
-     */@XmlTransient
+     */
+    @XmlTransient
     public Unidad getUnidad() {
         return unidad;
     }
@@ -153,6 +164,31 @@ public class Articulo implements Serializable {
      */
     public void setUnidad(Unidad unidad) {
         this.unidad = unidad;
+    }
+
+    public Unidad getUnidad_mayor() {
+        return unidad_mayor;
+    }
+
+    public void setUnidad_mayor(Unidad unidad_mayor_id) {
+        this.unidad_mayor = unidad_mayor_id;
+    }
+
+    public Double getStock_mayor_unidad() {
+        return stock_mayor_unidad;
+    }
+
+    public void setStock_mayor_unidad(Double stock_mayor_unidad) {
+        this.stock_mayor_unidad = stock_mayor_unidad;
+
+    }
+
+    public Double getFactor_conversion() {
+        return factor_conversion;
+    }
+
+    public void setFactor_conversion(Double factor_conversion) {
+        this.factor_conversion = factor_conversion;
     }
 
     @Override

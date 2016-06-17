@@ -4,10 +4,7 @@ import com.Beans.Articulo;
 import com.DAO.DAOGenerico;
 import com.Beans.Categoria;
 import com.CategoriaArticulos.CategoriaFrame;
-import com.Beans.ArticulosCompra;
 import com.Beans.Unidad;
-import com.Unidades.UnidadFrame;
-import com.Beans.ArticulosVenta;
 import com.Compras.RegistraCompra;
 import com.DAO.ArticuloDAO;
 import com.Pedidos.RegistraPedido;
@@ -18,11 +15,11 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class ArticulosFrame extends javax.swing.JInternalFrame {
 
-    int edicion = 0;
     RegistraCompra registraCompra;
     RegistraPedido registraPedido;
     private ArticulosTableModel tableModelArticulos;
@@ -52,12 +49,11 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             btnAlterar.setVisible(false);
             btnExcluir.setVisible(false);
         }
-        AutoCompleteDecorator.decorate(cbCategoria);
         actualizaCbCategoria();
-        AutoCompleteDecorator.decorate(cbUnidad);
         actualizaCbUnidad();
 
-        jPanel2.setVisible(false);
+        accionTaggetButton();
+
     }
 
     public ArticulosFrame(RegistraCompra registraCompra) {
@@ -66,7 +62,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnSeleccionaArticuloVenta.setVisible(true);
         defineModelo();
         filtros();
-        //btnExcluir.setVisible(false);
         this.setSize(950, 650);
 
         if (frameLogin.getInstance().getPerfil().equals("Operador")) {
@@ -76,12 +71,11 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             btnAlterar.setVisible(false);
             btnExcluir.setVisible(false);
         }
-        AutoCompleteDecorator.decorate(cbCategoria);
-        actualizaCbCategoria();
-        AutoCompleteDecorator.decorate(cbUnidad);
-        actualizaCbUnidad();
 
-        jPanel2.setVisible(false);
+        actualizaCbCategoria();
+
+        actualizaCbUnidad();
+        accionTaggetButton();
     }
 
     public ArticulosFrame(RegistraPedido registraPedido) {
@@ -90,7 +84,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnSeleccionaArticuloVenta.setVisible(true);
         defineModelo();
         filtros();
-        //btnExcluir.setVisible(false);
         this.setSize(950, 650);
 
         if (frameLogin.getInstance().getPerfil().equals("Operador")) {
@@ -100,17 +93,26 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             btnAlterar.setVisible(false);
             btnExcluir.setVisible(false);
         }
-        AutoCompleteDecorator.decorate(cbCategoria);
         actualizaCbCategoria();
-        AutoCompleteDecorator.decorate(cbUnidad);
         actualizaCbUnidad();
+        accionTaggetButton();
+    }
 
-        jPanel2.setVisible(false);
+    void accionTaggetButton() {
+        jXCollapsiblePane1.setAnimated(true);
+        jXCollapsiblePane1.setCollapsed(true);
+        Action toggleAction = jXCollapsiblePane1.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
+        toggleAction.putValue(JXCollapsiblePane.COLLAPSE_ICON, UIManager.getIcon("Tree.collapsedIcon"));
+        toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager.getIcon("Tree.expandedIcon"));
+
+        jToggleButton1.setAction(toggleAction);
+        jToggleButton1.setText("Detalles");
     }
 
     public final void actualizaCbCategoria() {
 
         try {
+            AutoCompleteDecorator.decorate(cbCategoria);
             List<Categoria> listadeCategorias = new ArrayList();
 
             DAOGenerico DAO = new DAOGenerico();
@@ -131,16 +133,19 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     public final void actualizaCbUnidad() {
 
         try {
+            AutoCompleteDecorator.decorate(cbUnidad);
+            AutoCompleteDecorator.decorate(cbUnidadMayor);
             List<Unidad> listaUnidad = new ArrayList();
-
             DAOGenerico DAO = new DAOGenerico();
             listaUnidad = DAO.BuscaTodos(Unidad.class);
 
             cbUnidad.removeAllItems();
+            cbUnidadMayor.removeAllItems();
 
-            for (Unidad unidades : listaUnidad) {
+            for (Unidad uni : listaUnidad) {
 
-                cbUnidad.addItem(unidades);
+                cbUnidad.addItem(uni);
+                cbUnidadMayor.addItem(uni);
             }
 
         } catch (Exception e) {
@@ -180,10 +185,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                     if (tblArticulos.getSelectedRow() != -1) {
                         articuloSeleccionado = listArticulos.get(tblArticulos.getSelectedRow());
                         btnSeleccionaArticuloVenta.setEnabled(true);
+                        btnAlterar.setEnabled(true);
+                        btnExcluir.setEnabled(true);
                         detallesArticulos();
 
                     } else {
                         articuloSeleccionado = null;
+                        btnAlterar.setEnabled(false);
+                        btnExcluir.setEnabled(false);
                         btnSeleccionaArticuloVenta.setEnabled(true);
                     }
                 }
@@ -205,21 +214,23 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 Articulo articulo = new Articulo();
                 articulo.setId(txtCodigo.getText());
                 articulo.setNombre(txtNombre.getText());
-                articulo.setCantidad(Double.parseDouble(txtCantidad.getText()));
+                articulo.setFactor_conversion(Double.parseDouble(txtFactor.getText()));
+                articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
+                //articulo.setStock_mayor_unidad(Double.parseDouble(txtCantMayorUnidad.getText()));
+
                 articulo.setDescripcion(txtDescripcion.getText());
                 articulo.setValor_venta(Double.parseDouble(txtValorVenta.getText()));
 
-                List<Categoria> categoriaSeleccionada = new DAOGenerico().buscarPor(Categoria.class, "nombre", cbCategoria.getSelectedItem().toString());
-                articulo.setCategoria(categoriaSeleccionada.get(0));
+                articulo.setCategoria((Categoria) cbCategoria.getSelectedItem());
 
-                List<Unidad> unidadSeleccionada = new DAOGenerico().buscarPor(Unidad.class, "descripcion", cbUnidad.getSelectedItem().toString());
-                articulo.setUnidad(unidadSeleccionada.get(0));
+                articulo.setUnidad((Unidad) cbUnidad.getSelectedItem());
+                articulo.setUnidad_mayor((Unidad) cbUnidadMayor.getSelectedItem());
 
                 articulo.setIva(Double.parseDouble(String.valueOf(cbIva.getSelectedItem())));
                 articulo.setValor_compra(Double.parseDouble(txtValor_CompraConImp.getText()));
 
-                DAOGenerico dao = new DAOGenerico(articulo);
-                dao.guardar();
+                articuloDAO = new ArticuloDAO(articulo);
+                articuloDAO.guardar();
 
                 JOptionPane.showMessageDialog(null, "Articulo registrado correctamente!");
 
@@ -245,27 +256,23 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             Articulo articulo = new Articulo();
             articulo.setId(txtCodigo.getText());
             articulo.setNombre(txtNombre.getText());
-            articulo.setCantidad(Double.parseDouble(txtCantidad.getText()));
+            articulo.setFactor_conversion(Double.parseDouble(txtFactor.getText()));
+            articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
+            //articulo.setStock_mayor_unidad(Double.parseDouble(txtCantMayorUnidad.getText()));
+
             articulo.setDescripcion(txtDescripcion.getText());
             articulo.setValor_venta(Double.parseDouble(txtValorVenta.getText()));
 
-            List<Categoria> categoriaSeleccionada = new DAOGenerico().buscarPor(Categoria.class, "nombre", cbCategoria.getSelectedItem().toString());
-            articulo.setCategoria(categoriaSeleccionada.get(0));
+            articulo.setCategoria((Categoria) cbCategoria.getSelectedItem());
 
-            List<Unidad> unidadSeleccionada = new DAOGenerico().buscarPor(Unidad.class, "descripcion", cbUnidad.getSelectedItem().toString());
-            articulo.setUnidad(unidadSeleccionada.get(0));
+            articulo.setUnidad((Unidad) cbUnidad.getSelectedItem());
+            articulo.setUnidad_mayor((Unidad) cbUnidadMayor.getSelectedItem());
 
             articulo.setIva(Double.parseDouble(String.valueOf(cbIva.getSelectedItem())));
             articulo.setValor_compra(Double.parseDouble(txtValor_CompraConImp.getText()));
 
-            DAOGenerico dao = new DAOGenerico(articulo);
-            dao.registraOActualiza();
-
-            if (!codigoViejo.equals(txtCodigo.getText())) {
-                DAOGenerico daoElimina = new DAOGenerico(articulo);
-                articulo.setId(codigoViejo);
-                daoElimina.elimina();
-            }
+            articuloDAO = new ArticuloDAO(articulo);
+            articuloDAO.actualiza();
 
             JOptionPane.showMessageDialog(null, "Articulo editado correctamente!");
             buscarTodos();
@@ -336,12 +343,33 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         if (articuloSeleccionado != null) {
             try {
-                txtCantidad.setText(articuloSeleccionado.getCantidad().toString());
+                txtCantMenorUnidad.setText(articuloSeleccionado.getCantidad().toString());
+
+                if (articuloSeleccionado.getStock_mayor_unidad() != null) {
+                    txtCantMayorUnidad.setText(articuloSeleccionado.getStock_mayor_unidad().toString());
+                } else {
+                    txtCantMayorUnidad.setText("");
+                }
+
                 txtCodigo.setText(articuloSeleccionado.getId());
                 txtDescripcion.setText(articuloSeleccionado.getDescripcion());
                 txtNombre.setText(articuloSeleccionado.getNombre());
                 txtValorVenta.setText(articuloSeleccionado.getValor_venta().toString());
                 txtValor_CompraConImp.setText(articuloSeleccionado.getValor_compra().toString());
+
+                cbUnidad.setSelectedItem(articuloSeleccionado.getUnidad());
+                if (articuloSeleccionado.getUnidad_mayor() != null) {
+                    cbUnidadMayor.setSelectedItem(articuloSeleccionado.getUnidad_mayor());
+                } else {
+                    cbUnidadMayor.setSelectedItem("");
+                }
+
+                cbCategoria.setSelectedItem(articuloSeleccionado.getCategoria());
+                if (articuloSeleccionado.getFactor_conversion() != null) {
+                    txtFactor.setText(articuloSeleccionado.getFactor_conversion().toString());
+                } else {
+                    txtFactor.setText("");
+                }
 
             } catch (Exception error) {
                 JOptionPane.showMessageDialog(null, "Error al mostrar detalles", "Error", JOptionPane.ERROR_MESSAGE);
@@ -353,23 +381,23 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private void habilitaCampos() {
         txtNombre.setEditable(true);
         txtValor_CompraConImp.setEditable(true);
-        //txtGanancia.setEditable(true);
         txtValorVenta.setEditable(true);
-        txtCantidad.setEditable(false);
-        //txtCodigo.setEditable(true);
+        txtCantMenorUnidad.setEditable(false);
+        //txtCantMayorUnidad.setEditable(false);
+        txtFactor.setEditable(true);
         txtDescripcion.setEnabled(true);
         cbCategoria.setEnabled(true);
         cbUnidad.setEnabled(true);
+        cbUnidadMayor.setEnabled(true);
         cbIva.setEditable(true);
         tblArticulos.setEnabled(false);
-        tblArticulos.setVisible(false);
+        //tblArticulos.setVisible(false);
         txtDescripcion.setEditable(true);
         txtDescripcion.setEnabled(true);
         btnSelecionaCategoria.setEnabled(true);
-        btnSelecionaUnidad.setEnabled(true);
         if (perfil.equals("Gerente")) {
-            txtCantidad.setEnabled(true);
-            txtCantidad.setEditable(true);
+            txtCantMenorUnidad.setEnabled(true);
+            txtCantMenorUnidad.setEditable(true);
         }
 
     }
@@ -378,7 +406,9 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtNombre.setEditable(false);
         txtValor_CompraConImp.setEditable(false);
         txtValorVenta.setEditable(false);
-        txtCantidad.setEditable(false);
+        txtCantMenorUnidad.setEditable(false);
+        //txtCantMayorUnidad.setEditable(false);
+        txtFactor.setEditable(false);
         txtCodigo.setEditable(false);
         tblArticulos.setEnabled(true);
         tblArticulos.setVisible(true);
@@ -386,9 +416,9 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtDescripcion.setEnabled(true);
         cbCategoria.setEnabled(false);
         cbUnidad.setEnabled(false);
+        cbUnidadMayor.setEnabled(false);
         cbIva.setEditable(false);
         btnSelecionaCategoria.setEnabled(false);
-        btnSelecionaUnidad.setEnabled(false);
 
     }
 
@@ -414,7 +444,9 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtNombre.setText("");
         txtValor_CompraConImp.setText("");
         txtValorVenta.setText("");
-        txtCantidad.setText("");
+        txtCantMenorUnidad.setText("");
+        txtCantMayorUnidad.setText("");
+        txtFactor.setText("");
         txtDescripcion.setText("");
     }
 
@@ -429,14 +461,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jTabbedPane4 = new javax.swing.JTabbedPane();
+        jXCollapsiblePane1 = new org.jdesktop.swingx.JXCollapsiblePane();
         jPanel8 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
         jlbCodigo = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
         jTabbedPane3 = new javax.swing.JTabbedPane();
         jPanel7 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
@@ -445,17 +475,29 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtValor_CompraConImp = new javax.swing.JFormattedTextField();
         jLabel6 = new javax.swing.JLabel();
         txtValorVenta = new javax.swing.JFormattedTextField();
-        jLabel11 = new javax.swing.JLabel();
-        txtCantidad = new javax.swing.JFormattedTextField();
-        jPanel11 = new javax.swing.JPanel();
         cbCategoria = new javax.swing.JComboBox();
         btnSelecionaCategoria = new javax.swing.JButton();
-        jLabel20 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
         jPanel12 = new javax.swing.JPanel();
         cbUnidad = new javax.swing.JComboBox();
-        btnSelecionaUnidad = new javax.swing.JButton();
+        cbUnidadMayor = new javax.swing.JComboBox();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        txtFactor = new javax.swing.JFormattedTextField();
+        jLabel12 = new javax.swing.JLabel();
+        txtCantMenorUnidad = new javax.swing.JFormattedTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtCantMayorUnidad = new javax.swing.JFormattedTextField();
         txtDescripcion = new javax.swing.JTextField();
         txtCodigo = new javax.swing.JTextField();
+        jPanel4 = new javax.swing.JPanel();
+        btnNovo = new javax.swing.JButton();
+        btnAlterar = new javax.swing.JButton();
+        btnExcluir = new javax.swing.JButton();
+        btnSalvar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        btnSeleccionaArticuloVenta = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblArticulos = new javax.swing.JTable();
@@ -464,15 +506,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         rbNombre = new javax.swing.JRadioButton();
         rbDescripcion = new javax.swing.JRadioButton();
         txtFiltro = new javax.swing.JTextField();
-        jPanel4 = new javax.swing.JPanel();
-        btnDetalles = new javax.swing.JButton();
-        btnListado = new javax.swing.JButton();
-        btnNovo = new javax.swing.JButton();
-        btnAlterar = new javax.swing.JButton();
-        btnExcluir = new javax.swing.JButton();
-        btnSalvar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
-        btnSeleccionaArticuloVenta = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jToggleButton1 = new javax.swing.JToggleButton();
 
         jTextField1.setText("jTextField1");
 
@@ -483,8 +518,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
-        setResizable(true);
-        setTitle("Sistema de control comercial - D.N.Soft .-");
         setPreferredSize(new java.awt.Dimension(900, 730));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
@@ -499,12 +532,10 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         getContentPane().add(jPanel1, gridBagConstraints);
 
-        jPanel2.setLayout(new java.awt.GridBagLayout());
-
+        jPanel8.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanel8.setLayout(new java.awt.GridBagLayout());
 
         jLabel3.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
@@ -540,18 +571,9 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(jLabel7, gridBagConstraints);
-
-        jLabel16.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel16.setText("Categoría del Articulo");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        jPanel8.add(jLabel16, gridBagConstraints);
 
         jTabbedPane3.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
 
@@ -612,82 +634,137 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel7.add(txtValorVenta, gridBagConstraints);
 
-        jLabel11.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel11.setText("Stock Disponible");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
-        jPanel7.add(jLabel11, gridBagConstraints);
-
-        txtCantidad.setEditable(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel7.add(txtCantidad, gridBagConstraints);
-
         jTabbedPane3.addTab("Valores", jPanel7);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 6;
+        gridBagConstraints.gridheight = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(jTabbedPane3, gridBagConstraints);
 
-        jPanel11.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
         cbCategoria.setEnabled(false);
         cbCategoria.setPreferredSize(new java.awt.Dimension(250, 20));
-        jPanel11.add(cbCategoria);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel8.add(cbCategoria, gridBagConstraints);
 
         btnSelecionaCategoria.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        btnSelecionaCategoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/Zoom.png"))); // NOI18N
+        btnSelecionaCategoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/search.png"))); // NOI18N
+        btnSelecionaCategoria.setBorderPainted(false);
         btnSelecionaCategoria.setEnabled(false);
         btnSelecionaCategoria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSelecionaCategoriaActionPerformed(evt);
             }
         });
-        jPanel11.add(btnSelecionaCategoria);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        jPanel8.add(jPanel11, gridBagConstraints);
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        jPanel8.add(btnSelecionaCategoria, gridBagConstraints);
 
-        jLabel20.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel20.setText("Unidad");
+        jLabel16.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jLabel16.setText("Categoría");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        jPanel8.add(jLabel20, gridBagConstraints);
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel8.add(jLabel16, gridBagConstraints);
 
-        jPanel12.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+        jPanel12.setLayout(new java.awt.GridBagLayout());
 
         cbUnidad.setEnabled(false);
         cbUnidad.setPreferredSize(new java.awt.Dimension(250, 20));
-        jPanel12.add(cbUnidad);
-
-        btnSelecionaUnidad.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        btnSelecionaUnidad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/Zoom.png"))); // NOI18N
-        btnSelecionaUnidad.setEnabled(false);
-        btnSelecionaUnidad.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSelecionaUnidadActionPerformed(evt);
-            }
-        });
-        jPanel12.add(btnSelecionaUnidad);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel12.add(cbUnidad, gridBagConstraints);
+
+        cbUnidadMayor.setEnabled(false);
+        cbUnidadMayor.setPreferredSize(new java.awt.Dimension(250, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel12.add(cbUnidadMayor, gridBagConstraints);
+
+        jLabel21.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jLabel21.setText("Mayor Unidad ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel12.add(jLabel21, gridBagConstraints);
+
+        jLabel20.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jLabel20.setText("Menor Unidad ");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        jPanel12.add(jLabel20, gridBagConstraints);
+
+        jLabel22.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jLabel22.setText("Equivalencia");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel12.add(jLabel22, gridBagConstraints);
+
+        txtFactor.setEditable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel12.add(txtFactor, gridBagConstraints);
+
+        jLabel12.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jLabel12.setText("Stock menor unidad");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        jPanel12.add(jLabel12, gridBagConstraints);
+
+        txtCantMenorUnidad.setEditable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel12.add(txtCantMenorUnidad, gridBagConstraints);
+
+        jLabel11.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jLabel11.setText("Stock mayor unidad");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        jPanel12.add(jLabel11, gridBagConstraints);
+
+        txtCantMayorUnidad.setEditable(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 100;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel12.add(txtCantMayorUnidad, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 4;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(jPanel12, gridBagConstraints);
 
         txtDescripcion.setEditable(false);
@@ -695,7 +772,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridheight = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.ipadx = 250;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
@@ -710,19 +786,97 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(txtCodigo, gridBagConstraints);
 
-        jTabbedPane4.addTab("Información Principal", jPanel8);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        jPanel2.add(jTabbedPane4, gridBagConstraints);
+        jXCollapsiblePane1.getContentPane().add(jPanel8);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        getContentPane().add(jPanel2, gridBagConstraints);
+        getContentPane().add(jXCollapsiblePane1, gridBagConstraints);
+
+        jPanel4.setLayout(new java.awt.GridBagLayout());
+
+        btnNovo.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        btnNovo.setMnemonic('N');
+        btnNovo.setText("Nuevo");
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(btnNovo, gridBagConstraints);
+
+        btnAlterar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        btnAlterar.setMnemonic('E');
+        btnAlterar.setText("Editar");
+        btnAlterar.setEnabled(false);
+        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(btnAlterar, gridBagConstraints);
+
+        btnExcluir.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        btnExcluir.setText("Excluir");
+        btnExcluir.setEnabled(false);
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(btnExcluir, gridBagConstraints);
+
+        btnSalvar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        btnSalvar.setMnemonic('S');
+        btnSalvar.setText("Salvar");
+        btnSalvar.setEnabled(false);
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(btnSalvar, gridBagConstraints);
+
+        btnCancelar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        btnCancelar.setMnemonic('C');
+        btnCancelar.setText("Cancelar");
+        btnCancelar.setEnabled(false);
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(btnCancelar, gridBagConstraints);
+
+        btnSeleccionaArticuloVenta.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        btnSeleccionaArticuloVenta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/images.jpg"))); // NOI18N
+        btnSeleccionaArticuloVenta.setMnemonic('A');
+        btnSeleccionaArticuloVenta.setText("Selecciona Articulo");
+        btnSeleccionaArticuloVenta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSeleccionaArticuloVentaActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(btnSeleccionaArticuloVenta, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        getContentPane().add(jPanel4, gridBagConstraints);
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
@@ -801,98 +955,21 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanel3, gridBagConstraints);
 
-        jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
+        jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        btnDetalles.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnDetalles.setMnemonic('D');
-        btnDetalles.setText("Exibir/Ocultar Detalles");
-        btnDetalles.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDetallesActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnDetalles);
-
-        btnListado.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnListado.setMnemonic('L');
-        btnListado.setText("Listado de Articulos");
-        btnListado.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnListadoActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnListado);
-
-        btnNovo.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnNovo.setMnemonic('N');
-        btnNovo.setText("Nuevo");
-        btnNovo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNovoActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnNovo);
-
-        btnAlterar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnAlterar.setMnemonic('E');
-        btnAlterar.setText("Editar");
-        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAlterarActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnAlterar);
-
-        btnExcluir.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnExcluir.setText("Excluir");
-        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExcluirActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnExcluir);
-
-        btnSalvar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnSalvar.setMnemonic('S');
-        btnSalvar.setText("Salvar");
-        btnSalvar.setEnabled(false);
-        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSalvarActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnSalvar);
-
-        btnCancelar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnCancelar.setMnemonic('C');
-        btnCancelar.setText("Cancelar");
-        btnCancelar.setEnabled(false);
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnCancelar);
-
-        btnSeleccionaArticuloVenta.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        btnSeleccionaArticuloVenta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/images.jpg"))); // NOI18N
-        btnSeleccionaArticuloVenta.setMnemonic('A');
-        btnSeleccionaArticuloVenta.setText("Selecciona Articulo");
-        btnSeleccionaArticuloVenta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSeleccionaArticuloVentaActionPerformed(evt);
-            }
-        });
-        jPanel4.add(btnSeleccionaArticuloVenta);
+        jToggleButton1.setSelected(true);
+        jToggleButton1.setText("Detalles");
+        jPanel2.add(jToggleButton1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        getContentPane().add(jPanel4, gridBagConstraints);
+        getContentPane().add(jPanel2, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -905,12 +982,11 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "Atención, el valor de venta no debe "
                     + "ser inferiror al valor de compra con Imp. Incl.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            if (edicion == 1) {
+            if (articuloSeleccionado != null) {
                 EditarProducto();
             } else {
                 NuevoProducto();
             }
-            edicion = 0;
         }
     }//GEN-LAST:event_btnSalvarActionPerformed
 
@@ -921,27 +997,9 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
 
-        List ListVerificaCompras = new DAOGenerico().buscarPor(ArticulosCompra.class, "id_articulo", txtCodigo.getText());
-
-        List ListVerificaVentas = new DAOGenerico().buscarPor(ArticulosVenta.class, "id_articulo", txtCodigo.getText());
-
-        if (!ListVerificaCompras.isEmpty()) {
-            txtCodigo.setEditable(false);
-        } else if (!ListVerificaVentas.isEmpty()) {
-            txtCodigo.setEditable(false);
-        } else {
-            txtCodigo.setEditable(true);
-
-        }
-
-        if (tblArticulos.getSelectedRow()
-                != -1) {
-            jPanel2.setVisible(true);
+        if (articuloSeleccionado != null) {
             habilitaBotoes();
             habilitaCampos();
-            edicion = 1;
-            codigoViejo = txtCodigo.getText();
-            //txtCodigo.setEditable(false);
 
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un cliente en la tabla", "Atención", JOptionPane.INFORMATION_MESSAGE);
@@ -965,21 +1023,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_btnExcluirActionPerformed
 
-    private void btnListadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnListadoActionPerformed
-
-        new DAOGenerico<>().informe();
-
-
-    }//GEN-LAST:event_btnListadoActionPerformed
-
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
 
-        jPanel2.setVisible(true);
+        //  jPanel2.setVisible(true);
         txtCodigo.setEnabled(true);
         txtCodigo.setEditable(true);
         txtCodigo.requestFocus();
         limpiaCampos();
-        txtCantidad.setText("0");
+        txtCantMenorUnidad.setText("0");
         habilitaCampos();
         habilitaBotoes();
 
@@ -990,33 +1041,10 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         filtros();
     }//GEN-LAST:event_txtFiltroActionPerformed
 
-    private void btnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetallesActionPerformed
-
-        switch (panelVisible) {
-            case 0:
-                panelVisible = 1;
-                jPanel2.setVisible(true);
-                break;
-            case 1:
-                panelVisible = 0;
-                jPanel2.setVisible(false);
-                break;
-        }
-
-    }//GEN-LAST:event_btnDetallesActionPerformed
-
     private void btnSeleccionaArticuloVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaArticuloVentaActionPerformed
 
         seleccionaArticulo();
     }//GEN-LAST:event_btnSeleccionaArticuloVentaActionPerformed
-
-    private void btnSelecionaUnidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaUnidadActionPerformed
-
-        UnidadFrame unidades = new UnidadFrame(this);
-        this.getDesktopPane().add(unidades);
-        unidades.setVisible(true);
-        unidades.toFront();
-    }//GEN-LAST:event_btnSelecionaUnidadActionPerformed
 
     private void btnSelecionaCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaCategoriaActionPerformed
 
@@ -1029,30 +1057,30 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnDetalles;
     private javax.swing.JButton btnExcluir;
-    private javax.swing.JButton btnListado;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSeleccionaArticuloVenta;
     private javax.swing.JButton btnSelecionaCategoria;
-    private javax.swing.JButton btnSelecionaUnidad;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox cbCategoria;
     private javax.swing.JComboBox cbIva;
     private javax.swing.JComboBox cbUnidad;
+    private javax.swing.JComboBox cbUnidadMayor;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -1061,18 +1089,21 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane3;
-    private javax.swing.JTabbedPane jTabbedPane4;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JToggleButton jToggleButton1;
+    private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private javax.swing.JLabel jlbCodigo;
     private javax.swing.JRadioButton rbCodigo;
     private javax.swing.JRadioButton rbDescripcion;
     private javax.swing.JRadioButton rbNombre;
     private javax.swing.JTable tblArticulos;
-    private javax.swing.JFormattedTextField txtCantidad;
+    private javax.swing.JFormattedTextField txtCantMayorUnidad;
+    private javax.swing.JFormattedTextField txtCantMenorUnidad;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDescripcion;
+    private javax.swing.JFormattedTextField txtFactor;
     private javax.swing.JTextField txtFiltro;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JFormattedTextField txtValorVenta;

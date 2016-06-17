@@ -387,7 +387,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
         ArticulosFrame articulos = new ArticulosFrame(perfil);
         desktopPane.add(articulos);
-        articulos.setLocation(1, 1);
+        centralizaJanela(articulos);
         articulos.setVisible(true);
         articulos.setSize(900, desktopPane.getHeight());
         articulos.toFront();

@@ -33,12 +33,6 @@ public class Articulo implements Serializable {
     private Unidad unidad;
     private Double iva = 21.0;
 
-    @ManyToOne()
-    @JoinColumn(name = "unidad_mayor_id")
-    private Unidad unidad_mayor;
-    private Double factor_conversion;
-    private Double stock_mayor_unidad;
-
     public Articulo() {
     }
 
@@ -91,7 +85,6 @@ public class Articulo implements Serializable {
      */
     public void setCantidad(Double cantidad) {
         this.cantidad = cantidad;
-        this.stock_mayor_unidad = cantidad / factor_conversion;
     }
 
     /**
@@ -164,31 +157,6 @@ public class Articulo implements Serializable {
      */
     public void setUnidad(Unidad unidad) {
         this.unidad = unidad;
-    }
-
-    public Unidad getUnidad_mayor() {
-        return unidad_mayor;
-    }
-
-    public void setUnidad_mayor(Unidad unidad_mayor_id) {
-        this.unidad_mayor = unidad_mayor_id;
-    }
-
-    public Double getStock_mayor_unidad() {
-        return stock_mayor_unidad;
-    }
-
-    public void setStock_mayor_unidad(Double stock_mayor_unidad) {
-        this.stock_mayor_unidad = stock_mayor_unidad;
-
-    }
-
-    public Double getFactor_conversion() {
-        return factor_conversion;
-    }
-
-    public void setFactor_conversion(Double factor_conversion) {
-        this.factor_conversion = factor_conversion;
     }
 
     @Override

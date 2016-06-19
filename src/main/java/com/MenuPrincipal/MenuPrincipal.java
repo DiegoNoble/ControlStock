@@ -14,7 +14,6 @@ import com.Unidades.UnidadFrame;
 import com.usuarios.frameLogin;
 import com.usuarios.registroUsuarios;
 import com.vendedor.VendedorFrame;
-import com.view.FrameRegistraCotizacion;
 import javax.swing.*;
 
 public final class MenuPrincipal extends javax.swing.JFrame {
@@ -67,7 +66,6 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         mnuSistema = new javax.swing.JMenu();
         mnuItemUsuarios = new javax.swing.JMenuItem();
-        mnuItemCotización = new javax.swing.JMenuItem();
         mnuItemSesion = new javax.swing.JMenuItem();
         mnuItemSalir = new javax.swing.JMenuItem();
         mnuRegistros = new javax.swing.JMenu();
@@ -149,17 +147,6 @@ public final class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         mnuSistema.add(mnuItemUsuarios);
-
-        mnuItemCotización.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        mnuItemCotización.setText(" Cotización  ");
-        mnuItemCotización.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        mnuItemCotización.setBorderPainted(true);
-        mnuItemCotización.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mnuItemCotizaciónActionPerformed(evt);
-            }
-        });
-        mnuSistema.add(mnuItemCotización);
 
         mnuItemSesion.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         mnuItemSesion.setText(" Cerrar sesión ");
@@ -432,15 +419,6 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         //this.dispose();
     }//GEN-LAST:event_mnuItemSesionActionPerformed
 
-    private void mnuItemCotizaciónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemCotizaciónActionPerformed
-
-        FrameRegistraCotizacion frame = new FrameRegistraCotizacion();
-        centralizaJanela(frame);
-        desktopPane.add(frame);
-        frame.setVisible(true);
-        frame.toFront();
-    }//GEN-LAST:event_mnuItemCotizaciónActionPerformed
-
     private void mnuItemConsultaCuentasProveedores1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaCuentasProveedores1ActionPerformed
 
         JOptionPane.showMessageDialog(null, "<html><font size=6 face=Verdana color=black><center>Sistema de Control Comercial<br><br>"
@@ -527,7 +505,6 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem mnuItemClientes1;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores1;
     private javax.swing.JMenuItem mnuItemConsultarVendas1;
-    private javax.swing.JMenuItem mnuItemCotización;
     private javax.swing.JMenuItem mnuItemProductos;
     private javax.swing.JMenuItem mnuItemProveedores;
     private javax.swing.JMenuItem mnuItemRegistrarVentas1;

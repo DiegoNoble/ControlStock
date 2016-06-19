@@ -102,11 +102,10 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jXCollapsiblePane1.setAnimated(true);
         jXCollapsiblePane1.setCollapsed(true);
         Action toggleAction = jXCollapsiblePane1.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
-        toggleAction.putValue(JXCollapsiblePane.COLLAPSE_ICON, UIManager.getIcon("Tree.collapsedIcon"));
-        toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager.getIcon("Tree.expandedIcon"));
+        toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager.getIcon("Tree.collapsedIcon"));
+        toggleAction.putValue(JXCollapsiblePane.COLLAPSE_ICON, UIManager.getIcon("Tree.expandedIcon"));
 
         jToggleButton1.setAction(toggleAction);
-        jToggleButton1.setText("Detalles");
     }
 
     public final void actualizaCbCategoria() {
@@ -134,18 +133,15 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         try {
             AutoCompleteDecorator.decorate(cbUnidad);
-            AutoCompleteDecorator.decorate(cbUnidadMayor);
             List<Unidad> listaUnidad = new ArrayList();
             DAOGenerico DAO = new DAOGenerico();
             listaUnidad = DAO.BuscaTodos(Unidad.class);
 
             cbUnidad.removeAllItems();
-            cbUnidadMayor.removeAllItems();
 
             for (Unidad uni : listaUnidad) {
 
                 cbUnidad.addItem(uni);
-                cbUnidadMayor.addItem(uni);
             }
 
         } catch (Exception e) {
@@ -214,7 +210,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 Articulo articulo = new Articulo();
                 articulo.setId(txtCodigo.getText());
                 articulo.setNombre(txtNombre.getText());
-                articulo.setFactor_conversion(Double.parseDouble(txtFactor.getText()));
                 articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
                 //articulo.setStock_mayor_unidad(Double.parseDouble(txtCantMayorUnidad.getText()));
 
@@ -224,7 +219,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 articulo.setCategoria((Categoria) cbCategoria.getSelectedItem());
 
                 articulo.setUnidad((Unidad) cbUnidad.getSelectedItem());
-                articulo.setUnidad_mayor((Unidad) cbUnidadMayor.getSelectedItem());
 
                 articulo.setIva(Double.parseDouble(String.valueOf(cbIva.getSelectedItem())));
                 articulo.setValor_compra(Double.parseDouble(txtValor_CompraConImp.getText()));
@@ -256,7 +250,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             Articulo articulo = new Articulo();
             articulo.setId(txtCodigo.getText());
             articulo.setNombre(txtNombre.getText());
-            articulo.setFactor_conversion(Double.parseDouble(txtFactor.getText()));
             articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
             //articulo.setStock_mayor_unidad(Double.parseDouble(txtCantMayorUnidad.getText()));
 
@@ -266,7 +259,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             articulo.setCategoria((Categoria) cbCategoria.getSelectedItem());
 
             articulo.setUnidad((Unidad) cbUnidad.getSelectedItem());
-            articulo.setUnidad_mayor((Unidad) cbUnidadMayor.getSelectedItem());
 
             articulo.setIva(Double.parseDouble(String.valueOf(cbIva.getSelectedItem())));
             articulo.setValor_compra(Double.parseDouble(txtValor_CompraConImp.getText()));
@@ -345,12 +337,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             try {
                 txtCantMenorUnidad.setText(articuloSeleccionado.getCantidad().toString());
 
-                if (articuloSeleccionado.getStock_mayor_unidad() != null) {
-                    txtCantMayorUnidad.setText(articuloSeleccionado.getStock_mayor_unidad().toString());
-                } else {
-                    txtCantMayorUnidad.setText("");
-                }
-
+              
                 txtCodigo.setText(articuloSeleccionado.getId());
                 txtDescripcion.setText(articuloSeleccionado.getDescripcion());
                 txtNombre.setText(articuloSeleccionado.getNombre());
@@ -358,18 +345,10 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 txtValor_CompraConImp.setText(articuloSeleccionado.getValor_compra().toString());
 
                 cbUnidad.setSelectedItem(articuloSeleccionado.getUnidad());
-                if (articuloSeleccionado.getUnidad_mayor() != null) {
-                    cbUnidadMayor.setSelectedItem(articuloSeleccionado.getUnidad_mayor());
-                } else {
-                    cbUnidadMayor.setSelectedItem("");
-                }
+               
 
                 cbCategoria.setSelectedItem(articuloSeleccionado.getCategoria());
-                if (articuloSeleccionado.getFactor_conversion() != null) {
-                    txtFactor.setText(articuloSeleccionado.getFactor_conversion().toString());
-                } else {
-                    txtFactor.setText("");
-                }
+               
 
             } catch (Exception error) {
                 JOptionPane.showMessageDialog(null, "Error al mostrar detalles", "Error", JOptionPane.ERROR_MESSAGE);
@@ -384,11 +363,9 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtValorVenta.setEditable(true);
         txtCantMenorUnidad.setEditable(false);
         //txtCantMayorUnidad.setEditable(false);
-        txtFactor.setEditable(true);
         txtDescripcion.setEnabled(true);
         cbCategoria.setEnabled(true);
         cbUnidad.setEnabled(true);
-        cbUnidadMayor.setEnabled(true);
         cbIva.setEditable(true);
         tblArticulos.setEnabled(false);
         //tblArticulos.setVisible(false);
@@ -408,7 +385,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtValorVenta.setEditable(false);
         txtCantMenorUnidad.setEditable(false);
         //txtCantMayorUnidad.setEditable(false);
-        txtFactor.setEditable(false);
         txtCodigo.setEditable(false);
         tblArticulos.setEnabled(true);
         tblArticulos.setVisible(true);
@@ -416,7 +392,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtDescripcion.setEnabled(true);
         cbCategoria.setEnabled(false);
         cbUnidad.setEnabled(false);
-        cbUnidadMayor.setEnabled(false);
         cbIva.setEditable(false);
         btnSelecionaCategoria.setEnabled(false);
 
@@ -445,9 +420,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtValor_CompraConImp.setText("");
         txtValorVenta.setText("");
         txtCantMenorUnidad.setText("");
-        txtCantMayorUnidad.setText("");
-        txtFactor.setText("");
-        txtDescripcion.setText("");
+               txtDescripcion.setText("");
     }
 
     @SuppressWarnings("unchecked")
@@ -480,15 +453,9 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jLabel16 = new javax.swing.JLabel();
         jPanel12 = new javax.swing.JPanel();
         cbUnidad = new javax.swing.JComboBox();
-        cbUnidadMayor = new javax.swing.JComboBox();
-        jLabel21 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
-        jLabel22 = new javax.swing.JLabel();
-        txtFactor = new javax.swing.JFormattedTextField();
         jLabel12 = new javax.swing.JLabel();
         txtCantMenorUnidad = new javax.swing.JFormattedTextField();
-        jLabel11 = new javax.swing.JLabel();
-        txtCantMayorUnidad = new javax.swing.JFormattedTextField();
         txtDescripcion = new javax.swing.JTextField();
         txtCodigo = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
@@ -687,48 +654,15 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel12.add(cbUnidad, gridBagConstraints);
 
-        cbUnidadMayor.setEnabled(false);
-        cbUnidadMayor.setPreferredSize(new java.awt.Dimension(250, 20));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel12.add(cbUnidadMayor, gridBagConstraints);
-
-        jLabel21.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel21.setText("Mayor Unidad ");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        jPanel12.add(jLabel21, gridBagConstraints);
-
         jLabel20.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel20.setText("Menor Unidad ");
+        jLabel20.setText("Unidad ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         jPanel12.add(jLabel20, gridBagConstraints);
 
-        jLabel22.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel22.setText("Equivalencia");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        jPanel12.add(jLabel22, gridBagConstraints);
-
-        txtFactor.setEditable(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel12.add(txtFactor, gridBagConstraints);
-
         jLabel12.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel12.setText("Stock menor unidad");
+        jLabel12.setText("Stock");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -742,22 +676,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel12.add(txtCantMenorUnidad, gridBagConstraints);
-
-        jLabel11.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel11.setText("Stock mayor unidad");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
-        jPanel12.add(jLabel11, gridBagConstraints);
-
-        txtCantMayorUnidad.setEditable(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.ipadx = 100;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel12.add(txtCantMayorUnidad, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -790,7 +708,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         getContentPane().add(jXCollapsiblePane1, gridBagConstraints);
 
@@ -961,13 +879,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/delete.png"))); // NOI18N
         jToggleButton1.setSelected(true);
         jToggleButton1.setText("Detalles");
         jPanel2.add(jToggleButton1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         getContentPane().add(jPanel2, gridBagConstraints);
 
@@ -1066,16 +985,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox cbCategoria;
     private javax.swing.JComboBox cbIva;
     private javax.swing.JComboBox cbUnidad;
-    private javax.swing.JComboBox cbUnidadMayor;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
-    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -1099,11 +1014,9 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JRadioButton rbDescripcion;
     private javax.swing.JRadioButton rbNombre;
     private javax.swing.JTable tblArticulos;
-    private javax.swing.JFormattedTextField txtCantMayorUnidad;
     private javax.swing.JFormattedTextField txtCantMenorUnidad;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDescripcion;
-    private javax.swing.JFormattedTextField txtFactor;
     private javax.swing.JTextField txtFiltro;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JFormattedTextField txtValorVenta;

@@ -1,7 +1,6 @@
 package com.DAO;
 
 import Utilidades.HibernateUtil;
-import com.Beans.Articulo;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -261,6 +260,8 @@ public class DAOGenerico<Objeto> {
         return objeto;
     }
 
+ 
+    
     public List buscaCompras(String idArticulo, String fechaInicial, String fechaFinal) {
 
         List objetos = null;

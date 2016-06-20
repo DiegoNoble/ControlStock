@@ -7,8 +7,8 @@ package com.Pedidos;
 
 import com.Beans.Articulo;
 import com.Beans.ArticulosPedido;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
+import com.Beans.EquivalenciaUnidades;
+import com.Beans.Unidad;
 import java.util.List;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
@@ -20,7 +20,7 @@ import javax.swing.table.AbstractTableModel;
 public class ArticulosPedidoTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Pos", "Cod.", "Nombre", "Cantidad", "Unitario", "Total"};
+    private final String[] colunas = new String[]{"Pos", "Cod.", "Nombre", "Unidad", "Cantidad", "Unitario", "Total"};
     //lista para a manipulacao do objeto
     private List<ArticulosPedido> list;
     JTextField txtTotal;
@@ -62,20 +62,22 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
                     return "";
                 }
             case 3:
-                return c.getCantPedida();
+                return c.getEquivalenciaUnidades().getUnidad();
             case 4:
-                if (c.getArticulo() != null) {
-                    return c.getArticulo().getValor_venta();
-                } else {
-                    return 0.0;
-                }
-
+                return c.getCantPedida();
             case 5:
-                if (c.getArticulo() != null) {
-                    return c.getCantPedida() * c.getArticulo().getValor_venta();
-                } else {
-                    return 0.0;
-                }
+                //if (c.getArticulo() != null) {
+                return c.getEquivalenciaUnidades().getValor_venta_equivalente();
+            //} else {
+            //  return 0.0;
+            //}
+
+            case 6:
+                //if (c.getArticulo() != null) {
+                return c.getImportePedido();
+            //} else {
+            //  return 0.0;
+            //}
 
             default:
                 return null;
@@ -99,10 +101,12 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
             case 2:
                 return String.class;
             case 3:
-                return String.class;
+                return Unidad.class;
             case 4:
                 return Double.class;
             case 5:
+                return Double.class;
+            case 6:
                 return Double.class;
 
             default:
@@ -110,6 +114,7 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
         }
     }
 
+ 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;

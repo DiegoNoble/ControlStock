@@ -40,7 +40,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         defineModelo();
         filtros();
         //btnExcluir.setVisible(false);
-        this.setSize(950, 650);
 
         if (frameLogin.getInstance().getPerfil().equals("Operador")) {
 
@@ -62,7 +61,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnSeleccionaArticuloVenta.setVisible(true);
         defineModelo();
         filtros();
-        this.setSize(950, 650);
 
         if (frameLogin.getInstance().getPerfil().equals("Operador")) {
 
@@ -84,7 +82,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnSeleccionaArticuloVenta.setVisible(true);
         defineModelo();
         filtros();
-        this.setSize(950, 650);
 
         if (frameLogin.getInstance().getPerfil().equals("Operador")) {
 
@@ -98,9 +95,11 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         accionTaggetButton();
     }
 
+   
+
     void accionTaggetButton() {
         jXCollapsiblePane1.setAnimated(true);
-        jXCollapsiblePane1.setCollapsed(true);
+        //jXCollapsiblePane1.setCollapsed(true);
         Action toggleAction = jXCollapsiblePane1.getActionMap().get(JXCollapsiblePane.TOGGLE_ACTION);
         toggleAction.putValue(JXCollapsiblePane.EXPAND_ICON, UIManager.getIcon("Tree.collapsedIcon"));
         toggleAction.putValue(JXCollapsiblePane.COLLAPSE_ICON, UIManager.getIcon("Tree.expandedIcon"));
@@ -189,6 +188,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                         articuloSeleccionado = null;
                         btnAlterar.setEnabled(false);
                         btnExcluir.setEnabled(false);
+
                         btnSeleccionaArticuloVenta.setEnabled(true);
                     }
                 }
@@ -337,7 +337,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             try {
                 txtCantMenorUnidad.setText(articuloSeleccionado.getCantidad().toString());
 
-              
                 txtCodigo.setText(articuloSeleccionado.getId());
                 txtDescripcion.setText(articuloSeleccionado.getDescripcion());
                 txtNombre.setText(articuloSeleccionado.getNombre());
@@ -345,10 +344,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 txtValor_CompraConImp.setText(articuloSeleccionado.getValor_compra().toString());
 
                 cbUnidad.setSelectedItem(articuloSeleccionado.getUnidad());
-               
 
                 cbCategoria.setSelectedItem(articuloSeleccionado.getCategoria());
-               
 
             } catch (Exception error) {
                 JOptionPane.showMessageDialog(null, "Error al mostrar detalles", "Error", JOptionPane.ERROR_MESSAGE);
@@ -372,6 +369,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtDescripcion.setEditable(true);
         txtDescripcion.setEnabled(true);
         btnSelecionaCategoria.setEnabled(true);
+        btnEquivalencia.setEnabled(true);
+
         if (perfil.equals("Gerente")) {
             txtCantMenorUnidad.setEnabled(true);
             txtCantMenorUnidad.setEditable(true);
@@ -394,6 +393,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         cbUnidad.setEnabled(false);
         cbIva.setEditable(false);
         btnSelecionaCategoria.setEnabled(false);
+        btnEquivalencia.setEnabled(false);
 
     }
 
@@ -411,6 +411,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnAlterar.setEnabled(false);
         btnExcluir.setEnabled(false);
         btnNovo.setEnabled(false);
+
     }
 
     private void limpiaCampos() {
@@ -420,7 +421,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtValor_CompraConImp.setText("");
         txtValorVenta.setText("");
         txtCantMenorUnidad.setText("");
-               txtDescripcion.setText("");
+        txtDescripcion.setText("");
     }
 
     @SuppressWarnings("unchecked")
@@ -456,6 +457,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jLabel20 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         txtCantMenorUnidad = new javax.swing.JFormattedTextField();
+        btnEquivalencia = new javax.swing.JButton();
         txtDescripcion = new javax.swing.JTextField();
         txtCodigo = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
@@ -485,7 +487,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         setClosable(true);
         setIconifiable(true);
         setMaximizable(true);
-        setPreferredSize(new java.awt.Dimension(900, 730));
+        setPreferredSize(new java.awt.Dimension(900, 700));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jPanel1.setBackground(new java.awt.Color(153, 153, 153));
@@ -655,7 +657,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jPanel12.add(cbUnidad, gridBagConstraints);
 
         jLabel20.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel20.setText("Unidad ");
+        jLabel20.setText("Menor Unidad ");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -664,18 +666,31 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jLabel12.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jLabel12.setText("Stock");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         jPanel12.add(jLabel12, gridBagConstraints);
 
         txtCantMenorUnidad.setEditable(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 100;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel12.add(txtCantMenorUnidad, gridBagConstraints);
+
+        btnEquivalencia.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/equal.png"))); // NOI18N
+        btnEquivalencia.setBorderPainted(false);
+        btnEquivalencia.setEnabled(false);
+        btnEquivalencia.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEquivalenciaActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        jPanel12.add(btnEquivalencia, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -879,7 +894,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jToggleButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/delete.png"))); // NOI18N
         jToggleButton1.setSelected(true);
         jToggleButton1.setText("Detalles");
         jPanel2.add(jToggleButton1);
@@ -973,9 +987,19 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         categorias.toFront();
     }//GEN-LAST:event_btnSelecionaCategoriaActionPerformed
 
+    private void btnEquivalenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEquivalenciaActionPerformed
+
+        EquivalenciasFrame equivalenciasFrame = new EquivalenciasFrame(articuloSeleccionado);
+        this.getDesktopPane().add(equivalenciasFrame);
+        equivalenciasFrame.setVisible(true);
+        equivalenciasFrame.toFront();
+
+    }//GEN-LAST:event_btnEquivalenciaActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnEquivalencia;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnSalvar;

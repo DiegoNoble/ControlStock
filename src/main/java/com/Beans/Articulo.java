@@ -1,6 +1,7 @@
 package com.Beans;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -32,6 +33,8 @@ public class Articulo implements Serializable {
     @JoinColumn(name = "unidad")
     private Unidad unidad;
     private Double iva = 21.0;
+    @OneToMany(mappedBy = "articulo")
+    private List<EquivalenciaUnidades> listEquivalencias;
 
     public Articulo() {
     }
@@ -157,6 +160,14 @@ public class Articulo implements Serializable {
      */
     public void setUnidad(Unidad unidad) {
         this.unidad = unidad;
+    }
+
+    public List<EquivalenciaUnidades> getListEquivalencias() {
+        return listEquivalencias;
+    }
+
+    public void setListEquivalencias(List<EquivalenciaUnidades> listEquivalencias) {
+        this.listEquivalencias = listEquivalencias;
     }
 
     @Override

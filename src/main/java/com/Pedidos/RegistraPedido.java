@@ -7,7 +7,9 @@ import com.Beans.ArticulosPedido;
 import com.Beans.Articulo;
 import com.Clientes.ClienteFrame;
 import com.Beans.Cliente;
+import com.Beans.EquivalenciaUnidades;
 import com.Beans.SituacionPedido;
+import com.Beans.Unidad;
 import com.Beans.Vendedor;
 import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;
@@ -31,7 +33,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-public class RegistraPedido extends javax.swing.JInternalFrame  {
+public class RegistraPedido extends javax.swing.JInternalFrame {
 
     List<Cliente> listClientes;
     List<Vendedor> listVendedores;
@@ -139,7 +141,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
 
         tblArticulosPedido.setModel(tableModel);
 
-        int[] anchos = {5, 100, 200, 20, 20, 50};
+        int[] anchos = {5, 100, 200, 20, 20, 50,30};
 
         for (int i = 0; i < tblArticulosPedido.getColumnCount(); i++) {
 
@@ -236,67 +238,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
             cbCliente.setSelectedItem(cliente);
         }
     }
-/*
-    @Override
-    public void dragEnter(DropTargetDragEvent dtde) {
-    }
-
-    @Override
-    public void dragExit(DropTargetEvent dte) {
-    }
-
-    @Override
-    public void dragOver(DropTargetDragEvent dtde) {
-    }
-
-    @Override
-    public void dropActionChanged(DropTargetDragEvent dtde) {
-    }
-
-    @Override
-    public void drop(DropTargetDropEvent dtde) {
-        try {
-            Transferable tr = dtde.getTransferable();
-            DataFlavor[] flavors = tr.getTransferDataFlavors();
-            if (flavors.length > 0) {
-                if (flavors[0].isFlavorJavaFileListType()) {
-                    dtde.acceptDrop(DnDConstants.ACTION_COPY);
-                    java.util.List list = (java.util.List) tr.getTransferData(flavors[0]);
-                    if (!list.isEmpty()) { 
-
-                        File file = new File(list.get(0).toString());
-                        if (file.exists()) {
-                            if (file.getName().endsWith("xml")) {
-                                XML_PEDIDOS = txtRutaXML.getText();
-                                JAXBContext context = JAXBContext.newInstance(Pedido.class);
-                                System.out.println("Salida desde el fichero XML: ");
-                                Unmarshaller um = context.createUnmarshaller();
-                                Pedido pedidoXML = (Pedido) um.unmarshal(new FileReader(XML_PEDIDOS));
-
-                                clienteDAO = new ClienteDAO();
-                                cbCliente.setSelectedItem(clienteDAO.buscarPorID(Cliente.class, pedidoXML.getCliente().getId_cliente()));
-                                vendedorDAO = new VendedorDAO();
-                                cbVendedor.setSelectedItem(vendedorDAO.buscarPorID(Vendedor.class, pedidoXML.getVendedor().getId()));
-                                tableModel.agregar(pedidoXML.getArticulosPedido());
-
-                            } else {
-                                JOptionPane.showMessageDialog(null, "No es un archivo *.xml valido", "Error", JOptionPane.ERROR_MESSAGE);
-                            }
-                        } else {
-                            System.err.println("error archivo no existe ");
-                        }
-                    }
-                    dtde.dropComplete(true);
-                    return;
-                }
-            }
-            System.err.println("Drop failed: " + dtde);
-            dtde.rejectDrop();
-        } catch (Exception ex) {
-            System.err.println(ex.getMessage());
-            dtde.rejectDrop();
-        }
-    }*/
+   
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -329,7 +271,8 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
         txtCantidad = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        btnNuevo1 = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        cbEquivalencias = new javax.swing.JComboBox();
         jPanel5 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         txtRutaXML = new javax.swing.JTextField();
@@ -507,7 +450,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 7;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         jPanel13.add(btnBuscar, gridBagConstraints);
@@ -521,7 +464,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         jPanel13.add(btnNuevo, gridBagConstraints);
@@ -536,12 +479,17 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         jPanel13.add(btnEliminar, gridBagConstraints);
 
         cbArticulos.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        cbArticulos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbArticulosActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -555,37 +503,37 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 30;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel13.add(txtCantidad, gridBagConstraints);
 
-        jLabel5.setText("Articulo");
+        jLabel5.setText("Unidad");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         jPanel13.add(jLabel5, gridBagConstraints);
 
         jLabel8.setText("Cantidad");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         jPanel13.add(jLabel8, gridBagConstraints);
 
-        btnNuevo1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/add.png"))); // NOI18N
-        btnNuevo1.setToolTipText("Nueva posición");
-        btnNuevo1.setBorder(null);
-        btnNuevo1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNuevo1ActionPerformed(evt);
-            }
-        });
+        jLabel13.setText("Articulo");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
-        jPanel13.add(btnNuevo1, gridBagConstraints);
+        jPanel13.add(jLabel13, gridBagConstraints);
+
+        cbEquivalencias.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel13.add(cbEquivalencias, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
@@ -793,8 +741,8 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
 
         Articulo articulo = (Articulo) cbArticulos.getSelectedItem();
         Double cantidad = Double.valueOf(txtCantidad.getText());
-        Double total = cantidad * articulo.getValor_venta();
-        tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articulo, cantidad, total));
+
+        tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articulo, cantidad, (EquivalenciaUnidades) cbEquivalencias.getSelectedItem()));
 
     }//GEN-LAST:event_btnNuevoActionPerformed
 
@@ -804,16 +752,12 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
 
     }//GEN-LAST:event_btnEliminarActionPerformed
 
-    private void btnNuevo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevo1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnNuevo1ActionPerformed
-
     private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
 
         Articulo articulo = (Articulo) cbArticulos.getSelectedItem();
         Double cantidad = Double.valueOf(txtCantidad.getText());
-        Double total = cantidad * articulo.getValor_venta();
-        tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articulo, cantidad, total));
+
+        tableModel.agregar(new ArticulosPedido(listArticulosPedido.size() + 1, articulo, cantidad, (EquivalenciaUnidades) cbEquivalencias.getSelectedItem()));
 
 
     }//GEN-LAST:event_txtCantidadActionPerformed
@@ -869,17 +813,25 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
         txtRazonSocial.setText(clienteSeleccionado.getRazon_social());
     }//GEN-LAST:event_cbClienteActionPerformed
 
+    private void cbArticulosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbArticulosActionPerformed
+
+        cbEquivalencias.removeAllItems();
+        for (EquivalenciaUnidades equivalenciaUnidades : ((Articulo) cbArticulos.getSelectedItem()).getListEquivalencias()) {
+            cbEquivalencias.addItem(equivalenciaUnidades);
+        }
+    }//GEN-LAST:event_cbArticulosActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnNuevo;
-    private javax.swing.JButton btnNuevo1;
     private javax.swing.JButton btnRegistraVenta;
     private javax.swing.JButton btnSelecionaCliente;
     private javax.swing.JButton btnSelecionaCliente1;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox cbArticulos;
     private javax.swing.JComboBox cbCliente;
+    private javax.swing.JComboBox cbEquivalencias;
     private javax.swing.JComboBox cbVendedor;
     private org.jdesktop.swingx.JXDatePicker dpFecha;
     private javax.swing.JButton jButton1;
@@ -888,6 +840,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame  {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

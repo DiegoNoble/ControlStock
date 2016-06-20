@@ -48,7 +48,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
     private void centralizaJanela(JInternalFrame internalFrame) {
         internalFrame.setLocation((this.getWidth() - internalFrame.getWidth()) / 2,
-                (this.getHeight() - internalFrame.getHeight()) / 4);
+                1);
     }
 
     @SuppressWarnings("unchecked")

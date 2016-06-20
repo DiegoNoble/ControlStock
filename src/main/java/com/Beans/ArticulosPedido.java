@@ -2,8 +2,6 @@ package com.Beans;
 
 import java.io.Serializable;
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -35,6 +33,8 @@ public class ArticulosPedido implements Serializable {
     private Double importePedido;
     private Double importeAtendido = 0.0;
     private Double importePendiente;
+    @ManyToOne
+    private EquivalenciaUnidades equivalenciaUnidades;
 
     public ArticulosPedido() {
     }
@@ -50,15 +50,20 @@ public class ArticulosPedido implements Serializable {
         this.cantPedida = cantPedida;
     }
 
-    public ArticulosPedido(Integer posicion, Articulo articulo, Double cantPedida, Double importePedido) {
+    public ArticulosPedido(Integer posicion, Articulo articulo, Double cantPedida, EquivalenciaUnidades equivalenciaUnidades) {
         this.posicion = posicion;
         this.articulo = articulo;
+        this.equivalenciaUnidades = equivalenciaUnidades;
         this.cantPedida = cantPedida;
         this.cantPendiente = cantPedida;
-        this.importePedido = importePedido;
+
+        this.cantAtendida = 0.0;
+        this.importeAtendido = 0.0;
+        this.importePedido = cantPedida * equivalenciaUnidades.getValor_venta_equivalente();
         this.importePendiente = importePedido;
     }
-@XmlTransient
+
+    @XmlTransient
     public Integer getId() {
         return id;
     }
@@ -142,6 +147,14 @@ public class ArticulosPedido implements Serializable {
 
     public void setImportePendiente(Double importePendiente) {
         this.importePendiente = importePendiente;
+    }
+
+    public EquivalenciaUnidades getEquivalenciaUnidades() {
+        return equivalenciaUnidades;
+    }
+
+    public void setEquivalenciaUnidades(EquivalenciaUnidades equivalenciaUnidades) {
+        this.equivalenciaUnidades = equivalenciaUnidades;
     }
 
     @XmlTransient

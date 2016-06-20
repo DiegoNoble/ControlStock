@@ -27,5 +27,6 @@
     <mapping class="com.Beans.Pedido"/>
     <mapping class="com.Beans.MovStock"/>
     <mapping class="com.Beans.Remito"/>
+    <mapping class="com.Beans.EquivalenciaUnidades"/>
   </session-factory>
 </hibernate-configuration>

@@ -84,7 +84,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
         tableModel = new AtencionArticulosPedidoTableModel(listArticulosPedido, txtTotal);
         tblArticulosPedido.setModel(tableModel);
 
-        int[] anchos = {5, 100, 200, 20, 20, 20, 20, 20};
+        int[] anchos = {5, 100, 200, 20, 20, 20, 20, 20, 20};
 
         for (int i = 0; i < tblArticulosPedido.getColumnCount(); i++) {
 
@@ -478,7 +478,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
         for (ArticulosPedido articulosPedido : listArticulosPedido) {
             articulosPedido.setCantPendiente(0.0);
             articulosPedido.setCantAtendida(articulosPedido.getCantPedida());
-            articulosPedido.setImporteAtendido(articulosPedido.getArticulo().getValor_venta() * articulosPedido.getCantAtendida());
+            articulosPedido.setImporteAtendido((articulosPedido.getArticulo().getValor_venta() * articulosPedido.getEquivalenciaUnidades().getFactor_conversion()) * articulosPedido.getCantAtendida());
 
         }
         tableModel.fireTableDataChanged();

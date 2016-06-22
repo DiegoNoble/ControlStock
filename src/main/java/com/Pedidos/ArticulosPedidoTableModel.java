@@ -67,7 +67,7 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
                 return c.getCantPedida();
             case 5:
                 //if (c.getArticulo() != null) {
-                return c.getEquivalenciaUnidades().getValor_venta_equivalente();
+                return c.getArticulo().getValor_venta() * c.getEquivalenciaUnidades().getFactor_conversion();
             //} else {
             //  return 0.0;
             //}
@@ -114,7 +114,6 @@ public class ArticulosPedidoTableModel extends AbstractTableModel {
         }
     }
 
- 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;

@@ -18,7 +18,7 @@ import javax.swing.table.AbstractTableModel;
 public class EquivalenciaUnidadesTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Unidad", "Factor", "Valor compra", "Valor venta", "Stock equivalente"};
+    private final String[] colunas = new String[]{"Unidad", "Factor"};
     //lista para a manipulacao do objeto
     private List<EquivalenciaUnidades> list;
     JTextField txtTotal;
@@ -49,12 +49,6 @@ public class EquivalenciaUnidadesTableModel extends AbstractTableModel {
                 return c.getUnidad();
             case 1:
                 return c.getFactor_conversion();
-            case 2:
-                return c.getValor_compra_equivalente();
-            case 3:
-                return c.getValor_venta_equivalente();
-            case 4:
-                return c.getStock();
             default:
                 return null;
         }
@@ -97,10 +91,7 @@ public class EquivalenciaUnidadesTableModel extends AbstractTableModel {
                 break;
             case 1:
                 c.setFactor_conversion((Double) aValue);
-                c.setValor_compra_equivalente((Double) c.getArticulo().getValor_compra() * c.getFactor_conversion());
-                c.setValor_venta_equivalente((Double) c.getArticulo().getValor_venta() * c.getFactor_conversion());
-                c.setStock((Double) c.getArticulo().getCantidad() / c.getFactor_conversion());
-                fireTableDataChanged();
+
                 break;
 
         }

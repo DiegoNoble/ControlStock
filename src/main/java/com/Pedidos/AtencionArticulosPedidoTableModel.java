@@ -7,6 +7,7 @@ package com.Pedidos;
 
 import com.Beans.Articulo;
 import com.Beans.ArticulosPedido;
+import com.Beans.Unidad;
 import java.util.List;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
@@ -18,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Pos", "Cod.", "Nombre", "Cant pedida", "Cant atendida", "Unitario", "% Bonif", "Sub Total"};
+    private final String[] colunas = new String[]{"Pos", "Cod.", "Nombre", "Unidad", "Cant pedida", "Cant atendida", "Unitario", "% Bonif", "Sub Total"};
     //lista para a manipulacao do objeto
     private List<ArticulosPedido> list;
     JTextField txtTotal;
@@ -54,14 +55,16 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
             case 2:
                 return c.getArticulo().getNombre();
             case 3:
-                return c.getCantPedida();
+                return c.getEquivalenciaUnidades().getUnidad();
             case 4:
-                return c.getCantAtendida();
+                return c.getCantPedida();
             case 5:
-                return c.getArticulo().getValor_venta();
+                return c.getCantAtendida();
             case 6:
-                return c.getBonificacion();
+                return c.getArticulo().getValor_venta() * c.getEquivalenciaUnidades().getFactor_conversion();
             case 7:
+                return c.getBonificacion();
+            case 8:
                 return c.getImporteAtendido();
 
             default:
@@ -86,7 +89,7 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
             case 2:
                 return String.class;
             case 3:
-                return Double.class;
+                return Unidad.class;
             case 4:
                 return Double.class;
             case 5:
@@ -94,6 +97,8 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
             case 6:
                 return Double.class;
             case 7:
+                return Double.class;
+            case 8:
                 return Double.class;
 
             default:
@@ -103,7 +108,7 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
 
     Double calculaTotalAtendido(ArticulosPedido a) {
 
-        Double total = a.getArticulo().getValor_venta() * a.getCantAtendida();
+        Double total = (a.getArticulo().getValor_venta() * a.getEquivalenciaUnidades().getFactor_conversion()) * a.getCantAtendida();
         Double totalBonificado = total - (total * (a.getBonificacion() / 100));
         return totalBonificado;
     }
@@ -132,9 +137,9 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 4) {
+        if (columnIndex == 5) {
             return true;
-        } else if (columnIndex == 6) {
+        } else if (columnIndex == 7) {
             return true;
         } else {
             return false;

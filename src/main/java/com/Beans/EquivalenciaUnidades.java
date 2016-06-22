@@ -19,14 +19,10 @@ public class EquivalenciaUnidades implements Serializable {
     @ManyToOne()
     private Unidad unidad;
     private Double factor_conversion;
-    private Double stock;
-    private Double valor_venta_equivalente;
-    private Double valor_compra_equivalente;
 
     public EquivalenciaUnidades() {
     }
 
-    
     public EquivalenciaUnidades(Articulo articulo) {
         this.articulo = articulo;
     }
@@ -61,30 +57,6 @@ public class EquivalenciaUnidades implements Serializable {
 
     public void setFactor_conversion(Double factor_conversion) {
         this.factor_conversion = factor_conversion;
-    }
-
-    public Double getStock() {
-        return stock;
-    }
-
-    public void setStock(Double stock) {
-        this.stock = stock;
-    }
-
-    public Double getValor_venta_equivalente() {
-        return valor_venta_equivalente;
-    }
-
-    public void setValor_venta_equivalente(Double valor_venta_equivalente) {
-        this.valor_venta_equivalente = valor_venta_equivalente;
-    }
-
-    public Double getValor_compra_equivalente() {
-        return valor_compra_equivalente;
-    }
-
-    public void setValor_compra_equivalente(Double valor_compra_equivalente) {
-        this.valor_compra_equivalente = valor_compra_equivalente;
     }
 
     @Override

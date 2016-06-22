@@ -33,14 +33,20 @@
      unidad.`DESCRIPCION` AS unidad_DESCRIPCION,
      articulo.`nombre` AS articulo_nombre,
      vendedor.`nombre` AS vendedor_nombre,
-     articulos_pedido.`bonificacion` AS articulos_pedido_bonificacion
+     articulos_pedido.`bonificacion` AS articulos_pedido_bonificacion,
+     equivalencia_unidades.`id` AS equivalencia_unidades_id,
+     equivalencia_unidades.`articulo_id` AS equivalencia_unidades_articulo_id,
+     equivalencia_unidades.`unidad_id` AS equivalencia_unidades_unidad_id,
+     equivalencia_unidades.`factor_conversion` AS equivalencia_unidades_factor_conversion
 FROM
-     `pedido` pedido INNER JOIN `articulos_pedido` articulos_pedido ON pedido.`id` = articulos_pedido.`id_pedido`
-     INNER JOIN `remito` remito ON pedido.`id` = remito.`id_pedido`
-     INNER JOIN `cliente` cliente ON pedido.`id_cliente` = cliente.`id_cliente`
-     INNER JOIN `vendedor` vendedor ON pedido.`id_vendedor` = vendedor.`id`
-     INNER JOIN `articulo` articulo ON articulos_pedido.`id_articulo` = articulo.`id`
-     INNER JOIN `unidad` unidad ON articulo.`unidad` = unidad.`ID`
+     `pedido` pedido 
+INNER JOIN `articulos_pedido` articulos_pedido ON pedido.`id` = articulos_pedido.`id_pedido`
+INNER JOIN `articulo` articulo ON articulos_pedido.`id_articulo` = articulo.`id`
+INNER JOIN `unidad` unidad ON articulo.`unidad` = unidad.`id`
+LEFT OUTER JOIN `equivalencia_unidades` equivalencia_unidades ON equivalencia_unidades.`unidad_id` = unidad.`ID`
+INNER JOIN `remito` remito ON pedido.`id` = remito.`id_pedido`
+INNER JOIN `cliente` cliente ON pedido.`id_cliente` = cliente.`id_cliente`
+INNER JOIN `vendedor` vendedor ON pedido.`id_vendedor` = vendedor.`id`
 WHERE
      remito.`id` = $P{idRemito}]]>
 	</queryString>
@@ -71,6 +77,10 @@ WHERE
 	<field name="articulo_nombre" class="java.lang.String"/>
 	<field name="vendedor_nombre" class="java.lang.String"/>
 	<field name="articulos_pedido_bonificacion" class="java.lang.Double"/>
+	<field name="equivalencia_unidades_id" class="java.lang.Long"/>
+	<field name="equivalencia_unidades_articulo_id" class="java.lang.String"/>
+	<field name="equivalencia_unidades_unidad_id" class="java.lang.Integer"/>
+	<field name="equivalencia_unidades_factor_conversion" class="java.lang.Double"/>
 	<variable name="suma" class="java.lang.Double" resetType="Column" calculation="Sum">
 		<variableExpression><![CDATA[$F{articulos_pedido_importeAtendido}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>

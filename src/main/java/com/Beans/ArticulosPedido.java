@@ -59,7 +59,7 @@ public class ArticulosPedido implements Serializable {
 
         this.cantAtendida = 0.0;
         this.importeAtendido = 0.0;
-        this.importePedido = cantPedida * equivalenciaUnidades.getValor_venta_equivalente();
+        this.importePedido = cantPedida * (articulo.getValor_venta() * equivalenciaUnidades.getFactor_conversion());
         this.importePendiente = importePedido;
     }
 

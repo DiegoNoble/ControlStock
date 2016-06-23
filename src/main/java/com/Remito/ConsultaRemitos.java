@@ -80,7 +80,7 @@ public final class ConsultaRemitos extends javax.swing.JInternalFrame {
         tableModel = new RemitoTableModel(listRemitos);
         tblRemitos.setModel(tableModel);
         tblRemitos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
-        int[] anchos = {20, 20, 20, 20,20, 20};
+        int[] anchos = {20, 20, 20, 20, 20, 20};
 
         for (int i = 0; i < tblRemitos.getColumnCount(); i++) {
 
@@ -147,23 +147,25 @@ public final class ConsultaRemitos extends javax.swing.JInternalFrame {
             Double mov = 0.0;
             Double valorUnitario = 0.0;
             Double importeRemito = 0.0;
+            Double unitarioBonificado = 0.0;
             List<MovStock> listMovStock = new ArrayList<>();
             Pedido pedido = remitoSeleccionado.getPedido();
             for (ArticulosPedido articulosPedido : pedido.getArticulosPedido()) {
 
                 if (articulosPedido.getCantPendiente() - articulosPedido.getCantPedida() != 0) {
-                    mov = (articulosPedido.getCantPedida() * -1);
+                    Double factor = articulosPedido.getEquivalenciaUnidades().getFactor_conversion();
+                    mov = ((articulosPedido.getCantPedida() * factor) * -1);
 
-                    valorUnitario = articulosPedido.getArticulo().getValor_venta();
-                    importeRemito = importeRemito + valorUnitario * mov;
-                    articulosPedido.setCantAtendida(articulosPedido.getCantPedida() + mov);
-                    articulosPedido.setCantPendiente(articulosPedido.getCantPedida());
+                    valorUnitario = (articulosPedido.getArticulo().getValor_venta());
+                    unitarioBonificado = valorUnitario - (valorUnitario * (articulosPedido.getBonificacion() / 100));
+                    importeRemito = importeRemito + unitarioBonificado * mov;
 
-                    articulosPedido.setImportePendiente(articulosPedido.getImportePedido());
-                    articulosPedido.setImporteAtendido(articulosPedido.getImporteAtendido() - articulosPedido.getImportePedido());
-                    articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
-                    articulosPedidoDAO.actualiza();
-
+                    //articulosPedido.setCantAtendida(articulosPedido.getCantPedida() + mov);
+                    //articulosPedido.setCantPendiente(articulosPedido.getCantPedida());
+                    //articulosPedido.setImportePendiente(articulosPedido.getImportePedido());
+                    //articulosPedido.setImporteAtendido(articulosPedido.getImporteAtendido() - articulosPedido.getImportePedido());
+                    //articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
+                    //articulosPedidoDAO.actualiza();
                     MovStock movStock = new MovStock();
                     movStock.setArticulo(articulosPedido.getArticulo());
                     movStock.setCantidadMov(-mov);
@@ -172,9 +174,9 @@ public final class ConsultaRemitos extends javax.swing.JInternalFrame {
                     listMovStock.add(movStock);
                 }
             }
-            pedido.setImportePendiente(pedido.getImporteTotal());
+            //pedido.setImportePendiente(pedido.getImporteTotal());
             pedido.setEstadoPedido(SituacionPedido.CON_REMITO_ANULADO);
-            pedido.setImporteAtendido(pedido.getImporteAtendido() + importeRemito);
+            //pedido.setImporteAtendido(pedido.getImporteAtendido() + importeRemito);
 
             pedidoDAO = new PedidoDAO(pedido);
             pedidoDAO.actualiza();

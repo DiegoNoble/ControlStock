@@ -5,7 +5,6 @@
  */
 package com.Pedidos;
 
-import com.Beans.Cliente;
 import com.Beans.SituacionPedido;
 import com.Beans.Pedido;
 import com.Beans.Vendedor;

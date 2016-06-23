@@ -74,6 +74,11 @@ public class Remito implements Serializable {
         this.anulado = anulado;
     }
 
+    @Override
+    public String toString() {
+        return id.toString();
+    }
+
   
 
 }

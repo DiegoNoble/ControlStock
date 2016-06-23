@@ -33,7 +33,7 @@ public class MyTimeCellRenderer extends DefaultTableCellRenderer {
     @Override
     protected void setValue(Object value) {
         if (value != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
             Date valuefOfdate = (Date) value;
             super.setValue(sdf.format(valuefOfdate));
         } else {

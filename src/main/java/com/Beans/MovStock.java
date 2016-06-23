@@ -11,7 +11,7 @@ public class MovStock implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Temporal(TemporalType.TIMESTAMP)
+    @Temporal(TemporalType.DATE)
     private Date fecha;
     private Double cantidadMov;
     private Double saldoStock;

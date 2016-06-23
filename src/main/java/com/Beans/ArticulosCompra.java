@@ -27,14 +27,18 @@ public class ArticulosCompra implements Serializable {
     @JoinColumn(name = "id_factura_compra")
     private FacturaCompra facturaCompra;
 
+    @ManyToOne
+    private EquivalenciaUnidades equivalenciaUnidades;
+
     public ArticulosCompra() {
     }
 
-    public ArticulosCompra(Integer posicion, Double valor, Double cantidad, Articulo articulo) {
+    public ArticulosCompra(Integer posicion, Double valor, Double cantidad, Articulo articulo, EquivalenciaUnidades equivalenciaUnidades) {
         this.posicion = posicion;
         this.valor = valor;
         this.cantidad = cantidad;
         this.articulo = articulo;
+        this.equivalenciaUnidades = equivalenciaUnidades;
     }
 
     public Integer getId() {
@@ -83,6 +87,14 @@ public class ArticulosCompra implements Serializable {
 
     public void setPosicion(Integer posicion) {
         this.posicion = posicion;
+    }
+
+    public EquivalenciaUnidades getEquivalenciaUnidades() {
+        return equivalenciaUnidades;
+    }
+
+    public void setEquivalenciaUnidades(EquivalenciaUnidades equivalenciaUnidades) {
+        this.equivalenciaUnidades = equivalenciaUnidades;
     }
 
 }

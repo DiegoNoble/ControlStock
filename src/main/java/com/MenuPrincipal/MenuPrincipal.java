@@ -2,6 +2,7 @@ package com.MenuPrincipal;
 
 import Utilidades.DesktopPaneImagem;
 import com.Articulos.ArticulosFrame;
+import com.Articulos.ConsultaMovStock;
 import com.CategoriaArticulos.CategoriaFrame;
 import com.Clientes.ClienteFrame;
 import com.Compras.ConsultaCompras;
@@ -83,6 +84,8 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         mnuCompras = new javax.swing.JMenu();
         mnuItemRegistrarVentas1 = new javax.swing.JMenuItem();
         mnuItemConsultarVendas1 = new javax.swing.JMenuItem();
+        mnuAyuda1 = new javax.swing.JMenu();
+        mnuItemConsultaCuentasProveedores2 = new javax.swing.JMenuItem();
         mnuAyuda = new javax.swing.JMenu();
         mnuItemConsultaCuentasProveedores1 = new javax.swing.JMenuItem();
 
@@ -322,6 +325,25 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
         jMenuBar1.add(mnuCompras);
 
+        mnuAyuda1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuAyuda1.setText(" Stock ");
+        mnuAyuda1.setBorderPainted(true);
+        mnuAyuda1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        mnuAyuda1.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+
+        mnuItemConsultaCuentasProveedores2.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemConsultaCuentasProveedores2.setText(" Consulta movimientos");
+        mnuItemConsultaCuentasProveedores2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuItemConsultaCuentasProveedores2.setBorderPainted(true);
+        mnuItemConsultaCuentasProveedores2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemConsultaCuentasProveedores2ActionPerformed(evt);
+            }
+        });
+        mnuAyuda1.add(mnuItemConsultaCuentasProveedores2);
+
+        jMenuBar1.add(mnuAyuda1);
+
         mnuAyuda.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         mnuAyuda.setText("  Ayuda  ");
         mnuAyuda.setBorderPainted(true);
@@ -491,6 +513,14 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         consultaRemitos.toFront();
     }//GEN-LAST:event_mnuItemRegistrarVentas5ActionPerformed
 
+    private void mnuItemConsultaCuentasProveedores2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaCuentasProveedores2ActionPerformed
+        ConsultaMovStock consultaMovStock = new ConsultaMovStock();
+        centralizaJanela(consultaMovStock);
+        desktopPane.add(consultaMovStock);
+        consultaMovStock.setVisible(true);
+        consultaMovStock.toFront();
+    }//GEN-LAST:event_mnuItemConsultaCuentasProveedores2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -499,11 +529,13 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JMenu mnuAyuda;
+    private javax.swing.JMenu mnuAyuda1;
     private javax.swing.JMenu mnuCompras;
     private javax.swing.JMenuItem mnuItemCategorias;
     private javax.swing.JMenuItem mnuItemClientes;
     private javax.swing.JMenuItem mnuItemClientes1;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores1;
+    private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores2;
     private javax.swing.JMenuItem mnuItemConsultarVendas1;
     private javax.swing.JMenuItem mnuItemProductos;
     private javax.swing.JMenuItem mnuItemProveedores;

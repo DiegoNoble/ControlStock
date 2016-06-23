@@ -7,7 +7,7 @@ package com.Compras;
 
 import com.Beans.Articulo;
 import com.Beans.ArticulosCompra;
-import com.Beans.FacturaCompra;
+import com.Beans.Unidad;
 import java.util.List;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
@@ -19,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 public class ArticulosCompraTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Pos", "Cod.", "Nombre", "Cantidad", "Unitario", "Total"};
+    private final String[] colunas = new String[]{"Pos", "Cod.", "Nombre", "Unidad", "Cantidad", "Unitario", "Total"};
     //lista para a manipulacao do objeto
     private List<ArticulosCompra> list;
     JTextField txtTotal;
@@ -30,7 +30,6 @@ public class ArticulosCompraTableModel extends AbstractTableModel {
         this.list = list;
     }
 
-    
     public ArticulosCompraTableModel(List<ArticulosCompra> list, JTextField txtTotal, JTextField txtSubTotal, JTextField txtIVA) {
         this.txtTotal = txtTotal;
         this.txtSubTotal = txtSubTotal;
@@ -67,20 +66,14 @@ public class ArticulosCompraTableModel extends AbstractTableModel {
                     return "";
                 }
             case 3:
-                return c.getCantidad();
+                return c.getEquivalenciaUnidades().getUnidad();
             case 4:
-                if (c.getArticulo() != null) {
-                    return c.getValor();
-                } else {
-                    return 0.0;
-                }
-
+                return c.getCantidad();
             case 5:
-                if (c.getArticulo() != null) {
-                    return c.getCantidad() * c.getValor();
-                } else {
-                    return 0.0;
-                }
+                return c.getValor();
+
+            case 6:
+                return c.getValor() * c.getCantidad();
 
             default:
                 return null;
@@ -104,10 +97,12 @@ public class ArticulosCompraTableModel extends AbstractTableModel {
             case 2:
                 return String.class;
             case 3:
-                return String.class;
+                return Unidad.class;
             case 4:
                 return Double.class;
             case 5:
+                return Double.class;
+            case 6:
                 return Double.class;
 
             default:
@@ -126,7 +121,8 @@ public class ArticulosCompraTableModel extends AbstractTableModel {
         this.fireTableRowsInserted(list.size() - 1, list.size() - 1);
         CalculaTotal();
     }
-     public void agregar(List<ArticulosCompra> articulosCompras) {
+
+    public void agregar(List<ArticulosCompra> articulosCompras) {
         list.clear();
 
         list.addAll(articulosCompras);
@@ -155,8 +151,8 @@ public class ArticulosCompraTableModel extends AbstractTableModel {
         Double subtotal = 0.0;
         Double iva = 0.0;
         for (ArticulosCompra articulosCompra : list) {
-            if (articulosCompra.getValor()!= null) {
-                subtotal = subtotal + articulosCompra.getValor()*articulosCompra.getCantidad();
+            if (articulosCompra.getValor() != null) {
+                subtotal = subtotal + articulosCompra.getValor() * articulosCompra.getCantidad();
 
             }
 

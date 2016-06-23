@@ -4,6 +4,8 @@ import Utilidades.ControlarEntradaTexto;
 import com.Articulos.ArticulosFrame;
 import com.Beans.Articulo;
 import com.Beans.ArticulosCompra;
+import com.Beans.ArticulosPedido;
+import com.Beans.EquivalenciaUnidades;
 import com.Beans.FacturaCompra;
 import com.Beans.MovStock;
 import com.Beans.Proveedor;
@@ -99,7 +101,7 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
 
         tblArticulosCompra.setModel(tableModel);
 
-        int[] anchos = {5, 100, 200, 20, 20, 50};
+        int[] anchos = {5, 100, 200, 20, 20, 20, 50};
 
         for (int i = 0; i < tblArticulosCompra.getColumnCount(); i++) {
 
@@ -137,17 +139,18 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
                     subtotal = subtotal + articulosCompra.getValor() * articulosCompra.getCantidad();
                     articulosCompra.setFacturaCompra(compra);
 
+                    Double factor = articulosCompra.getEquivalenciaUnidades().getFactor_conversion();
                     MovStock movStock = new MovStock();
                     movStock.setArticulo(articulosCompra.getArticulo());
-                    movStock.setCantidadMov(articulosCompra.getCantidad());
+                    movStock.setCantidadMov(articulosCompra.getCantidad()*factor);
                     movStock.setFecha(new Date());
-                    movStock.setSaldoStock(articulosCompra.getArticulo().getCantidad() + articulosCompra.getCantidad());
+                    movStock.setSaldoStock(articulosCompra.getArticulo().getCantidad() + (articulosCompra.getCantidad()*factor));
 
                     listMovStock.add(movStock);
 
                     Articulo articulo = movStock.getArticulo();
                     articulo.setCantidad(movStock.getSaldoStock());
-                    articulo.setValor_compra(articulosCompra.getValor());
+                    articulo.setValor_compra(articulosCompra.getValor()/factor);
                     articulosDAO = new ArticuloDAO(articulo);
                     articulosDAO.actualiza();
 
@@ -238,6 +241,8 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
         jLabel8 = new javax.swing.JLabel();
         txtValorUnitario = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        cbEquivalencias = new javax.swing.JComboBox();
         jPanel10 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -378,7 +383,7 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 7;
+        gridBagConstraints.gridx = 9;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         jPanel13.add(btnBuscar, gridBagConstraints);
@@ -392,7 +397,7 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         jPanel13.add(btnNuevo, gridBagConstraints);
@@ -407,12 +412,17 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 8;
+        gridBagConstraints.gridx = 10;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         jPanel13.add(btnEliminar, gridBagConstraints);
 
         cbArticulos.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        cbArticulos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbArticulosActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -420,7 +430,7 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel13.add(cbArticulos, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 30;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -434,11 +444,11 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
 
         jLabel8.setText("Valor unitario");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
         jPanel13.add(jLabel8, gridBagConstraints);
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridx = 7;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 30;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -446,9 +456,23 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
 
         jLabel9.setText("Cantidad");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         jPanel13.add(jLabel9, gridBagConstraints);
+
+        jLabel6.setText("Unidad");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        jPanel13.add(jLabel6, gridBagConstraints);
+
+        cbEquivalencias.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 60;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel13.add(cbEquivalencias, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
@@ -588,8 +612,10 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
         Articulo articulo = (Articulo) cbArticulos.getSelectedItem();
         Double cantidad = Double.valueOf(txtCantidad.getText());
         Double unitario = Double.valueOf(txtValorUnitario.getText());
+        
         if (cantidad != 0 && unitario != 0) {
-            tableModel.agregar(new ArticulosCompra(listArticulosCompra.size() + 1, unitario, cantidad, articulo));
+
+            tableModel.agregar(new ArticulosCompra(listArticulosCompra.size() + 1, unitario, cantidad, articulo, (EquivalenciaUnidades) cbEquivalencias.getSelectedItem()));
             limbiaCampo();
         } else {
             JOptionPane.showMessageDialog(this, "Selecione una cantidad y un valor unitario!", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -604,6 +630,15 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_btnEliminarActionPerformed
 
+    private void cbArticulosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbArticulosActionPerformed
+
+        cbEquivalencias.removeAllItems();
+        for (EquivalenciaUnidades equivalenciaUnidades : ((Articulo) cbArticulos.getSelectedItem()).getListEquivalencias()) {
+            cbEquivalencias.addItem(equivalenciaUnidades);
+        }
+
+    }//GEN-LAST:event_cbArticulosActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnEliminar;
@@ -612,6 +647,7 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnSelecionaProveedor;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox cbArticulos;
+    private javax.swing.JComboBox cbEquivalencias;
     private javax.swing.JComboBox cbProveedor;
     private org.jdesktop.swingx.JXDatePicker dpFecha;
     private javax.swing.JLabel jLabel1;
@@ -621,6 +657,7 @@ public class RegistraCompra extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;

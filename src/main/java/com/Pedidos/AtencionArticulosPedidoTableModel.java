@@ -119,12 +119,12 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
 
-            case 4:
+            case 5:
                 c.setCantAtendida((Double) aValue);
                 c.setImporteAtendido(calculaTotalAtendido(c));
                 break;
 
-            case 6:
+            case 7:
 
                 c.setBonificacion((Double) aValue);
                 c.setImporteAtendido(calculaTotalAtendido(c));

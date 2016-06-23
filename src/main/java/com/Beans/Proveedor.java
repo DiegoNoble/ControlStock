@@ -149,7 +149,7 @@ public class Proveedor implements Serializable {
     }
 
     public String toString() {
-        return nombre;
+        return razon_social;
     }
 
 }

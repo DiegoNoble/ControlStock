@@ -33,7 +33,7 @@ public class FacturaCompra implements Serializable {
 
     @OneToMany(mappedBy = "facturaCompra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ArticulosCompra> articulosCompra;
-    
+
     public Integer getId() {
         return id;
     }
@@ -96,6 +96,11 @@ public class FacturaCompra implements Serializable {
 
     public void setArticulosCompra(List<ArticulosCompra> articulosCompra) {
         this.articulosCompra = articulosCompra;
+    }
+
+    @Override
+    public String toString() {
+        return "Documento: " + nroDocumento + ", Proveedor " + proveedor + "";
     }
 
 }

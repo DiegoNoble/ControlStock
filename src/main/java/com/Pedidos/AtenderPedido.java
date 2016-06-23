@@ -123,7 +123,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                 for (ArticulosPedido articulosPedido : listArticulosPedido) {
 
                     if (articulosPedido.getCantPendiente() - articulosPedido.getCantPedida() != 0) {
-                        mov = articulosPedido.getCantAtendida();
+                        mov = articulosPedido.getCantAtendida()*articulosPedido.getEquivalenciaUnidades().getFactor_conversion();
 
                         importeRemito = importeRemito + articulosPedido.getImporteAtendido();
                         //articulosPedido.setCantp(articulosPedido.getCantPedida() - articulosPedido.getCantPendiente());

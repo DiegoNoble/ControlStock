@@ -4,7 +4,13 @@
  */
 package com.DAO;
 
+import com.Beans.Articulo;
 import com.Beans.MovStock;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import javax.swing.JOptionPane;
+import org.hibernate.Query;
 
 /**
  *
@@ -19,4 +25,21 @@ public class MovStockDAO extends DAOGenerico<Object> {
         super.objeto = objeto;
     }
 
+    public List buscaMovArticuloEntreFechas(Articulo articulo, Date fechaInicial, Date fechaFinal) {
+
+        List objetos = null;
+        try {
+            SimpleDateFormat formatoBD = new SimpleDateFormat("yyyy-MM-dd");
+            transacion = seccion.beginTransaction();
+            Query query = seccion.createQuery("from MovStock where articulo = '" + articulo + "' and fecha between '" + formatoBD.format(fechaInicial) + "' "
+                    + "and '" + formatoBD.format(fechaFinal) + "'order by id desc,fecha desc" );
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al traer todos los registros" + e);
+        }
+        return objetos;
+
+    }
 }

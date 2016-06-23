@@ -6,83 +6,70 @@
 	<parameter name="idRemito" class="java.lang.Integer"/>
 	<parameter name="logo" class="java.lang.Object"/>
 	<queryString>
-		<![CDATA[SELECT
-     remito.`fecha` AS remito_fecha,
-     pedido.`id` AS pedido_id,
-     pedido.`fecha` AS pedido_fecha,
-     cliente.`id_cliente` AS cliente_id_cliente,
-     cliente.`razon_social` AS cliente_razon_social,
-     cliente.`cel` AS cliente_cel,
-     cliente.`ci` AS cliente_ci,
-     cliente.`ciudad` AS cliente_ciudad,
-     cliente.`direccion` AS cliente_direccion,
-     cliente.`email` AS cliente_email,
-     cliente.`telefono` AS cliente_telefono,
-     articulos_pedido.`cantAtendida` AS articulos_pedido_cantAtendida,
-     articulos_pedido.`importeAtendido` AS articulos_pedido_importeAtendido,
-     articulos_pedido.`posicion` AS articulos_pedido_posicion,
-     remito.`id` AS remito_id,
-     pedido.`id_vendedor` AS pedido_id_vendedor,
-     articulo.`descripcion` AS articulo_descripcion,
-     articulo.`valor_venta` AS articulo_valor_venta,
-     cliente.`condicionImpositiva` AS cliente_condicionImpositiva,
-     cliente.`documento` AS cliente_documento,
-     articulo.`id` AS articulo_id,
-     remito.`importeRemito` AS remito_importeRemito,
-     pedido.`observaciones` AS pedido_observaciones,
-     unidad.`DESCRIPCION` AS unidad_DESCRIPCION,
-     articulo.`nombre` AS articulo_nombre,
-     vendedor.`nombre` AS vendedor_nombre,
-     articulos_pedido.`bonificacion` AS articulos_pedido_bonificacion,
-     equivalencia_unidades.`id` AS equivalencia_unidades_id,
-     equivalencia_unidades.`articulo_id` AS equivalencia_unidades_articulo_id,
-     equivalencia_unidades.`unidad_id` AS equivalencia_unidades_unidad_id,
-     equivalencia_unidades.`factor_conversion` AS equivalencia_unidades_factor_conversion
-FROM
-     `pedido` pedido 
-INNER JOIN `articulos_pedido` articulos_pedido ON pedido.`id` = articulos_pedido.`id_pedido`
-INNER JOIN `articulo` articulo ON articulos_pedido.`id_articulo` = articulo.`id`
-INNER JOIN `unidad` unidad ON articulo.`unidad` = unidad.`id`
-LEFT OUTER JOIN `equivalencia_unidades` equivalencia_unidades ON equivalencia_unidades.`unidad_id` = unidad.`ID`
-INNER JOIN `remito` remito ON pedido.`id` = remito.`id_pedido`
-INNER JOIN `cliente` cliente ON pedido.`id_cliente` = cliente.`id_cliente`
-INNER JOIN `vendedor` vendedor ON pedido.`id_vendedor` = vendedor.`id`
-WHERE
-     remito.`id` = $P{idRemito}]]>
+		<![CDATA[SELECT C.razon_social, C.documento,C.condicionImpositiva, C.ciudad, C.cel,C.telefono,C.direccion,
+R.fecha as fechaRemito, P.id as id_pedido, P.observaciones, V.nombre as nombrePreventista, V.id as idVendedor,
+R.id as idRemito,
+AP.posicion,A.id as idArticulo, A.nombre as nombreArticulo, U.descripcion,AP.cantAtendida,(A.valor_venta*EU.factor_conversion)
+as unitario,AP.bonificacion, AP.importeAtendido
+FROM articulos_pedido as AP
+inner join articulo as A on A.id = AP.id_articulo
+inner join pedido as P on P.id = AP.id_pedido
+inner join remito as R on R.id_pedido = P.id
+inner join equivalencia_unidades as EU on EU.id = AP.equivalenciaUnidades_id
+inner join unidad as U on U.id = EU.unidad_id
+inner join cliente as C on C.id_cliente = P.id_cliente
+inner join vendedor as V on V.id = P.id_vendedor
+where R.id = $P{idRemito}]]>
 	</queryString>
-	<field name="remito_fecha" class="java.sql.Date"/>
-	<field name="pedido_id" class="java.lang.Integer"/>
-	<field name="pedido_fecha" class="java.sql.Date"/>
-	<field name="cliente_id_cliente" class="java.lang.Integer"/>
-	<field name="cliente_razon_social" class="java.lang.String"/>
-	<field name="cliente_cel" class="java.lang.String"/>
-	<field name="cliente_ci" class="java.lang.String"/>
-	<field name="cliente_ciudad" class="java.lang.String"/>
-	<field name="cliente_direccion" class="java.lang.String"/>
-	<field name="cliente_email" class="java.lang.String"/>
-	<field name="cliente_telefono" class="java.lang.String"/>
-	<field name="articulos_pedido_cantAtendida" class="java.lang.Double"/>
-	<field name="articulos_pedido_importeAtendido" class="java.lang.Double"/>
-	<field name="articulos_pedido_posicion" class="java.lang.Integer"/>
-	<field name="remito_id" class="java.lang.Integer"/>
-	<field name="pedido_id_vendedor" class="java.lang.Integer"/>
-	<field name="articulo_descripcion" class="java.lang.String"/>
-	<field name="articulo_valor_venta" class="java.lang.Double"/>
-	<field name="cliente_condicionImpositiva" class="java.lang.String"/>
-	<field name="cliente_documento" class="java.lang.String"/>
-	<field name="articulo_id" class="java.lang.String"/>
-	<field name="remito_importeRemito" class="java.lang.Double"/>
-	<field name="pedido_observaciones" class="java.lang.String"/>
-	<field name="unidad_DESCRIPCION" class="java.lang.String"/>
-	<field name="articulo_nombre" class="java.lang.String"/>
-	<field name="vendedor_nombre" class="java.lang.String"/>
-	<field name="articulos_pedido_bonificacion" class="java.lang.Double"/>
-	<field name="equivalencia_unidades_id" class="java.lang.Long"/>
-	<field name="equivalencia_unidades_articulo_id" class="java.lang.String"/>
-	<field name="equivalencia_unidades_unidad_id" class="java.lang.Integer"/>
-	<field name="equivalencia_unidades_factor_conversion" class="java.lang.Double"/>
+	<field name="razon_social" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="documento" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="condicionImpositiva" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="ciudad" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cel" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="telefono" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="direccion" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fechaRemito" class="java.sql.Date"/>
+	<field name="id_pedido" class="java.lang.Integer"/>
+	<field name="observaciones" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombrePreventista" class="java.lang.String"/>
+	<field name="idVendedor" class="java.lang.Integer"/>
+	<field name="idRemito" class="java.lang.Integer"/>
+	<field name="posicion" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="idArticulo" class="java.lang.String"/>
+	<field name="nombreArticulo" class="java.lang.String"/>
+	<field name="descripcion" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cantAtendida" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="unitario" class="java.lang.Double"/>
+	<field name="bonificacion" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="importeAtendido" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<variable name="suma" class="java.lang.Double" resetType="Column" calculation="Sum">
-		<variableExpression><![CDATA[$F{articulos_pedido_importeAtendido}]]></variableExpression>
+		<variableExpression><![CDATA[$F{importeAtendido}]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<background>
@@ -150,84 +137,84 @@ WHERE
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{remito_fecha}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{fechaRemito}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Transparent" x="77" y="58" width="83" height="20" backcolor="#CCCCCC" uuid="46b121e0-04fa-4a0a-91d6-04ff62376917"/>
 				<textElement>
 					<font fontName="Arial" size="15" isBold="true" isItalic="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{remito_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{idRemito}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="63" y="87" width="307" height="20" uuid="c03f8883-9e1d-478a-b693-9c8239400678"/>
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cliente_razon_social}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{razon_social}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="71" y="147" width="280" height="20" uuid="4dcab6b4-0ac4-4fc6-8838-7f37e054e7e7"/>
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cliente_direccion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{direccion}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="63" y="167" width="202" height="20" uuid="564122a1-13ea-4b9d-a21c-136f24bb7512"/>
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cliente_ciudad}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{ciudad}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="37" y="187" width="100" height="20" uuid="c44e3fef-0a3a-4de2-a02d-cd874f28648d"/>
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cliente_cel}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{telefono}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="172" y="187" width="100" height="20" uuid="077d9622-53bd-44f7-aa09-103cf8d1b674"/>
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cliente_telefono}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cel}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="72" y="107" width="155" height="20" uuid="ddc782f3-55c6-4abb-b1ed-16f0aa940be6"/>
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cliente_documento}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{documento}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="62" y="127" width="242" height="20" uuid="b3553ad3-cfcd-4cd4-99e3-e0606c92fa22"/>
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{cliente_condicionImpositiva}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{condicionImpositiva}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="466" y="60" width="17" height="20" uuid="8d70e500-f09c-48a8-91f0-e3fb1721f00b"/>
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pedido_id_vendedor}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{idVendedor}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="373" y="100" width="181" height="111" uuid="1b2331d5-51eb-4819-8db6-62a9d6c80829"/>
 				<textElement>
 					<font fontName="Arial" size="15" isStrikeThrough="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pedido_observaciones}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{observaciones}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="494" y="60" width="61" height="20" uuid="ebb5d846-9bbf-4509-aa52-2794f9c34c87"/>
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{vendedor_nombre}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nombrePreventista}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="374" y="40" width="90" height="20" backcolor="#CCCCCC" uuid="602ccf24-46e7-46e4-b403-2f83254444c7"/>
@@ -241,7 +228,7 @@ WHERE
 				<textElement>
 					<font fontName="Arial" size="15"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{pedido_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{id_pedido}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement mode="Transparent" x="2" y="127" width="60" height="20" backcolor="#CCCCCC" uuid="4bdebcbb-e702-4d59-a599-d1e1d8ddfcc2"/>
@@ -357,28 +344,28 @@ WHERE
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{articulos_pedido_posicion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="76" y="2" width="150" height="16" uuid="9102da4f-c8b4-4ed0-a641-8e7ade801af1"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{articulo_nombre}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{nombreArticulo}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="36" y="2" width="36" height="16" uuid="e63592d6-fab9-4cfa-8151-aeb6e39e90bc"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{articulo_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{idArticulo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$ #,##0.00">
 				<reportElement x="480" y="2" width="64" height="16" uuid="2ec7369a-988d-4119-963c-17588aa9b985"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{articulos_pedido_importeAtendido}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{importeAtendido}]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement x="1" y="20" width="551" height="1" uuid="32f9330f-db21-45e4-a5a5-acbd1509399c"/>
@@ -388,28 +375,28 @@ WHERE
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{articulos_pedido_cantAtendida}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{cantAtendida}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$ #,##0.00">
 				<reportElement x="284" y="2" width="57" height="16" uuid="359b1985-cd95-4ceb-91d5-e0a5b0ba4069"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{unidad_DESCRIPCION}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
 				<reportElement x="421" y="2" width="38" height="16" uuid="5c24bf4a-a957-47f9-ae09-2a81a21a5fef"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{articulos_pedido_bonificacion}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{bonificacion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$ #,##0.00">
 				<reportElement x="349" y="2" width="60" height="16" uuid="4b283aa3-8afa-434f-95fe-6aabbc791547"/>
 				<textElement>
 					<font size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{articulo_valor_venta}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{unitario}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
@@ -423,7 +410,7 @@ WHERE
 				<textElement>
 					<font size="18"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{remito_importeRemito}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$V{suma}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="345" y="34" width="109" height="27" uuid="fe802998-735c-47ef-b4f1-9fc6070ea8b0"/>

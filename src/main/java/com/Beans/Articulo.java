@@ -162,6 +162,7 @@ public class Articulo implements Serializable {
         this.unidad = unidad;
     }
 
+    @XmlTransient
     public List<EquivalenciaUnidades> getListEquivalencias() {
         return listEquivalencias;
     }

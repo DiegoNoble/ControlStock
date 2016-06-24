@@ -3,10 +3,12 @@ package com.Articulos;
 import com.Beans.Articulo;
 import com.DAO.DAOGenerico;
 import com.Beans.Categoria;
+import com.Beans.EquivalenciaUnidades;
 import com.CategoriaArticulos.CategoriaFrame;
 import com.Beans.Unidad;
 import com.Compras.RegistraCompra;
 import com.DAO.ArticuloDAO;
+import com.DAO.EquivalenciaUnidadesDAO;
 import com.Pedidos.RegistraPedido;
 import com.usuarios.frameLogin;
 import java.util.ArrayList;
@@ -94,8 +96,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         actualizaCbUnidad();
         accionTaggetButton();
     }
-
-   
 
     void accionTaggetButton() {
         jXCollapsiblePane1.setAnimated(true);
@@ -226,6 +226,13 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 articuloDAO = new ArticuloDAO(articulo);
                 articuloDAO.guardar();
 
+                EquivalenciaUnidades equivalenciaUnidades = new EquivalenciaUnidades();
+                equivalenciaUnidades.setArticulo(articulo);
+                equivalenciaUnidades.setFactor_conversion(1.0);
+                equivalenciaUnidades.setUnidad(articulo.getUnidad());
+                EquivalenciaUnidadesDAO unidadesDAO = new EquivalenciaUnidadesDAO(equivalenciaUnidades);
+                unidadesDAO.guardar();
+                
                 JOptionPane.showMessageDialog(null, "Articulo registrado correctamente!");
 
                 buscarTodos();

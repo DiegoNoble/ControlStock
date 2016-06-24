@@ -20,6 +20,10 @@ public class ArticulosPedidoDAO extends DAOGenerico<Object> {
         super.objeto = objeto;
     }
 
+    public ArticulosPedidoDAO() {
+
+    }
+
     public List<ArticulosPedido> buscarPorPedido(Pedido pedido) {
 
         List objetos = null;

@@ -6,6 +6,8 @@ package com.Beans;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -13,8 +15,9 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "unidad")
-
+@XmlRootElement(name = "unidad")
 public class Unidad implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -29,6 +32,7 @@ public class Unidad implements Serializable {
         this.id = id;
     }
 
+    @XmlTransient
     public Integer getId() {
         return id;
     }
@@ -45,9 +49,9 @@ public class Unidad implements Serializable {
         this.descripcion = descripcion;
     }
 
-   @Override
+    @Override
     public String toString() {
         return descripcion;
     }
-    
+
 }

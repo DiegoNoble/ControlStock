@@ -1,5 +1,6 @@
 package com.DAO;
 
+import com.Beans.ArticulosCompra;
 import javax.swing.JOptionPane;
 
 public class ArticulosCompraDAO extends DAOGenerico<Object> {
@@ -8,7 +9,7 @@ public class ArticulosCompraDAO extends DAOGenerico<Object> {
 
     }
 
-    public ArticulosCompraDAO(ArticulosCompraDAO objeto) {
+    public ArticulosCompraDAO(ArticulosCompra objeto) {
 
         super.objeto = objeto;
     }

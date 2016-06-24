@@ -2,6 +2,8 @@ package com.Beans;
 
 import java.io.Serializable;
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -9,6 +11,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "equivalencia_unidades")
+@XmlRootElement(name = "equivalenciaUnidades")
 public class EquivalenciaUnidades implements Serializable {
 
     @Id
@@ -34,7 +37,7 @@ public class EquivalenciaUnidades implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-
+@XmlTransient
     public Articulo getArticulo() {
         return articulo;
     }
@@ -43,6 +46,7 @@ public class EquivalenciaUnidades implements Serializable {
         this.articulo = articulo;
     }
 
+   
     public Unidad getUnidad() {
         return unidad;
     }
@@ -51,6 +55,7 @@ public class EquivalenciaUnidades implements Serializable {
         this.unidad = unidad;
     }
 
+    
     public Double getFactor_conversion() {
         return factor_conversion;
     }

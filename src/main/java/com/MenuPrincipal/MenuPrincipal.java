@@ -1,6 +1,8 @@
 package com.MenuPrincipal;
 
+import Utilidades.Actualiza;
 import Utilidades.DesktopPaneImagem;
+import Utilidades.DetectaCombinacionTeclas;
 import com.Articulos.ArticulosFrame;
 import com.Articulos.ConsultaMovStock;
 import com.CategoriaArticulos.CategoriaFrame;
@@ -44,7 +46,11 @@ public final class MenuPrincipal extends javax.swing.JFrame {
             case "Administrador":
 
         }
-
+       /* Actualiza actualiza = new Actualiza();
+        actualiza.actualizaArticulosPedido();
+*/
+        DetectaCombinacionTeclas combinacionTeclas = new DetectaCombinacionTeclas();
+        combinacionTeclas.init(this);
     }
 
     private void centralizaJanela(JInternalFrame internalFrame) {

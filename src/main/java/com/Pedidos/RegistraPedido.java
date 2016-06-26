@@ -809,7 +809,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
         clienteSeleccionado = (Cliente) cbCliente.getSelectedItem();
         txtDocumento.setText(clienteSeleccionado.getDocumento());
-        txtCiudad.setText(clienteSeleccionado.getCiudad());
+        txtCiudad.setText(clienteSeleccionado.getCiudad().toString());
         txtRazonSocial.setText(clienteSeleccionado.getRazon_social());
     }//GEN-LAST:event_cbClienteActionPerformed
 

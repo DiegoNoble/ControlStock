@@ -6,7 +6,7 @@
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/control_stock</property>
     <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password">06martin</property>
+    <property name="hibernate.connection.password">dieguito</property>
     <property name="hibernate.show_sql">false</property>
     <property name="hibernate.format_sql">false</property>
     <property name="hibernate.hbm2ddl.auto">update</property>
@@ -27,6 +27,7 @@
     <mapping class="com.Beans.Pedido"/>
     <mapping class="com.Beans.MovStock"/>
     <mapping class="com.Beans.Remito"/>
+    <mapping class="com.Beans.Ciudad"/>
     <mapping class="com.Beans.EquivalenciaUnidades"/>
   </session-factory>
 </hibernate-configuration>

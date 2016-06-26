@@ -1,8 +1,10 @@
 package com.Clientes;
 
+import com.Beans.Ciudad;
 import com.Beans.Cliente;
 import javax.swing.JOptionPane;
 import com.Beans.CondicionImpositiva;
+import com.DAO.CiudadDAO;
 import com.DAO.ClienteDAO;
 import com.Pedidos.RegistraPedido;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class ClienteFrame extends javax.swing.JInternalFrame {
 
@@ -22,11 +25,13 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     ClientesTableModel tableModel;
     List<Cliente> listClientes;
     ClienteDAO clienteDAO;
+    CiudadDAO ciudadDAO;
     Cliente cliente;
 
     public ClienteFrame() {
         initComponents();
         listClientes = new ArrayList<>();
+        cargaComboCiudad();
         defineModelo();
         buscaTodos();
         btnSeleccionaCliente.setVisible(false);
@@ -53,6 +58,27 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     void buscaTodos() {
         clienteDAO = new ClienteDAO();
         tableModel.agregar(clienteDAO.BuscaTodos(Cliente.class));
+    }
+
+    public final void cargaComboCiudad() {
+
+        try {
+            AutoCompleteDecorator.decorate(cbCiudad);
+            List<Ciudad> ciudades = new ArrayList();
+
+            ciudadDAO = new CiudadDAO();
+            ciudades = ciudadDAO.BuscaTodos(Ciudad.class);
+
+            cbCiudad.removeAllItems();
+
+            for (Ciudad ciudad : ciudades) {
+
+                cbCiudad.addItem(ciudad);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
 
     private void defineModelo() {
@@ -94,7 +120,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private void muestraDetalle() {
 
         txtCel.setText(clienteSeleccionado.getCel());
-        txtCiudad.setText(clienteSeleccionado.getCiudad());
+        cbCiudad.setSelectedItem(clienteSeleccionado.getCiudad());
         txtDireccion.setText(clienteSeleccionado.getDireccion());
         txtDocumento.setText(clienteSeleccionado.getDocumento());
         txtEmail.setText(clienteSeleccionado.getEmail());
@@ -134,7 +160,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
                 cliente.setNombre(txtNombre.getText());
                 cliente.setCel(txtCel.getText());
-                cliente.setCiudad(txtCiudad.getText());
+                cliente.setCiudad((Ciudad) cbCiudad.getSelectedItem());
                 cliente.setDireccion(txtDireccion.getText());
                 cliente.setEmail(txtEmail.getText());
                 cliente.setFecha_ingreso(dpFecha.getDate());
@@ -166,7 +192,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             try {
                 clienteSeleccionado.setNombre(txtNombre.getText());
                 clienteSeleccionado.setCel(txtCel.getText());
-                clienteSeleccionado.setCiudad(txtCiudad.getText());
+                clienteSeleccionado.setCiudad((Ciudad) cbCiudad.getSelectedItem());
                 clienteSeleccionado.setDireccion(txtDireccion.getText());
                 clienteSeleccionado.setEmail(txtEmail.getText());
                 clienteSeleccionado.setFecha_ingreso(dpFecha.getDate());
@@ -204,7 +230,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private void habilitaCampos() {
         txtNombre.setEditable(true);
         txtDireccion.setEditable(true);
-        txtCiudad.setEditable(true);
+        cbCiudad.setEditable(true);
         txtPaís.setEditable(true);
         txtDocumento.setEditable(true);
         txtTelefono.setEditable(true);
@@ -223,7 +249,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private void desabilitaCampos() {
         txtNombre.setEditable(false);
         txtDireccion.setEditable(false);
-        txtCiudad.setEditable(false);
+        cbCiudad.setEditable(false);
         txtPaís.setEditable(false);
         txtDocumento.setEditable(false);
         txtTelefono.setEditable(false);
@@ -259,7 +285,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
         txtNombre.setText("");
         txtDireccion.setText("");
-        txtCiudad.setText("");
+        //cbCiudad.setText("");
         txtPaís.setText("");
         txtDocumento.setText("");
         txtTelefono.setText("");
@@ -286,7 +312,6 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         txtDireccion = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        txtCiudad = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         txtPaís = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
@@ -303,6 +328,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         txtCel = new javax.swing.JTextField();
         cbCondicionImpo = new javax.swing.JComboBox();
         dpFecha = new org.jdesktop.swingx.JXDatePicker();
+        cbCiudad = new javax.swing.JComboBox();
         jPanel3 = new javax.swing.JPanel();
         txtFiltroNombre = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -393,17 +419,6 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jLabel5, gridBagConstraints);
-
-        txtCiudad.setEditable(false);
-        txtCiudad.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(txtCiudad, gridBagConstraints);
 
         jLabel6.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jLabel6.setText("País");
@@ -549,6 +564,14 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.gridy = 5;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(dpFecha, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(cbCiudad, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -783,6 +806,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSeleccionaCliente;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox cbCiudad;
     private javax.swing.JComboBox cbCondicionImpo;
     private org.jdesktop.swingx.JXDatePicker dpFecha;
     private javax.swing.JLabel jLabel1;
@@ -809,7 +833,6 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private javax.swing.JRadioButton rbNombre;
     private javax.swing.JTable tblCliente;
     private javax.swing.JTextField txtCel;
-    private javax.swing.JTextField txtCiudad;
     private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtDocumento;
     private javax.swing.JTextField txtEmail;

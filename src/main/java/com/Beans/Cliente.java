@@ -7,10 +7,8 @@ package com.Beans;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 
 /**
  *
@@ -32,8 +30,9 @@ public class Cliente implements Serializable {
     private String nombre;
     @Column(name = "direccion")
     private String direccion;
-    @Column(name = "ciudad")
-    private String ciudad;
+    @ManyToOne()
+    @JoinColumn(name = "ciudad_id")
+    private Ciudad ciudad;
     @Column(name = "pais")
     private String pais;
     @Column(name = "telefono")
@@ -72,7 +71,6 @@ public class Cliente implements Serializable {
     /**
      * @return the nombre
      */
-    
     public String getNombre() {
         return nombre;
     }
@@ -99,24 +97,15 @@ public class Cliente implements Serializable {
         this.direccion = direccion;
     }
 
-    /**
-     * @return the ciudad
-     */
-    
-    public String getCiudad() {
+    @XmlTransient
+    public Ciudad getCiudad() {
         return ciudad;
     }
 
-    /**
-     * @param ciudad the ciudad to set
-     */
-    public void setCiudad(String ciudad) {
+    public void setCiudad(Ciudad ciudad) {
         this.ciudad = ciudad;
     }
 
-    /**
-     * @return the pais
-     */
     @XmlTransient
     public String getPais() {
         return pais;
@@ -174,7 +163,6 @@ public class Cliente implements Serializable {
         this.email = email;
     }
 
-   
     public String getRazon_social() {
         return razon_social;
     }
@@ -189,7 +177,6 @@ public class Cliente implements Serializable {
     /**
      * @return the rut
      */
-    
     public String getDocumento() {
         return documento;
     }

@@ -13,6 +13,7 @@ import com.DAO.MovStockDAO;
 import com.DAO.PedidoDAO;
 import com.DAO.RemitoDAO;
 import com.Renderers.MeDateCellRenderer;
+import com.Renderers.TableRendererColorRemito;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -80,6 +81,7 @@ public final class ConsultaRemitos extends javax.swing.JInternalFrame {
         tableModel = new RemitoTableModel(listRemitos);
         tblRemitos.setModel(tableModel);
         tblRemitos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
+        tblRemitos.getColumn("Tipo").setCellRenderer(new TableRendererColorRemito(0));
         int[] anchos = {20, 20, 20, 20, 20, 20};
 
         for (int i = 0; i < tblRemitos.getColumnCount(); i++) {
@@ -160,12 +162,12 @@ public final class ConsultaRemitos extends javax.swing.JInternalFrame {
                     unitarioBonificado = valorUnitario - (valorUnitario * (articulosPedido.getBonificacion() / 100));
                     importeRemito = importeRemito + unitarioBonificado * mov;
 
-                    //articulosPedido.setCantAtendida(articulosPedido.getCantPedida() + mov);
+                    articulosPedido.setCantAtendida(articulosPedido.getCantAtendida() - articulosPedido.getCantAtendida());
                     //articulosPedido.setCantPendiente(articulosPedido.getCantPedida());
                     //articulosPedido.setImportePendiente(articulosPedido.getImportePedido());
-                    //articulosPedido.setImporteAtendido(articulosPedido.getImporteAtendido() - articulosPedido.getImportePedido());
-                    //articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
-                    //articulosPedidoDAO.actualiza();
+                    articulosPedido.setImporteAtendido(articulosPedido.getImporteAtendido() - articulosPedido.getImporteAtendido());
+                    articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
+                    articulosPedidoDAO.actualiza();
                     MovStock movStock = new MovStock();
                     movStock.setArticulo(articulosPedido.getArticulo());
                     movStock.setCantidadMov(-mov);

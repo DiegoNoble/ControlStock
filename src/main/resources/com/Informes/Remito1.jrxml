@@ -6,7 +6,7 @@
 	<parameter name="idRemito" class="java.lang.Integer"/>
 	<parameter name="logo" class="java.lang.Object"/>
 	<queryString>
-		<![CDATA[SELECT C.razon_social, C.documento,C.condicionImpositiva, C.ciudad, C.cel,C.telefono,C.direccion,
+		<![CDATA[SELECT C.razon_social, C.documento,C.condicionImpositiva, CI.nombre as ciudad, C.cel,C.telefono,C.direccion,
 R.fecha as fechaRemito, P.id as id_pedido, P.observaciones, V.nombre as nombrePreventista, V.id as idVendedor,
 R.id as idRemito,
 AP.posicion,A.id as idArticulo, A.nombre as nombreArticulo, U.descripcion,AP.cantAtendida,(A.valor_venta*EU.factor_conversion)
@@ -19,6 +19,7 @@ inner join equivalencia_unidades as EU on EU.id = AP.equivalenciaUnidades_id
 inner join unidad as U on U.id = EU.unidad_id
 inner join cliente as C on C.id_cliente = P.id_cliente
 inner join vendedor as V on V.id = P.id_vendedor
+inner join ciudad as CI on c.ciudad_id = CI.id
 where R.id = $P{idRemito}]]>
 	</queryString>
 	<field name="razon_social" class="java.lang.String">
@@ -30,9 +31,7 @@ where R.id = $P{idRemito}]]>
 	<field name="condicionImpositiva" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="ciudad" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
+	<field name="ciudad" class="java.lang.String"/>
 	<field name="cel" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>

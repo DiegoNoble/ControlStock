@@ -243,6 +243,8 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         txtRazonSocial.setEditable(true);
         txtDocumento.setEditable(true);
         tblCliente.setEnabled(false);
+        cbCiudad.setEnabled(true);
+        cbCiudad.setEditable(true);
         tblCliente.setVisible(false);
     }
 
@@ -250,6 +252,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         txtNombre.setEditable(false);
         txtDireccion.setEditable(false);
         cbCiudad.setEditable(false);
+        cbCiudad.setEnabled(false);
         txtPaís.setEditable(false);
         txtDocumento.setEditable(false);
         txtTelefono.setEditable(false);
@@ -550,6 +553,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(txtCel, gridBagConstraints);
 
+        cbCondicionImpo.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
@@ -565,6 +569,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(dpFecha, gridBagConstraints);
 
+        cbCiudad.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 4;

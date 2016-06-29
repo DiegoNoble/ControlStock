@@ -42,6 +42,25 @@ public class DAOGenerico<Objeto> {
 
     }
 
+    public void guardarList(List objetos) {
+
+        try {
+            transacion = seccion.beginTransaction();
+            for (Object objeto : objetos) {
+                seccion.save(objeto);
+                seccion.flush();
+                seccion.clear();
+
+            }
+            transacion.commit();
+            seccion.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            transacion.rollback();
+            JOptionPane.showMessageDialog(null, "Error al guardar registros" + e);
+        }
+    }
+
     public void actualiza() {
 
         try {
@@ -260,8 +279,6 @@ public class DAOGenerico<Objeto> {
         return objeto;
     }
 
- 
-    
     public List buscaCompras(String idArticulo, String fechaInicial, String fechaFinal) {
 
         List objetos = null;

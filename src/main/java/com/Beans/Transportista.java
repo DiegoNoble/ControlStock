@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Diego
  */
 @Entity
-@Table(name = "vendedor")
+@Table(name = "transportista")
 
-public class Vendedor implements Serializable {
+public class Transportista implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +43,7 @@ public class Vendedor implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date Fecha_ingreso;
 
-    public Vendedor() {
+    public Transportista() {
     }
 
     public Integer getId() {

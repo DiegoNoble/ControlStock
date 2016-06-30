@@ -1,9 +1,8 @@
-package com.Ciudades;
+package com.CategoriaArticulos;
 
-import com.Beans.Ciudad;
-import com.DAO.CiudadDAO;
+import com.Beans.Categoria;
+import com.DAO.CategoriaDAO;
 import java.awt.Component;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -25,22 +24,22 @@ import javax.swing.table.DefaultTableCellRenderer;
  *
  * @author Diego Noble
  */
-public class CiudadesFrame extends javax.swing.JDialog {
+public class CategoriasDialog extends javax.swing.JDialog {
 
-    CiudadDAO ciudadesDAO;
+    CategoriaDAO categoriaDAO;
 
-    Ciudad ciudad;
-    List<Ciudad> listCiudades;
-    CiudadesTableModel tableModel;
+    Categoria categoria;
+    List<Categoria> listCategoria;
+    CategoriaTableModel tableModel;
     ListSelectionModel listModel;
 
-    public CiudadesFrame(java.awt.Frame parent, boolean modal, Component frame) {
+    public CategoriasDialog(java.awt.Frame parent, boolean modal, Component frame) {
         super(parent, modal);
         initComponents();
 
         //setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/logoTrans.png")));
         //CIERRA JOPTIONPANE CON ESCAPE
-        jPanel2.grabFocus();
+        //jPanel2.grabFocus();
         //jPanel2.addKeyListener(new OptionPaneEstandar(this));
 
         setLocationRelativeTo(frame);
@@ -51,11 +50,11 @@ public class CiudadesFrame extends javax.swing.JDialog {
     final void configuraTbl() {
         ((DefaultTableCellRenderer) tbl.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 
-        listCiudades = new ArrayList<>();
-        ciudadesDAO = new CiudadDAO();
-        listCiudades.addAll(ciudadesDAO.BuscaTodos(Ciudad.class));
+        listCategoria = new ArrayList<>();
+        categoriaDAO = new CategoriaDAO();
+        listCategoria.addAll(categoriaDAO.BuscaTodos(Categoria.class));
 
-        tableModel = new CiudadesTableModel(listCiudades);
+        tableModel = new CategoriaTableModel(listCategoria);
         tbl.setModel(tableModel);
         createKeybindings(tbl);
         tbl.setRowHeight(25);
@@ -77,8 +76,8 @@ public class CiudadesFrame extends javax.swing.JDialog {
             @Override
             public void tableChanged(TableModelEvent tme) {
 
-                ciudadesDAO = new CiudadDAO();
-                ciudadesDAO.guardarList(listCiudades);
+                categoriaDAO = new CategoriaDAO();
+                categoriaDAO.guardarList(listCategoria);
 
             }
         });
@@ -110,16 +109,16 @@ public class CiudadesFrame extends javax.swing.JDialog {
     }
 
     void agregarNuevo() {
-        ciudad = new Ciudad();
-        tableModel.agregar(ciudad);
+        categoria = new Categoria();
+        tableModel.agregar(categoria);
     }
 
     void elminarSeleccionado() {
         try {
-            Ciudad toDelete = tableModel.getCliente(tbl.getSelectedRow());
+            Categoria toDelete = tableModel.getCliente(tbl.getSelectedRow());
             tableModel.eliminar(tbl.getSelectedRow());
-            ciudadesDAO = new CiudadDAO(toDelete);
-            ciudadesDAO.elimina();
+            categoriaDAO = new CategoriaDAO(toDelete);
+            categoriaDAO.elimina();
             btnEliminar.setEnabled(false);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "No se puede eliminar el registro que este vinculado", "Error", JOptionPane.ERROR_MESSAGE);
@@ -137,14 +136,14 @@ public class CiudadesFrame extends javax.swing.JDialog {
         btnNuevo = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
         txtBuscaPropiedad = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
 
         jButton2.setText("jButton2");
 
@@ -195,19 +194,6 @@ public class CiudadesFrame extends javax.swing.JDialog {
         gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 4;
         getContentPane().add(jPanel3, gridBagConstraints);
-
-        jPanel2.setBackground(new java.awt.Color(204, 0, 0));
-
-        jLabel3.setFont(new java.awt.Font("Arial", 3, 48)); // NOI18N
-        jLabel3.setText("Registro de ciudades");
-        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        jPanel2.add(jLabel3);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.weightx = 1.0;
-        getContentPane().add(jPanel2, gridBagConstraints);
 
         jPanel4.setLayout(new java.awt.GridBagLayout());
 
@@ -268,6 +254,21 @@ public class CiudadesFrame extends javax.swing.JDialog {
         gridBagConstraints.weighty = 1.0;
         getContentPane().add(jPanel4, gridBagConstraints);
 
+        jPanel1.setBackground(new java.awt.Color(153, 153, 153));
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Categorias");
+        jPanel1.add(jLabel1);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        getContentPane().add(jPanel1, gridBagConstraints);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -297,21 +298,21 @@ public class CiudadesFrame extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelarKeyPressed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
-        ciudad = new Ciudad();
-        tableModel.agregar(ciudad);
+        categoria = new Categoria();
+        tableModel.agregar(categoria);
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnNuevoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnNuevoKeyPressed
-        ciudad = new Ciudad();
-        tableModel.agregar(ciudad);
+        categoria = new Categoria();
+        tableModel.agregar(categoria);
 
     }//GEN-LAST:event_btnNuevoKeyPressed
 
     private void txtBuscaPropiedadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscaPropiedadActionPerformed
 
-        listCiudades.clear();
-        ciudadesDAO = new CiudadDAO();
-        listCiudades.addAll(ciudadesDAO.buscarPor(Ciudad.class,"nombre",txtBuscaPropiedad.getText()));
+        categoriaDAO = new CategoriaDAO();
+        categoriaDAO = new CategoriaDAO();
+        listCategoria.addAll(categoriaDAO.buscarPor(Categoria.class,"nombre",txtBuscaPropiedad.getText()));
         tableModel.fireTableDataChanged();
 
     }//GEN-LAST:event_txtBuscaPropiedadActionPerformed
@@ -322,9 +323,9 @@ public class CiudadesFrame extends javax.swing.JDialog {
     private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;

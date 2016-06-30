@@ -100,5 +100,21 @@ public class RemitoDAO extends DAOGenerico<Object> {
 
     }
     
+    public List buscaDisponiblesEntreFechas(Date desde, Date hasta) {
+
+        List objetos = null;
+        try {
+            SimpleDateFormat formatoBD = new SimpleDateFormat("yyyy-MM-dd");
+            transacion = seccion.beginTransaction();
+            Query query = seccion.createQuery("from Remito where fecha >= '" + formatoBD.format(desde) + "' and fecha <='" + formatoBD.format(hasta) + "' order by id desc");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al traer todos los registros" + e);
+        }
+        return objetos;
+
+    }
     
 }

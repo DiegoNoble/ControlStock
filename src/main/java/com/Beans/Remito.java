@@ -19,6 +19,10 @@ public class Remito implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_pedido")
     private Pedido pedido;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_reparto")
+    private Reparto reparto;
     @Enumerated(EnumType.STRING)
     private TipoRemito tipoRemito;
     private Boolean anulado = false;
@@ -74,11 +78,17 @@ public class Remito implements Serializable {
         this.anulado = anulado;
     }
 
+    public Reparto getReparto() {
+        return reparto;
+    }
+
+    public void setReparto(Reparto reparto) {
+        this.reparto = reparto;
+    }
+
     @Override
     public String toString() {
         return id.toString();
     }
-
-  
 
 }

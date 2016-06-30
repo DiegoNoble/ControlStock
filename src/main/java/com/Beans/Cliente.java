@@ -33,8 +33,6 @@ public class Cliente implements Serializable {
     @ManyToOne()
     @JoinColumn(name = "ciudad_id")
     private Ciudad ciudad;
-    @Column(name = "pais")
-    private String pais;
     @Column(name = "telefono")
     private String telefono;
     @Column(name = "cel")
@@ -104,18 +102,6 @@ public class Cliente implements Serializable {
 
     public void setCiudad(Ciudad ciudad) {
         this.ciudad = ciudad;
-    }
-
-    @XmlTransient
-    public String getPais() {
-        return pais;
-    }
-
-    /**
-     * @param pais the pais to set
-     */
-    public void setPais(String pais) {
-        this.pais = pais;
     }
 
     /**

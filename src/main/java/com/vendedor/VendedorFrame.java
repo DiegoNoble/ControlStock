@@ -1,6 +1,9 @@
 package com.vendedor;
 
+import com.Beans.Ciudad;
 import com.Beans.Vendedor;
+import com.Ciudades.CiudadesDialog;
+import com.DAO.CiudadDAO;
 import javax.swing.JOptionPane;
 import com.DAO.VendedorDAO;
 import com.Pedidos.RegistraPedido;
@@ -12,6 +15,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
 public class VendedorFrame extends javax.swing.JInternalFrame {
 
@@ -21,10 +25,12 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
     List<Vendedor> listVendedores;
     VendedorDAO vendedorDAO;
     Vendedor vendedor;
+    CiudadDAO ciudadDAO;
 
     public VendedorFrame() {
         initComponents();
         listVendedores = new ArrayList<>();
+        cargaComboCiudad();
         defineModelo();
         buscaTodos();
         btnSeleccionaVendedor.setVisible(false);
@@ -32,14 +38,34 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
         btnExcluir.setVisible(false);
     }
 
-   
-
     public VendedorFrame(RegistraPedido seteaVendedorPedido) {
         initComponents();
 
         btnExcluir.setVisible(false);
+        cargaComboCiudad();
         defineModelo();
         this.seteaVendedorPedido = seteaVendedorPedido;
+    }
+
+    public final void cargaComboCiudad() {
+
+        try {
+            AutoCompleteDecorator.decorate(cbCiudad);
+            List<Ciudad> ciudades = new ArrayList();
+
+            ciudadDAO = new CiudadDAO();
+            ciudades = ciudadDAO.BuscaTodos(Ciudad.class);
+
+            cbCiudad.removeAllItems();
+
+            for (Ciudad ciudad : ciudades) {
+
+                cbCiudad.addItem(ciudad);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
 
     public Vendedor getClie() {
@@ -93,12 +119,11 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
     private void muestraDetalle() {
 
         txtCel.setText(vendedorSeleccionado.getCel());
-        txtCiudad.setText(vendedorSeleccionado.getCiudad());
+        cbCiudad.setSelectedItem(vendedorSeleccionado.getCiudad());
         txtDireccion.setText(vendedorSeleccionado.getDireccion());
         txtDocumento.setText(vendedorSeleccionado.getCi());
         txtEmail.setText(vendedorSeleccionado.getEmail());
         txtNombre.setText(vendedorSeleccionado.getNombre());
-        txtPaís.setText(vendedorSeleccionado.getPais());
         txtTelefono.setText(vendedorSeleccionado.getTelefono());
         dpFecha.setDate(vendedorSeleccionado.getFecha_ingreso());
 
@@ -131,11 +156,10 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
 
                 vendedor.setNombre(txtNombre.getText());
                 vendedor.setCel(txtCel.getText());
-                vendedor.setCiudad(txtCiudad.getText());
+                vendedor.setCiudad((Ciudad) cbCiudad.getSelectedItem());
                 vendedor.setDireccion(txtDireccion.getText());
                 vendedor.setEmail(txtEmail.getText());
                 vendedor.setFecha_ingreso(dpFecha.getDate());
-                vendedor.setPais(txtPaís.getText());
                 vendedor.setCi(txtDocumento.getText());
                 vendedor.setTelefono(txtTelefono.getText());
 
@@ -161,11 +185,10 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
             try {
                 vendedorSeleccionado.setNombre(txtNombre.getText());
                 vendedorSeleccionado.setCel(txtCel.getText());
-                vendedorSeleccionado.setCiudad(txtCiudad.getText());
+                vendedorSeleccionado.setCiudad((Ciudad) cbCiudad.getSelectedItem());
                 vendedorSeleccionado.setDireccion(txtDireccion.getText());
                 vendedorSeleccionado.setEmail(txtEmail.getText());
                 vendedorSeleccionado.setFecha_ingreso(dpFecha.getDate());
-                vendedorSeleccionado.setPais(txtPaís.getText());
                 vendedorSeleccionado.setCi(txtDocumento.getText());
                 vendedorSeleccionado.setTelefono(txtTelefono.getText());
 
@@ -197,8 +220,7 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
     private void habilitaCampos() {
         txtNombre.setEditable(true);
         txtDireccion.setEditable(true);
-        txtCiudad.setEditable(true);
-        txtPaís.setEditable(true);
+        cbCiudad.setEnabled(true);
         txtDocumento.setEditable(true);
         txtTelefono.setEditable(true);
         txtEmail.setEditable(true);
@@ -213,8 +235,7 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
     private void desabilitaCampos() {
         txtNombre.setEditable(false);
         txtDireccion.setEditable(false);
-        txtCiudad.setEditable(false);
-        txtPaís.setEditable(false);
+        cbCiudad.setEnabled(false);
         txtDocumento.setEditable(false);
         txtTelefono.setEditable(false);
         txtEmail.setEditable(false);
@@ -246,8 +267,6 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
 
         txtNombre.setText("");
         txtDireccion.setText("");
-        txtCiudad.setText("");
-        txtPaís.setText("");
         txtDocumento.setText("");
         txtTelefono.setText("");
         txtEmail.setText("");
@@ -272,9 +291,6 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         txtDireccion = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        txtCiudad = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
-        txtPaís = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         txtTelefono = new javax.swing.JTextField();
@@ -285,6 +301,8 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
         jLabel13 = new javax.swing.JLabel();
         txtCel = new javax.swing.JTextField();
         dpFecha = new org.jdesktop.swingx.JXDatePicker();
+        cbCiudad = new javax.swing.JComboBox();
+        btnCiudad = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         txtFiltroNombre = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -376,36 +394,6 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jLabel5, gridBagConstraints);
 
-        txtCiudad.setEditable(false);
-        txtCiudad.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(txtCiudad, gridBagConstraints);
-
-        jLabel6.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel6.setText("País");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jLabel6, gridBagConstraints);
-
-        txtPaís.setEditable(false);
-        txtPaís.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 5;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(txtPaís, gridBagConstraints);
-
         jLabel8.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jLabel8.setText("Documento");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -496,6 +484,31 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.gridy = 5;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(dpFecha, gridBagConstraints);
+
+        cbCiudad.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(cbCiudad, gridBagConstraints);
+
+        btnCiudad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/add.png"))); // NOI18N
+        btnCiudad.setToolTipText("Nueva posición");
+        btnCiudad.setBorder(null);
+        btnCiudad.setEnabled(false);
+        btnCiudad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCiudadActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
+        jPanel2.add(btnCiudad, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -726,14 +739,23 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
          */
     }//GEN-LAST:event_btnSeleccionaVendedorActionPerformed
 
+    private void btnCiudadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCiudadActionPerformed
+        CiudadesDialog ciudadesFrame = new CiudadesDialog(null, true, this);
+        ciudadesFrame.setVisible(true);
+        ciudadesFrame.toFront();
+        cargaComboCiudad();
+    }//GEN-LAST:event_btnCiudadActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnCiudad;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSeleccionaVendedor;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox cbCiudad;
     private org.jdesktop.swingx.JXDatePicker dpFecha;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -743,7 +765,6 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -757,13 +778,11 @@ public class VendedorFrame extends javax.swing.JInternalFrame {
     private javax.swing.JRadioButton rbNombre;
     private javax.swing.JTable tblVendedor;
     private javax.swing.JTextField txtCel;
-    private javax.swing.JTextField txtCiudad;
     private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtDocumento;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtFiltroNombre;
     private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtPaís;
     private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 }

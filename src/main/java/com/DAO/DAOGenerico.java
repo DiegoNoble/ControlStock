@@ -47,7 +47,7 @@ public class DAOGenerico<Objeto> {
         try {
             transacion = seccion.beginTransaction();
             for (Object objeto : objetos) {
-                seccion.save(objeto);
+                seccion.saveOrUpdate(objeto);
                 seccion.flush();
                 seccion.clear();
 
@@ -80,7 +80,10 @@ public class DAOGenerico<Objeto> {
         try {
             transacion = seccion.beginTransaction();
             seccion.delete(objeto);
+            seccion.flush();
+            seccion.clear();
             transacion.commit();
+            seccion.close();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error al registrar" + e, "Error", JOptionPane.ERROR_MESSAGE);
             transacion.rollback();

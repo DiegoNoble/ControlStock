@@ -1,11 +1,11 @@
 package com.MenuPrincipal;
 
-import Utilidades.Actualiza;
 import Utilidades.DesktopPaneImagem;
 import Utilidades.DetectaCombinacionTeclas;
 import com.Articulos.ArticulosFrame;
 import com.Articulos.ConsultaMovStock;
-import com.CategoriaArticulos.CategoriaFrame;
+import com.CategoriaArticulos.CategoriasDialog;
+import com.Ciudades.CiudadesDialog;
 import com.Clientes.ClienteFrame;
 import com.Compras.ConsultaCompras;
 import com.Compras.RegistraCompra;
@@ -13,6 +13,7 @@ import com.Pedidos.ConsultaPedidos;
 import com.Pedidos.RegistraPedido;
 import com.Proveedores.ProveedoresFrame;
 import com.Remito.ConsultaRemitos;
+import com.Transportista.TransportistaFrame;
 import com.Unidades.UnidadFrame;
 import com.usuarios.frameLogin;
 import com.usuarios.registroUsuarios;
@@ -46,9 +47,9 @@ public final class MenuPrincipal extends javax.swing.JFrame {
             case "Administrador":
 
         }
-       /* Actualiza actualiza = new Actualiza();
-        actualiza.actualizaArticulosPedido();
-*/
+        /* Actualiza actualiza = new Actualiza();
+         actualiza.actualizaArticulosPedido();
+         */
         DetectaCombinacionTeclas combinacionTeclas = new DetectaCombinacionTeclas();
         combinacionTeclas.init(this);
     }
@@ -79,9 +80,11 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         mnuItemClientes = new javax.swing.JMenuItem();
         mnuItemProveedores = new javax.swing.JMenuItem();
         mnuItemClientes1 = new javax.swing.JMenuItem();
+        mnuItemClientes2 = new javax.swing.JMenuItem();
         mnuItemProductos = new javax.swing.JMenuItem();
         mnuItemCategorias = new javax.swing.JMenuItem();
         mnuItemUnidades = new javax.swing.JMenuItem();
+        mnuItemUnidades1 = new javax.swing.JMenuItem();
         mnuVentas = new javax.swing.JMenu();
         mnuItemRegistrarVentas2 = new javax.swing.JMenuItem();
         mnuItemRegistrarVentas3 = new javax.swing.JMenuItem();
@@ -219,6 +222,17 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         });
         mnuRegistros.add(mnuItemClientes1);
 
+        mnuItemClientes2.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemClientes2.setText(" Transportistas ");
+        mnuItemClientes2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        mnuItemClientes2.setBorderPainted(true);
+        mnuItemClientes2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemClientes2ActionPerformed(evt);
+            }
+        });
+        mnuRegistros.add(mnuItemClientes2);
+
         mnuItemProductos.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         mnuItemProductos.setText(" Articulos ");
         mnuItemProductos.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -251,6 +265,17 @@ public final class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         mnuRegistros.add(mnuItemUnidades);
+
+        mnuItemUnidades1.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemUnidades1.setText(" Ciudades ");
+        mnuItemUnidades1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        mnuItemUnidades1.setBorderPainted(true);
+        mnuItemUnidades1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemUnidades1ActionPerformed(evt);
+            }
+        });
+        mnuRegistros.add(mnuItemUnidades1);
 
         jMenuBar1.add(mnuRegistros);
 
@@ -459,11 +484,9 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
     private void mnuItemCategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemCategoriasActionPerformed
 
-        CategoriaFrame categoria = new CategoriaFrame();
-        desktopPane.add(categoria);
-        categoria.setLocation(1, 1);
-        categoria.setVisible(true);
-        categoria.toFront();
+        CategoriasDialog categorias = new CategoriasDialog(null, false, this);
+        categorias.setVisible(true);
+        categorias.toFront();
 
     }//GEN-LAST:event_mnuItemCategoriasActionPerformed
 
@@ -527,6 +550,20 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         consultaMovStock.toFront();
     }//GEN-LAST:event_mnuItemConsultaCuentasProveedores2ActionPerformed
 
+    private void mnuItemUnidades1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemUnidades1ActionPerformed
+        CiudadesDialog ciudadesDialog = new CiudadesDialog(this, false, this);
+        ciudadesDialog.setVisible(true);
+        ciudadesDialog.toFront();
+    }//GEN-LAST:event_mnuItemUnidades1ActionPerformed
+
+    private void mnuItemClientes2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemClientes2ActionPerformed
+        TransportistaFrame transportistaFrame = new TransportistaFrame();
+        centralizaJanela(transportistaFrame);
+        desktopPane.add(transportistaFrame);
+        transportistaFrame.setVisible(true);
+        transportistaFrame.toFront();
+    }//GEN-LAST:event_mnuItemClientes2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -540,6 +577,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem mnuItemCategorias;
     private javax.swing.JMenuItem mnuItemClientes;
     private javax.swing.JMenuItem mnuItemClientes1;
+    private javax.swing.JMenuItem mnuItemClientes2;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores1;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores2;
     private javax.swing.JMenuItem mnuItemConsultarVendas1;
@@ -552,6 +590,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem mnuItemSalir;
     private javax.swing.JMenuItem mnuItemSesion;
     private javax.swing.JMenuItem mnuItemUnidades;
+    private javax.swing.JMenuItem mnuItemUnidades1;
     private javax.swing.JMenuItem mnuItemUsuarios;
     private javax.swing.JMenu mnuRegistros;
     private javax.swing.JMenu mnuSistema;

@@ -1,17 +1,15 @@
-package com.Clientes;
+package com.Transportista;
 
 import com.Beans.Ciudad;
-import com.Beans.Cliente;
-import javax.swing.JOptionPane;
-import com.Beans.CondicionImpositiva;
+import com.Beans.Transportista;
 import com.Ciudades.CiudadesDialog;
 import com.DAO.CiudadDAO;
-import com.DAO.ClienteDAO;
+import javax.swing.JOptionPane;
+import com.DAO.TransportistaDAO;
 import com.Pedidos.RegistraPedido;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -19,46 +17,34 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
 
-public class ClienteFrame extends javax.swing.JInternalFrame {
+public class TransportistaFrame extends javax.swing.JInternalFrame {
 
-    private RegistraPedido seteaClientePedido;
-    private Cliente clienteSeleccionado;
-    ClientesTableModel tableModel;
-    List<Cliente> listClientes;
-    ClienteDAO clienteDAO;
+    private Transportista vendedorSeleccionado;
+    RegistraPedido seteaTransportistaPedido;
+    TransportistaTableModel tableModel;
+    List<Transportista> listTransportistas;
+    TransportistaDAO vendedorDAO;
+    Transportista vendedor;
     CiudadDAO ciudadDAO;
-    Cliente cliente;
 
-    public ClienteFrame() {
+    public TransportistaFrame() {
         initComponents();
-        listClientes = new ArrayList<>();
+        listTransportistas = new ArrayList<>();
         cargaComboCiudad();
         defineModelo();
         buscaTodos();
-        btnSeleccionaCliente.setVisible(false);
+        btnSeleccionaTransportista.setVisible(false);
 
         btnExcluir.setVisible(false);
     }
 
-    public ClienteFrame(RegistraPedido seteaClientePedido) {
+    public TransportistaFrame(RegistraPedido seteaTransportistaPedido) {
         initComponents();
 
         btnExcluir.setVisible(false);
+        cargaComboCiudad();
         defineModelo();
-        this.seteaClientePedido = seteaClientePedido;
-    }
-
-    public Cliente getClie() {
-        return clienteSeleccionado;
-    }
-
-    public void setClie(Cliente clie) {
-        this.clienteSeleccionado = clie;
-    }
-
-    void buscaTodos() {
-        clienteDAO = new ClienteDAO();
-        tableModel.agregar(clienteDAO.BuscaTodos(Cliente.class));
+        this.seteaTransportistaPedido = seteaTransportistaPedido;
     }
 
     public final void cargaComboCiudad() {
@@ -82,28 +68,40 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         }
     }
 
+    public Transportista getClie() {
+        return vendedorSeleccionado;
+    }
+
+    public void setClie(Transportista clie) {
+        this.vendedorSeleccionado = clie;
+    }
+
+    void buscaTodos() {
+        vendedorDAO = new TransportistaDAO();
+        tableModel.agregar(vendedorDAO.BuscaTodos(Transportista.class));
+    }
+
     private void defineModelo() {
 
         try {
-            cbCondicionImpo.setModel(new DefaultComboBoxModel(CondicionImpositiva.values()));
 
-            ((DefaultTableCellRenderer) tblCliente.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+            ((DefaultTableCellRenderer) tblTransportista.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 
-            tableModel = new ClientesTableModel(listClientes);
-            tblCliente.setModel(tableModel);
+            tableModel = new TransportistaTableModel(listTransportistas);
+            tblTransportista.setModel(tableModel);
 
-            ListSelectionModel listModel = tblCliente.getSelectionModel();
+            ListSelectionModel listModel = tblTransportista.getSelectionModel();
             listModel.addListSelectionListener(new ListSelectionListener() {
                 @Override
                 public void valueChanged(ListSelectionEvent lse) {
-                    if (tblCliente.getSelectedRow() != -1) {
-                        clienteSeleccionado = listClientes.get(tblCliente.getSelectedRow());
+                    if (tblTransportista.getSelectedRow() != -1) {
+                        vendedorSeleccionado = listTransportistas.get(tblTransportista.getSelectedRow());
                         btnExcluir.setEnabled(true);
                         btnAlterar.setEnabled(true);
                         muestraDetalle();
 
                     } else {
-                        clienteSeleccionado = null;
+                        vendedorSeleccionado = null;
                         btnExcluir.setEnabled(false);
                         btnAlterar.setEnabled(false);
                     }
@@ -120,59 +118,55 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
     private void muestraDetalle() {
 
-        txtCel.setText(clienteSeleccionado.getCel());
-        cbCiudad.setSelectedItem(clienteSeleccionado.getCiudad());
-        txtDireccion.setText(clienteSeleccionado.getDireccion());
-        txtDocumento.setText(clienteSeleccionado.getDocumento());
-        txtEmail.setText(clienteSeleccionado.getEmail());
-        txtNombre.setText(clienteSeleccionado.getNombre());
-        txtRazonSocial.setText(clienteSeleccionado.getRazon_social());
-        txtTelefono.setText(clienteSeleccionado.getTelefono());
-        dpFecha.setDate(clienteSeleccionado.getFecha_ingreso());
-        cbCondicionImpo.setSelectedItem(clienteSeleccionado.getCondicionImpositiva());
+        txtCel.setText(vendedorSeleccionado.getCel());
+        cbCiudad.setSelectedItem(vendedorSeleccionado.getCiudad());
+        txtDireccion.setText(vendedorSeleccionado.getDireccion());
+        txtDocumento.setText(vendedorSeleccionado.getCi());
+        txtEmail.setText(vendedorSeleccionado.getEmail());
+        txtNombre.setText(vendedorSeleccionado.getNombre());
+        txtTelefono.setText(vendedorSeleccionado.getTelefono());
+        dpFecha.setDate(vendedorSeleccionado.getFecha_ingreso());
 
     }
 
     void filtro() {
-        clienteDAO = new ClienteDAO();
+        vendedorDAO = new TransportistaDAO();
         if (rbCod.isSelected()) {
             try {
-                tableModel.agregar(clienteDAO.buscarPor(Cliente.class, "id_cliente", Integer.parseInt(txtFiltroNombre.getText())));
+                tableModel.agregar(vendedorDAO.buscarPor(Transportista.class, "id_vendedor", Integer.parseInt(txtFiltroNombre.getText())));
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(null, "Los codigos deben ser numéricos", "Error", JOptionPane.ERROR_MESSAGE);
                 exception.printStackTrace();
             }
         } else if (rbNombre.isSelected()) {
-            tableModel.agregar(clienteDAO.buscarCliente(txtFiltroNombre.getText()));
+            tableModel.agregar(vendedorDAO.buscarTransportista(txtFiltroNombre.getText()));
         }
 
     }
 
-    private void NuevoCliente() {
+    private void NuevoTransportista() {
 
         if (txtNombre.getText().trim().equals("")) {
-            JOptionPane.showMessageDialog(this, "Informe el nombre del cliente!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Informe el nombre del vendedor!", "Error", JOptionPane.ERROR_MESSAGE);
             txtNombre.requestFocus();
         } else {
 
             try {
-                cliente = new Cliente();
+                vendedor = new Transportista();
 
-                cliente.setNombre(txtNombre.getText());
-                cliente.setCel(txtCel.getText());
-                cliente.setCiudad((Ciudad) cbCiudad.getSelectedItem());
-                cliente.setDireccion(txtDireccion.getText());
-                cliente.setEmail(txtEmail.getText());
-                cliente.setFecha_ingreso(dpFecha.getDate());
-                cliente.setRazon_social(txtRazonSocial.getText());
-                cliente.setDocumento(txtDocumento.getText());
-                cliente.setTelefono(txtTelefono.getText());
-                cliente.setCondicionImpositiva((CondicionImpositiva) cbCondicionImpo.getSelectedItem());
+                vendedor.setNombre(txtNombre.getText());
+                vendedor.setCel(txtCel.getText());
+                vendedor.setCiudad((Ciudad) cbCiudad.getSelectedItem());
+                vendedor.setDireccion(txtDireccion.getText());
+                vendedor.setEmail(txtEmail.getText());
+                vendedor.setFecha_ingreso(dpFecha.getDate());
+                vendedor.setCi(txtDocumento.getText());
+                vendedor.setTelefono(txtTelefono.getText());
 
-                clienteDAO = new ClienteDAO(cliente);
-                clienteDAO.guardar();
+                vendedorDAO = new TransportistaDAO(vendedor);
+                vendedorDAO.guardar();
 
-                JOptionPane.showMessageDialog(null, "Cliente registrado correctamente!");
+                JOptionPane.showMessageDialog(null, "Transportista registrado correctamente!");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "Error al guardar registros " + ex, "Error", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
@@ -181,29 +175,27 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         }
     }
 
-    private void EditarCliente() {
+    private void EditarTransportista() {
 
         if (txtNombre.getText().trim().equals("")) {
-            JOptionPane.showMessageDialog(this, "Informe el nombre del cliente!", "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Informe el nombre del vendedor!", "Erro", JOptionPane.ERROR_MESSAGE);
             txtNombre.requestFocus();
 
         } else {
             try {
-                clienteSeleccionado.setNombre(txtNombre.getText());
-                clienteSeleccionado.setCel(txtCel.getText());
-                clienteSeleccionado.setCiudad((Ciudad) cbCiudad.getSelectedItem());
-                clienteSeleccionado.setDireccion(txtDireccion.getText());
-                clienteSeleccionado.setEmail(txtEmail.getText());
-                clienteSeleccionado.setFecha_ingreso(dpFecha.getDate());
-                clienteSeleccionado.setRazon_social(txtRazonSocial.getText());
-                clienteSeleccionado.setDocumento(txtDocumento.getText());
-                clienteSeleccionado.setTelefono(txtTelefono.getText());
-                clienteSeleccionado.setCondicionImpositiva((CondicionImpositiva) cbCondicionImpo.getSelectedItem());
+                vendedorSeleccionado.setNombre(txtNombre.getText());
+                vendedorSeleccionado.setCel(txtCel.getText());
+                vendedorSeleccionado.setCiudad((Ciudad) cbCiudad.getSelectedItem());
+                vendedorSeleccionado.setDireccion(txtDireccion.getText());
+                vendedorSeleccionado.setEmail(txtEmail.getText());
+                vendedorSeleccionado.setFecha_ingreso(dpFecha.getDate());
+                vendedorSeleccionado.setCi(txtDocumento.getText());
+                vendedorSeleccionado.setTelefono(txtTelefono.getText());
 
-                clienteDAO = new ClienteDAO(clienteSeleccionado);
-                clienteDAO.actualiza();
+                vendedorDAO = new TransportistaDAO(vendedorSeleccionado);
+                vendedorDAO.actualiza();
 
-                JOptionPane.showMessageDialog(null, "Cliente editado correctamente!");
+                JOptionPane.showMessageDialog(null, "Transportista editado correctamente!");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(null, "Error al actualizar registros " + ex, "Error", JOptionPane.ERROR_MESSAGE);
                 ex.printStackTrace();
@@ -213,11 +205,11 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
     }
 
-    private void eliminaCliente() {
+    private void eliminaTransportista() {
         try {
-            clienteDAO = new ClienteDAO(clienteSeleccionado);
-            clienteDAO.elimina();
-            JOptionPane.showMessageDialog(null, "Cliente eliminado correctamente!");
+            vendedorDAO = new TransportistaDAO(vendedorSeleccionado);
+            vendedorDAO.elimina();
+            JOptionPane.showMessageDialog(null, "Transportista eliminado correctamente!");
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "No es posible eliminar el registro seleccionado " + ex, "Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
@@ -228,44 +220,33 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private void habilitaCampos() {
         txtNombre.setEditable(true);
         txtDireccion.setEditable(true);
-        cbCiudad.setEditable(true);
+        cbCiudad.setEnabled(true);
+        txtPaís.setEditable(true);
         txtDocumento.setEditable(true);
         txtTelefono.setEditable(true);
         txtEmail.setEditable(true);
         txtCel.setEditable(true);
         dpFecha.setEditable(true);
         dpFecha.setEnabled(true);
-        cbCondicionImpo.setEditable(true);
-        cbCondicionImpo.setEnabled(true);
-        txtRazonSocial.setEditable(true);
         txtDocumento.setEditable(true);
-        tblCliente.setEnabled(false);
-        cbCiudad.setEnabled(true);
-        cbCiudad.setEditable(true);
-        tblCliente.setVisible(false);
-        btnCiudad.setEnabled(true);
-
+        tblTransportista.setEnabled(false);
+        tblTransportista.setVisible(false);
     }
 
     private void desabilitaCampos() {
         txtNombre.setEditable(false);
         txtDireccion.setEditable(false);
-        cbCiudad.setEditable(false);
         cbCiudad.setEnabled(false);
+        txtPaís.setEditable(false);
         txtDocumento.setEditable(false);
         txtTelefono.setEditable(false);
         txtEmail.setEditable(false);
-        cbCondicionImpo.setEditable(false);
-        cbCondicionImpo.setEnabled(false);
         txtCel.setEditable(false);
         dpFecha.setEditable(false);
         dpFecha.setEnabled(false);
-        txtRazonSocial.setEditable(false);
         txtDocumento.setEditable(false);
-        tblCliente.setEnabled(true);
-        tblCliente.setVisible(true);
-        btnCiudad.setEnabled(false);
-
+        tblTransportista.setEnabled(true);
+        tblTransportista.setVisible(true);
     }
 
     private void desabilitaBotoes() {
@@ -288,13 +269,12 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
         txtNombre.setText("");
         txtDireccion.setText("");
-        //cbCiudad.setText("");
+        txtPaís.setText("");
         txtDocumento.setText("");
         txtTelefono.setText("");
         txtEmail.setText("");
         txtCel.setText("");
         dpFecha.setDate(new Date());
-        txtRazonSocial.setText("");
         txtDocumento.setText("");
     }
 
@@ -314,31 +294,29 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         txtDireccion = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        txtPaís = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         txtTelefono = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
         txtDocumento = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        txtRazonSocial = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         txtCel = new javax.swing.JTextField();
-        cbCondicionImpo = new javax.swing.JComboBox();
         dpFecha = new org.jdesktop.swingx.JXDatePicker();
         cbCiudad = new javax.swing.JComboBox();
         btnCiudad = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         txtFiltroNombre = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblCliente = new javax.swing.JTable();
+        tblTransportista = new javax.swing.JTable();
         rbCod = new javax.swing.JRadioButton();
         rbNombre = new javax.swing.JRadioButton();
         jLabel14 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        btnSeleccionaCliente = new javax.swing.JButton();
+        btnSeleccionaTransportista = new javax.swing.JButton();
         btnNovo = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
@@ -362,7 +340,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Clientes");
+        jLabel1.setText("Transportistas");
         jPanel1.add(jLabel1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -420,6 +398,25 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(jLabel5, gridBagConstraints);
+
+        jLabel6.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jLabel6.setText("País");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(jLabel6, gridBagConstraints);
+
+        txtPaís.setEditable(false);
+        txtPaís.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(txtPaís, gridBagConstraints);
 
         jLabel8.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jLabel8.setText("Documento");
@@ -480,39 +477,12 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(txtDocumento, gridBagConstraints);
 
-        jLabel7.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel7.setText("Razón Social");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(jLabel7, gridBagConstraints);
-
-        txtRazonSocial.setEditable(false);
-        txtRazonSocial.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 5;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(txtRazonSocial, gridBagConstraints);
-
         jLabel11.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jLabel11.setText("Fecha de Ingreso");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 5;
         jPanel2.add(jLabel11, gridBagConstraints);
-
-        jLabel12.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jLabel12.setText("Condición Impositiva");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-        jPanel2.add(jLabel12, gridBagConstraints);
 
         jLabel13.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
         jLabel13.setText("Cel");
@@ -531,15 +501,6 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel2.add(txtCel, gridBagConstraints);
-
-        cbCondicionImpo.setEnabled(false);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel2.add(cbCondicionImpo, gridBagConstraints);
 
         dpFecha.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -596,8 +557,8 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(txtFiltroNombre, gridBagConstraints);
 
-        tblCliente.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        tblCliente.setModel(new javax.swing.table.DefaultTableModel(
+        tblTransportista.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        tblTransportista.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -607,8 +568,8 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tblCliente.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane1.setViewportView(tblCliente);
+        tblTransportista.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane1.setViewportView(tblTransportista);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -648,15 +609,15 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-        btnSeleccionaCliente.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
-        btnSeleccionaCliente.setMnemonic('C');
-        btnSeleccionaCliente.setText("Selecciona Cliente");
-        btnSeleccionaCliente.addActionListener(new java.awt.event.ActionListener() {
+        btnSeleccionaTransportista.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
+        btnSeleccionaTransportista.setMnemonic('C');
+        btnSeleccionaTransportista.setText("Selecciona transportista");
+        btnSeleccionaTransportista.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSeleccionaClienteActionPerformed(evt);
+                btnSeleccionaTransportistaActionPerformed(evt);
             }
         });
-        jPanel4.add(btnSeleccionaCliente);
+        jPanel4.add(btnSeleccionaTransportista);
 
         btnNovo.setFont(new java.awt.Font("Verdana", 0, 14)); // NOI18N
         btnNovo.setMnemonic('N');
@@ -720,7 +681,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
 
-        clienteSeleccionado = null;
+        vendedorSeleccionado = null;
         limpiaCampos();
         habilitaCampos();
         habilitaBotoes();
@@ -729,10 +690,10 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
 
-        if (clienteSeleccionado == null) {
-            NuevoCliente();
+        if (vendedorSeleccionado == null) {
+            NuevoTransportista();
         } else {
-            EditarCliente();
+            EditarTransportista();
         }
 
         buscaTodos();
@@ -748,24 +709,24 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
 
-        if (tblCliente.getSelectedRow() != -1) {
+        if (tblTransportista.getSelectedRow() != -1) {
             habilitaBotoes();
             habilitaCampos();
 
         } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un cliente en la tabla", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Seleccione un vendedor en la tabla", "Atención", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnAlterarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-        if (tblCliente.getSelectedRow() != -1) {
-            String Nombre = txtRazonSocial.getText();
-            int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación del Cliente " + Nombre + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
+        if (tblTransportista.getSelectedRow() != -1) {
+            String Nombre = txtNombre.getText();
+            int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación del Transportista " + Nombre + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
             if (resposta == JOptionPane.YES_OPTION) {
-                eliminaCliente();
+                eliminaTransportista();
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Seleccione un vendedor de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
         }
         buscaTodos();
         limpiaCampos();
@@ -777,33 +738,36 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         filtro();
     }//GEN-LAST:event_txtFiltroNombreActionPerformed
 
-    private void btnSeleccionaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaClienteActionPerformed
+    private void btnSeleccionaTransportistaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaTransportistaActionPerformed
 
-        int filaSeleccionada = tblCliente.getSelectedRow();
-        if (filaSeleccionada == -1) {
-            JOptionPane.showMessageDialog(null, "Seleccione un cliente en la tabla!", "Error", JOptionPane.ERROR_MESSAGE);
-        } else {
+        /* int filaSeleccionada = tblTransportista.getSelectedRow();
+         if (filaSeleccionada == -1) {
+         JOptionPane.showMessageDialog(null, "Seleccione un vendedor en la tabla!", "Error", JOptionPane.ERROR_MESSAGE);
+         } else {
 
-            Cliente cliente = new Cliente();
-            cliente.setId_cliente(Integer.parseInt(tblCliente.getValueAt(filaSeleccionada, 0).toString()));
-            cliente.setNombre(tblCliente.getValueAt(filaSeleccionada, 1).toString());
-            if (seteaClientePedido == null) {
-                seteaClientePedido.agregarCliente(cliente);
-                this.dispose();
-                seteaClientePedido.toFront();
-            }
+         Transportista vendedor = new Transportista();
+         vendedor.setId_vendedor(Integer.parseInt(tblTransportista.getValueAt(filaSeleccionada, 0).toString()));
+         vendedor.setNombre(tblTransportista.getValueAt(filaSeleccionada, 1).toString());
+         if (seteaTransportistaVenta == null) {
+         seteaTransportistaPedido.agregarTransportista(vendedor);
+         this.dispose();
+         seteaTransportistaPedido.toFront();
+         } else if (seteaTransportistaPedido == null) {
+         seteaTransportistaVenta.setClie(vendedor);
+         this.dispose();
+         seteaTransportistaVenta.toFront();
+         }
 
-        }
+         }
 
-
-    }//GEN-LAST:event_btnSeleccionaClienteActionPerformed
+         */
+    }//GEN-LAST:event_btnSeleccionaTransportistaActionPerformed
 
     private void btnCiudadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCiudadActionPerformed
         CiudadesDialog ciudadesFrame = new CiudadesDialog(null, true, this);
         ciudadesFrame.setVisible(true);
         ciudadesFrame.toFront();
         cargaComboCiudad();
-
     }//GEN-LAST:event_btnCiudadActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -813,21 +777,19 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnSalvar;
-    private javax.swing.JButton btnSeleccionaCliente;
+    private javax.swing.JButton btnSeleccionaTransportista;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox cbCiudad;
-    private javax.swing.JComboBox cbCondicionImpo;
     private org.jdesktop.swingx.JXDatePicker dpFecha;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
@@ -839,14 +801,14 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JRadioButton rbCod;
     private javax.swing.JRadioButton rbNombre;
-    private javax.swing.JTable tblCliente;
+    private javax.swing.JTable tblTransportista;
     private javax.swing.JTextField txtCel;
     private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtDocumento;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtFiltroNombre;
     private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtRazonSocial;
+    private javax.swing.JTextField txtPaís;
     private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 }

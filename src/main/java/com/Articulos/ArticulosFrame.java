@@ -4,8 +4,8 @@ import com.Beans.Articulo;
 import com.DAO.DAOGenerico;
 import com.Beans.Categoria;
 import com.Beans.EquivalenciaUnidades;
-import com.CategoriaArticulos.CategoriaFrame;
 import com.Beans.Unidad;
+import com.CategoriaArticulos.CategoriasDialog;
 import com.Compras.RegistraCompra;
 import com.DAO.ArticuloDAO;
 import com.DAO.EquivalenciaUnidadesDAO;
@@ -232,7 +232,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 equivalenciaUnidades.setUnidad(articulo.getUnidad());
                 EquivalenciaUnidadesDAO unidadesDAO = new EquivalenciaUnidadesDAO(equivalenciaUnidades);
                 unidadesDAO.guardar();
-                
+
                 JOptionPane.showMessageDialog(null, "Articulo registrado correctamente!");
 
                 buscarTodos();
@@ -988,19 +988,22 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     private void btnSelecionaCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelecionaCategoriaActionPerformed
 
-        CategoriaFrame categorias = new CategoriaFrame(this);
-        this.getDesktopPane().add(categorias);
+        CategoriasDialog categorias = new CategoriasDialog(null, true, this);
         categorias.setVisible(true);
         categorias.toFront();
+        actualizaCbCategoria();
     }//GEN-LAST:event_btnSelecionaCategoriaActionPerformed
 
     private void btnEquivalenciaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEquivalenciaActionPerformed
 
-        EquivalenciasFrame equivalenciasFrame = new EquivalenciasFrame(articuloSeleccionado);
-        this.getDesktopPane().add(equivalenciasFrame);
-        equivalenciasFrame.setVisible(true);
-        equivalenciasFrame.toFront();
-
+        /*EquivalenciasFrame equivalenciasFrame = new EquivalenciasFrame(articuloSeleccionado);
+         this.getDesktopPane().add(equivalenciasFrame);
+         equivalenciasFrame.setVisible(true);
+         equivalenciasFrame.toFront();
+         */
+        EquivalenciasDialog equivalenciasDialog = new EquivalenciasDialog(null, true, this, articuloSeleccionado);
+        equivalenciasDialog.setVisible(true);
+        equivalenciasDialog.toFront();
     }//GEN-LAST:event_btnEquivalenciaActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

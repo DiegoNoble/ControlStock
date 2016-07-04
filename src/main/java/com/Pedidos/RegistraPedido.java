@@ -9,7 +9,6 @@ import com.Clientes.ClienteFrame;
 import com.Beans.Cliente;
 import com.Beans.EquivalenciaUnidades;
 import com.Beans.SituacionPedido;
-import com.Beans.Unidad;
 import com.Beans.Vendedor;
 import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;

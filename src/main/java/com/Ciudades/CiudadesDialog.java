@@ -3,6 +3,7 @@ package com.Ciudades;
 import com.Beans.Ciudad;
 import com.DAO.CiudadDAO;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -42,7 +43,6 @@ public class CiudadesDialog extends javax.swing.JDialog {
         //CIERRA JOPTIONPANE CON ESCAPE
         //jPanel2.grabFocus();
         //jPanel2.addKeyListener(new OptionPaneEstandar(this));
-
         setLocationRelativeTo(frame);
         configuraTbl();
         btnEliminar.setEnabled(false);
@@ -301,6 +301,14 @@ public class CiudadesDialog extends javax.swing.JDialog {
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         ciudad = new Ciudad();
         tableModel.agregar(ciudad);
+
+        int index = listCiudades.indexOf(ciudad);
+
+        tbl.setRowSelectionInterval(index, index);
+        Rectangle r = tbl.getCellRect(index, index, true);
+        tbl.scrollRectToVisible(r);
+        tbl.editCellAt(index, 0);
+        tbl.getEditorComponent().requestFocus();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
     private void btnNuevoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnNuevoKeyPressed
@@ -313,7 +321,7 @@ public class CiudadesDialog extends javax.swing.JDialog {
 
         listCiudades.clear();
         ciudadesDAO = new CiudadDAO();
-        listCiudades.addAll(ciudadesDAO.buscarPor(Ciudad.class,"nombre",txtBuscaPropiedad.getText()));
+        listCiudades.addAll(ciudadesDAO.buscarPor(Ciudad.class, "nombre", txtBuscaPropiedad.getText()));
         tableModel.fireTableDataChanged();
 
     }//GEN-LAST:event_txtBuscaPropiedadActionPerformed

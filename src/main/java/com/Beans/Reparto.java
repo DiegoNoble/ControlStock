@@ -26,6 +26,9 @@ public class Reparto implements Serializable {
     private SituacionReparto situacionReparto;
 
     private String observaciones;
+    private Double porcentageComision;
+    private Double comision;
+    private Double totalRepartoSinIVA;
 
     public Reparto() {
 
@@ -77,6 +80,30 @@ public class Reparto implements Serializable {
 
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
+    }
+
+    public Double getPorcentageComision() {
+        return porcentageComision;
+    }
+
+    public void setPorcentageComision(Double porcentageComision) {
+        this.porcentageComision = porcentageComision;
+    }
+
+    public Double getComision() {
+        return comision;
+    }
+
+    public void setComision(Double comision) {
+        this.comision = comision;
+    }
+
+    public Double getTotalRepartoSinIVA() {
+        return totalRepartoSinIVA;
+    }
+
+    public void setTotalRepartoSinIVA(Double totalRepartoSinIVA) {
+        this.totalRepartoSinIVA = totalRepartoSinIVA;
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.Beans;
 
 public enum SituacionReparto {
 
-    EN_CURSO("En curso"), FINALIZAdo("Finalizado");
+    EN_CURSO("En curso"), FINALIZADO("Finalizado");
     private String description;
 
     SituacionReparto(String description) {

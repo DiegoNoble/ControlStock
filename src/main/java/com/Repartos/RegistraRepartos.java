@@ -169,14 +169,14 @@ public final class RegistraRepartos extends javax.swing.JInternalFrame {
         } else {
 
             try {
-                Double total = Double.parseDouble(txtTotal.getText().replace(",","."));
+                Double total = Double.parseDouble(txtTotal.getText().replace(",", "."));
                 Double porcentageComision = Double.parseDouble(txtPorcentageComision.getText());
                 Double comision = total * porcentageComision / 100;
                 Reparto reparto = new Reparto();
                 reparto.setComision(comision);
                 reparto.setFecha(dpfecha.getDate());
                 reparto.setObservaciones(txtObservaciones.getText());
-                reparto.setPorcentageComision(comision);
+                reparto.setPorcentageComision(porcentageComision);
                 reparto.setSituacionReparto(SituacionReparto.EN_CURSO);
                 reparto.setTotalRepartoSinIVA(total);
                 reparto.setTransportista((Transportista) cbTransportistas.getSelectedItem());
@@ -185,14 +185,10 @@ public final class RegistraRepartos extends javax.swing.JInternalFrame {
                 repartoDAO = new RepartoDAO(reparto);
                 repartoDAO.registraOActualiza();
 
-                for (Remito remito : listRemitosSeleccionados) {
-                    remito.setReparto(reparto);
-                    remitoDAO = new RemitoDAO(remito);
-                    remitoDAO.registraOActualiza();
-                }
-
                 JOptionPane.showMessageDialog(null, "Generado correctamente!");
                 listRemitosSeleccionados.clear();
+                repartoDAO = new RepartoDAO();
+                repartoDAO.ResumenReparto(listRemitosSeleccionados);
 
             } catch (Exception e) {
                 e.printStackTrace();

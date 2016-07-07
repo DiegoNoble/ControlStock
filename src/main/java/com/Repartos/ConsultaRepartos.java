@@ -1,10 +1,13 @@
 package com.Repartos;
 
+import com.Beans.Remito;
 import com.Beans.Reparto;
+import com.Beans.SituacionReparto;
 import com.DAO.ArticuloDAO;
 import com.DAO.ArticulosPedidoDAO;
 import com.DAO.MovStockDAO;
 import com.DAO.PedidoDAO;
+import com.DAO.RemitoDAO;
 import com.DAO.RepartoDAO;
 import com.Renderers.MeDateCellRenderer;
 import com.Renderers.TableRendererColorReparto;
@@ -28,6 +31,7 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
     ArticulosPedidoDAO articulosPedidoDAO;
     ArticuloDAO articulosDAO;
     MovStockDAO movStockDAO;
+    RemitoDAO remitoDAO;
 
     public ConsultaRepartos() {
         initComponents();
@@ -37,6 +41,8 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
         btnImprimirReparto.setEnabled(false);
         //btnAnular.setVisible(false);
         btnAnular.setEnabled(false);
+        btnModificar.setEnabled(false);
+        btnFinalizar.setEnabled(false);
     }
 
     public void buscar() {
@@ -59,7 +65,7 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
         }
     }
 
-    private void buscarPorFechas() {
+    public void buscarPorFechas() {
         repartoDAO = new RepartoDAO();
         tableModel.agregar(repartoDAO.buscaEntreFechas(dpDesde.getDate(), dpHasta.getDate()));
     }
@@ -75,7 +81,7 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
         tableModel = new RepartoTableModel(listRepartos);
         tblRepartos.setModel(tableModel);
         tblRepartos.getColumn("Fecha").setCellRenderer(new MeDateCellRenderer());
-        tblRepartos.getColumn("Situación").setCellRenderer(new TableRendererColorReparto(0));
+        tblRepartos.getColumn("Situación").setCellRenderer(new TableRendererColorReparto(1));
         int[] anchos = {10, 20, 50, 100, 20, 20, 20};
 
         for (int i = 0; i < tblRepartos.getColumnCount(); i++) {
@@ -89,17 +95,20 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
             @Override
             public void valueChanged(ListSelectionEvent lse) {
                 if (tblRepartos.getSelectedRow() != -1) {
-                    btnImprimirReparto.setEnabled(true);
+
                     repartoSeleccionado = listRepartos.get(tblRepartos.getSelectedRow());
-                   /* if (repartoSeleccionado.getAnulado() == false) {
+                    btnImprimirReparto.setEnabled(true);
+                    if (repartoSeleccionado.getSituacionReparto() == SituacionReparto.EN_CURSO) {
+                        btnModificar.setEnabled(true);
+                        btnFinalizar.setEnabled(true);
                         btnAnular.setEnabled(true);
-                    } else {
-                        btnAnular.setEnabled(false);
-                    }*/
+                    }
                 } else {
-                    btnImprimirReparto.setEnabled(false);
                     repartoSeleccionado = null;
+                    btnImprimirReparto.setEnabled(false);
                     btnAnular.setEnabled(false);
+                    btnModificar.setEnabled(false);
+                    btnFinalizar.setEnabled(false);
                 }
             }
         });
@@ -119,11 +128,13 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
     private void imprimirReparto() {
 
         try {
+
             if (repartoSeleccionado == null) {
                 JOptionPane.showMessageDialog(this, "Seleccione un reparto", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                    repartoDAO = new RepartoDAO();
-                    repartoDAO.ResumenReparto(repartoSeleccionado.getRemitos());
+                repartoDAO = new RepartoDAO();
+                repartoDAO.ResumenReparto(repartoSeleccionado.getRemitos());
+
             }
 
         } catch (Exception ex) {
@@ -134,78 +145,25 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
 
     private void anularReparto() {
 
-       /* try {
-            Double mov = 0.0;
-            Double valorUnitario = 0.0;
-            Double importeReparto = 0.0;
-            Double unitarioBonificado = 0.0;
-            List<MovStock> listMovStock = new ArrayList<>();
-            Pedido pedido = repartoSeleccionado.getPedido();
-            for (ArticulosPedido articulosPedido : pedido.getArticulosPedido()) {
-
-                if (articulosPedido.getCantPendiente() - articulosPedido.getCantPedida() != 0) {
-                    Double factor = articulosPedido.getEquivalenciaUnidades().getFactor_conversion();
-                    mov = ((articulosPedido.getCantPedida() * factor) * -1);
-
-                    valorUnitario = (articulosPedido.getArticulo().getValor_venta());
-                    unitarioBonificado = valorUnitario - (valorUnitario * (articulosPedido.getBonificacion() / 100));
-                    importeReparto = importeReparto + unitarioBonificado * mov;
-
-                    articulosPedido.setCantAtendida(articulosPedido.getCantAtendida() - articulosPedido.getCantAtendida());
-                    //articulosPedido.setCantPendiente(articulosPedido.getCantPedida());
-                    //articulosPedido.setImportePendiente(articulosPedido.getImportePedido());
-                    articulosPedido.setImporteAtendido(articulosPedido.getImporteAtendido() - articulosPedido.getImporteAtendido());
-                    articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
-                    articulosPedidoDAO.actualiza();
-                    MovStock movStock = new MovStock();
-                    movStock.setArticulo(articulosPedido.getArticulo());
-                    movStock.setCantidadMov(-mov);
-                    movStock.setSaldoStock(articulosPedido.getArticulo().getCantidad() + (-mov));
-                    movStock.setFecha(new Date());
-                    listMovStock.add(movStock);
+        try {
+            if (JOptionPane.showConfirmDialog(this, "Esta seguro que desea eliminar el reparto "
+                    + "seleccionado?", "Confirmación", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                for (Remito remito : repartoSeleccionado.getRemitos()) {
+                    remito.setReparto(null);
+                    remitoDAO = new RemitoDAO(remito);
+                    remitoDAO.registraOActualiza();
                 }
+
+                repartoDAO = new RepartoDAO();
+                repartoDAO.eliminarPor(Reparto.class, "id", repartoSeleccionado.getId().toString());
+                JOptionPane.showMessageDialog(this, "Eliminado correctamente");
+                buscarPorFechas();
             }
-            //pedido.setImportePendiente(pedido.getImporteTotal());
-            pedido.setEstadoPedido(SituacionPedido.CON_REMITO_ANULADO);
-            //pedido.setImporteAtendido(pedido.getImporteAtendido() + importeReparto);
-
-            pedidoDAO = new PedidoDAO(pedido);
-            pedidoDAO.actualiza();
-
-            Reparto reparto = new Reparto();
-            reparto.setFecha(new Date());
-            reparto.setImporteReparto(importeReparto);
-            reparto.setPedido(pedido);
-            reparto.setTipoReparto(TipoReparto.CONTRA_REMITO);
-            reparto.setAnulado(true);
-            repartoDAO = new RepartoDAO(reparto);
-            repartoDAO.guardar();
-            repartoSeleccionado.setAnulado(true);
-            repartoDAO = new RepartoDAO(repartoSeleccionado);
-            repartoDAO.actualiza();
-
-            for (MovStock movStock : listMovStock) {
-                movStock.setReparto(reparto);
-                movStockDAO = new MovStockDAO(movStock);
-                movStockDAO.guardar();
-
-                Articulo articulo = movStock.getArticulo();
-                articulo.setCantidad(movStock.getSaldoStock());
-                articulosDAO = new ArticuloDAO(articulo);
-                articulosDAO.actualiza();
-
-            }
-            JOptionPane.showMessageDialog(this, "Reparto generado correctamente", "Información", JOptionPane.INFORMATION_MESSAGE);
-            //this.consultaPedido.buscar();
-            //this.dispose();
-            repartoDAO = new RepartoDAO();
-            repartoDAO.imprimeContraReparto(reparto);
-
         } catch (Exception ex) {
 
             JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
             ex.printStackTrace();
-        }*/
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -236,6 +194,8 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
         jPanel4 = new javax.swing.JPanel();
         btnImprimirReparto = new javax.swing.JButton();
         btnAnular = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
+        btnFinalizar = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
 
@@ -252,7 +212,7 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Consulta Remitos");
+        jLabel1.setText("Consulta repartos");
         jPanel1.add(jLabel1);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -446,6 +406,28 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnAnular);
 
+        btnModificar.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btnModificar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/edit.png"))); // NOI18N
+        btnModificar.setMnemonic('R');
+        btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnModificar);
+
+        btnFinalizar.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+        btnFinalizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/imagenes/accept.png"))); // NOI18N
+        btnFinalizar.setMnemonic('R');
+        btnFinalizar.setText("Finalizar");
+        btnFinalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFinalizarActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnFinalizar);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -485,11 +467,31 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_rbTransportistaActionPerformed
 
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+
+        RegistraRepartos registraRepartos = new RegistraRepartos(this, repartoSeleccionado);
+        super.getDesktopPane().add(registraRepartos);
+        registraRepartos.setVisible(true);
+        registraRepartos.toFront();
+
+
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void btnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFinalizarActionPerformed
+
+        repartoSeleccionado.setSituacionReparto(SituacionReparto.FINALIZADO);
+        repartoDAO = new RepartoDAO(repartoSeleccionado);
+        repartoDAO.actualiza();
+        buscarPorFechas();
+    }//GEN-LAST:event_btnFinalizarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAnular;
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnBuscarPorFechas;
+    private javax.swing.JButton btnFinalizar;
     private javax.swing.JButton btnImprimirReparto;
+    private javax.swing.JButton btnModificar;
     private javax.swing.ButtonGroup buttonGroup1;
     private org.jdesktop.swingx.JXDatePicker dpDesde;
     private org.jdesktop.swingx.JXDatePicker dpHasta;

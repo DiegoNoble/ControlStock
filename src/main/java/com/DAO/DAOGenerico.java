@@ -85,6 +85,7 @@ public class DAOGenerico<Objeto> {
             transacion.commit();
             seccion.close();
         } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al registrar" + e, "Error", JOptionPane.ERROR_MESSAGE);
             transacion.rollback();
         }

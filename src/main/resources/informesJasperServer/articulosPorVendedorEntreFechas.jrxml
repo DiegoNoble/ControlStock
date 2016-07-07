@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
+<!-- 2016-06-24T11:17:23 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c84274e-bc7c-488d-8786-d0b3e4770a1a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ControlStock.xml"/>
+	<parameter name="vendedores" class="java.util.List">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="desde" class="java.sql.Date"/>
+	<parameter name="hasta" class="java.sql.Date"/>
+	<queryString>
+		<![CDATA[select v.nombre as vendedor, A.id as id, A.nombre as nombreArticulo, 'CAJAS' as unidad,
+sum(AP.cantAtendida*EU.factor_conversion)/ (select EEUU.factor_conversion from equivalencia_unidades as EEUU
+where EEUU.unidad_id = 3 and A.id = EEUU.articulo_id)
+as cantidad, sum(AP.ImporteAtendido)as total
+from articulos_pedido as AP
+inner join remito as R on AP.id_pedido = R.id_pedido
+inner join articulo as A on A.id = AP.id_articulo
+inner join unidad as U on U.id= A.unidad
+inner join pedido as P on P.id= AP.id_pedido
+inner join equivalencia_unidades as EU on EU.id = AP.equivalenciaUnidades_id
+right outer join vendedor as V on P.id_vendedor = V.id
+WHERE 
+	 $X{IN,v.id,vendedores} and R.fecha between $P{desde}  and  $P{hasta} 
+GROUP BY vendedor,A.id]]>
+	</queryString>
+	<field name="vendedor" class="java.lang.String"/>
+	<field name="id" class="java.lang.String"/>
+	<field name="nombreArticulo" class="java.lang.String"/>
+	<field name="unidad" class="java.lang.String"/>
+	<field name="cantidad" class="java.lang.Double"/>
+	<field name="total" class="java.lang.Double"/>
+	<variable name="total" class="java.lang.Double" resetType="Group" resetGroup="Preventista" calculation="Sum">
+		<variableExpression><![CDATA[$F{total}]]></variableExpression>
+	</variable>
+	<group name="Preventista">
+		<groupExpression><![CDATA[$F{vendedor}]]></groupExpression>
+		<groupHeader>
+			<band height="50">
+				<textField>
+					<reportElement mode="Transparent" x="159" y="0" width="221" height="30" forecolor="#000000" backcolor="#E6E6E6" uuid="665dc13c-8daf-4b1c-8833-1eda7cfab62a"/>
+					<textElement>
+						<font size="16" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{vendedor}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Opaque" x="1" y="30" width="79" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="2f0702bb-d5e7-491f-92c7-0af9996640fb"/>
+					<textElement textAlignment="Justified">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Articulo]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="86" y="30" width="73" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="c1b6867b-832d-43f7-8f27-ef151ed33664"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Nombre]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="222" y="30" width="59" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="2a6e3b4d-bb1b-4107-9640-62fd5c8d7351"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Unidad]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="326" y="30" width="81" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="083cc619-7964-4124-acea-f5f8a4ebc670"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Cantidad]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Opaque" x="463" y="30" width="79" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="96a38058-0928-4783-9799-802d8bb45ac1"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Sub Total]]></text>
+				</staticText>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="0" y="49" width="555" height="1" uuid="f953ad65-b8b2-4503-8a08-7446772c7c91"/>
+				</line>
+				<staticText>
+					<reportElement mode="Transparent" x="1" y="0" width="158" height="30" forecolor="#000000" backcolor="#E6E6E6" uuid="1e2a87cb-2deb-423c-a2ed-c46f35f5935f"/>
+					<textElement textAlignment="Justified">
+						<font size="20" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Preventista:]]></text>
+				</staticText>
+				<line>
+					<reportElement positionType="FixRelativeToBottom" x="0" y="30" width="555" height="1" uuid="8615628f-ba80-4bc0-bc4e-4640c036df89"/>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="29">
+				<staticText>
+					<reportElement mode="Opaque" x="370" y="0" width="79" height="23" forecolor="#006699" backcolor="#E6E6E6" uuid="ce34c7df-e32d-4234-a6c3-3a4dda221896"/>
+					<textElement textAlignment="Center">
+						<font size="14" isBold="true" isItalic="false"/>
+					</textElement>
+					<text><![CDATA[Total ]]></text>
+				</staticText>
+				<textField evaluationTime="Group" evaluationGroup="Preventista" pattern="$ #,##0.00">
+					<reportElement mode="Opaque" x="449" y="0" width="105" height="23" backcolor="#CCCCCC" uuid="f4bd9f9e-fb9f-4a59-8ec2-19d23c05573a"/>
+					<textElement>
+						<font size="14" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="50">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="70" backcolor="#006699" uuid="c1dc60cb-6e47-4ab3-a167-66809f51b48a"/>
+				<staticText>
+					<reportElement x="20" y="20" width="560" height="43" forecolor="#FFFFFF" uuid="eda570f9-80ab-425e-9af7-94135b06e572"/>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Articulos por preventista]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="50">
+			<staticText>
+				<reportElement mode="Transparent" x="1" y="7" width="69" height="30" forecolor="#000000" backcolor="#E6E6E6" uuid="122e078b-7d74-4cf7-b2f8-c723bb92717b"/>
+				<textElement textAlignment="Justified">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="221" y="7" width="60" height="30" forecolor="#000000" backcolor="#E6E6E6" uuid="e2a17efb-12af-456f-a43f-aa117a776e08"/>
+				<textElement textAlignment="Justified">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[hasta:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="70" y="7" width="142" height="30" uuid="64f6dd0a-2c94-424e-9e3c-ed88ef221ec0"/>
+				<textElement>
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{desde}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="280" y="7" width="140" height="30" uuid="b13226f6-1195-407d-8919-62a7715108cb"/>
+				<textElement>
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{hasta}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22">
+			<textField pattern="$ #,##0.00">
+				<reportElement x="463" y="3" width="92" height="16" uuid="43c400f6-18bd-4cfc-85ad-e8e6957a060e"/>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="3" width="81" height="16" uuid="64729336-c113-41ea-866a-36c3a3166399"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="86" y="3" width="128" height="16" uuid="ab7838be-564c-4a25-9edb-c0795c52e581"/>
+				<textFieldExpression><![CDATA[$F{nombreArticulo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="222" y="3" width="77" height="16" uuid="70793ac5-2e64-409f-8c2d-c2457621ad45"/>
+				<textFieldExpression><![CDATA[$F{unidad}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00#">
+				<reportElement x="326" y="3" width="81" height="16" uuid="632b2522-d40c-4a1b-af1d-82d371e9700a"/>
+				<textFieldExpression><![CDATA[$F{cantidad}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="2f58a422-5108-459c-8f6f-aaaf3da75116"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="39">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="20" width="515" height="13" backcolor="#E6E6E6" uuid="ce80c5fb-c311-4c3a-86db-13f125450436"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="20" width="40" height="13" backcolor="#E6E6E6" uuid="c0544030-a57a-4ebb-b281-43ebf16fa1f6"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="20" width="100" height="13" uuid="c6a455fe-aa2e-4161-aefe-7d2de8333ebe"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -325,6 +325,7 @@ public class EquivalenciasDialog extends javax.swing.JDialog {
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         equivalenciaUnidades = new EquivalenciaUnidades();
+        equivalenciaUnidades.setArticulo(articuloSeleccionado);
         tableModel.agregar(equivalenciaUnidades);
     }//GEN-LAST:event_btnNuevoActionPerformed
 

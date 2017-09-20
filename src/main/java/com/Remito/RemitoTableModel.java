@@ -54,6 +54,7 @@ public class RemitoTableModel extends AbstractTableModel {
                 return c.getImporteAtendido();
             case 4:
                 return c.getPedido();
+
             default:
                 return null;
         }

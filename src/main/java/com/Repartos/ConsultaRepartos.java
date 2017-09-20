@@ -133,7 +133,7 @@ public final class ConsultaRepartos extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(this, "Seleccione un reparto", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 repartoDAO = new RepartoDAO();
-                repartoDAO.ResumenReparto(repartoSeleccionado.getRemitos());
+                repartoDAO.ResumenReparto(repartoSeleccionado);
 
             }
 

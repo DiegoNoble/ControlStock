@@ -39,13 +39,8 @@ public class RepartoDAO extends DAOGenerico<Object> {
 
     }
 
-    public void ResumenReparto(List<Remito> listRemitosSeleccionados) {
+    public void ResumenReparto(Reparto reparto) {
         transacion = seccion.beginTransaction();
-
-        List<Integer> ids = new ArrayList<>();
-        for (Remito r : listRemitosSeleccionados) {
-            ids.add(r.getId());
-        }
 
         seccion.doWork(new Work() {
 
@@ -54,12 +49,13 @@ public class RepartoDAO extends DAOGenerico<Object> {
                 try {
                     BufferedImage logo = ImageIO.read(getClass().getResource("/com/imagenes/logo.png"));
                     HashMap parametros = new HashMap();
-                    parametros.put("remitos", ids);
+                    parametros.put("reparto", reparto.getId());
                     parametros.put("logo", logo);
                     InputStream resource = getClass().getResourceAsStream("/com/Informes/RemitosReparto.jasper");
                     JasperPrint jasperPrint = JasperFillManager.fillReport(resource, parametros, cnctn);
                     JasperViewer.viewReport(jasperPrint, false);
                 } catch (Exception ex) {
+                    ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, ex);
                 }
             }

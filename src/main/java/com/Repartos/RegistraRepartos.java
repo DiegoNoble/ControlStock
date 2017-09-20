@@ -226,7 +226,7 @@ public final class RegistraRepartos extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(null, "Generado correctamente!");
 
                 repartoDAO = new RepartoDAO();
-                repartoDAO.ResumenReparto(listRemitosSeleccionados);
+                repartoDAO.ResumenReparto(reparto);
                 listRemitosSeleccionados.clear();
                 tableModelSeleccionados.fireTableDataChanged();
                 if (consultaRepartos != null) {

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
+<!-- 2016-07-12T21:16:51 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c84274e-bc7c-488d-8786-d0b3e4770a1a">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="transportista" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="desde" class="java.sql.Date"/>
+	<parameter name="hasta" class="java.sql.Date"/>
+	<queryString>
+		<![CDATA[select R.*, t.nombre from reparto as R inner join transportista t on t.id = R.id_transportista 
+where R.fecha between   $P{desde} and   $P{hasta} and T.id =  $P{transportista} 
+]]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="observaciones" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="situacionReparto" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="id_transportista" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="comision" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="porcentageComision" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="totalRepartoSinIVA" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<variable name="pendientes" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{situacionReparto}.equals("EN_CURSO") ? $F{comision}:0]]></variableExpression>
+	</variable>
+	<variable name="finalizados" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{situacionReparto}.equals("FINALIZADO") ? $F{comision}:0]]></variableExpression>
+	</variable>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="50">
+			<frame>
+				<reportElement mode="Opaque" x="-20" y="-20" width="595" height="70" backcolor="#006699" uuid="c1dc60cb-6e47-4ab3-a167-66809f51b48a"/>
+				<staticText>
+					<reportElement x="20" y="20" width="560" height="43" forecolor="#FFFFFF" uuid="eda570f9-80ab-425e-9af7-94135b06e572"/>
+					<textElement>
+						<font size="34" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Comisiones por transportista]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="90">
+			<staticText>
+				<reportElement mode="Transparent" x="1" y="7" width="69" height="30" forecolor="#000000" backcolor="#E6E6E6" uuid="122e078b-7d74-4cf7-b2f8-c723bb92717b"/>
+				<textElement textAlignment="Justified">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Desde:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="221" y="7" width="60" height="30" forecolor="#000000" backcolor="#E6E6E6" uuid="e2a17efb-12af-456f-a43f-aa117a776e08"/>
+				<textElement textAlignment="Justified">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[hasta:]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="70" y="7" width="142" height="30" uuid="64f6dd0a-2c94-424e-9e3c-ed88ef221ec0"/>
+				<textElement>
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{desde}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="280" y="7" width="140" height="30" uuid="b13226f6-1195-407d-8919-62a7715108cb"/>
+				<textElement>
+					<font size="20" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{hasta}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="2" y="37" width="158" height="30" forecolor="#000000" backcolor="#E6E6E6" uuid="1e2a87cb-2deb-423c-a2ed-c46f35f5935f"/>
+				<textElement textAlignment="Justified">
+					<font size="20" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Transportista:]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Transparent" x="160" y="37" width="221" height="30" forecolor="#000000" backcolor="#E6E6E6" uuid="665dc13c-8daf-4b1c-8833-1eda7cfab62a"/>
+				<textElement>
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="2" y="67" width="79" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="2f0702bb-d5e7-491f-92c7-0af9996640fb"/>
+				<textElement textAlignment="Justified">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Situación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="121" y="67" width="164" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="c1b6867b-832d-43f7-8f27-ef151ed33664"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total reparto sin IVA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="311" y="67" width="98" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="2a6e3b4d-bb1b-4107-9640-62fd5c8d7351"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Porcentage]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="461" y="67" width="81" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="083cc619-7964-4124-acea-f5f8a4ebc670"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Comisión total]]></text>
+			</staticText>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="2" y="87" width="555" height="1" uuid="8615628f-ba80-4bc0-bc4e-4640c036df89"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22">
+			<textField>
+				<reportElement x="0" y="0" width="81" height="16" uuid="64729336-c113-41ea-866a-36c3a3166399"/>
+				<textElement textAlignment="Justified"/>
+				<textFieldExpression><![CDATA[$F{situacionReparto}]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="327" y="0" width="66" height="16" uuid="ab7838be-564c-4a25-9edb-c0795c52e581"/>
+				<textFieldExpression><![CDATA["% "+$F{porcentageComision}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00;$-#,##0.00">
+				<reportElement x="162" y="0" width="77" height="16" uuid="70793ac5-2e64-409f-8c2d-c2457621ad45"/>
+				<textFieldExpression><![CDATA[$F{totalRepartoSinIVA}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00;$-#,##0.00">
+				<reportElement x="464" y="0" width="81" height="16" uuid="632b2522-d40c-4a1b-af1d-82d371e9700a"/>
+				<textFieldExpression><![CDATA[$F{comision}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="2f58a422-5108-459c-8f6f-aaaf3da75116"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="93">
+			<textField>
+				<reportElement mode="Opaque" x="0" y="80" width="515" height="13" backcolor="#E6E6E6" uuid="ce80c5fb-c311-4c3a-86db-13f125450436"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="515" y="80" width="40" height="13" backcolor="#E6E6E6" uuid="c0544030-a57a-4ebb-b281-43ebf16fa1f6"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement x="0" y="80" width="100" height="13" uuid="c6a455fe-aa2e-4161-aefe-7d2de8333ebe"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="237" y="27" width="210" height="22" forecolor="#006699" backcolor="#E6E6E6" uuid="d136618d-8ea1-4d3c-8034-f914233764dd"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Total comisiones pendientes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="236" y="50" width="212" height="22" forecolor="#006699" backcolor="#E6E6E6" uuid="b0759386-046a-403c-b8cd-3fc121740398"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" isItalic="false"/>
+				</textElement>
+				<text><![CDATA[Total comisiones finalizadas]]></text>
+			</staticText>
+			<textField pattern="$#,##0.00;$-#,##0.00">
+				<reportElement x="448" y="27" width="104" height="22" uuid="8fc04218-4b71-466b-9cba-660270a7b73c"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{pendientes}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$#,##0.00;$-#,##0.00">
+				<reportElement x="449" y="50" width="104" height="22" uuid="96659ff7-965a-4abe-b713-0b43b274c961"/>
+				<textElement>
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{finalizados}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

@@ -1,7 +1,9 @@
 package com.usuarios;
 
+import com.Beans.Parametros;
 import com.Beans.Usuario;
 import com.DAO.DAOGenerico;
+import com.DAO.ParametrosDAO;
 import com.MenuPrincipal.MenuPrincipal;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -12,29 +14,28 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
 public class frameLogin extends javax.swing.JFrame {
-    
+
     private static Usuario usuario;
-            
+    ParametrosDAO parametrosDAO;
+
     public frameLogin() {
         initComponents();
         setSize(400, 220);
         setLocationRelativeTo(null);
-        
+
     }
-    
-    public static Usuario getInstance() {  
-  
-        if (usuario == null) {  
-            usuario = new Usuario();  
-        }  
-  
-        return usuario;  
-    }  
-    
-    
+
+    public static Usuario getInstance() {
+
+        if (usuario == null) {
+            usuario = new Usuario();
+        }
+
+        return usuario;
+    }
+
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             JOptionPane.showMessageDialog(null, "Você pressionou Enter");
@@ -60,13 +61,41 @@ public class frameLogin extends javax.swing.JFrame {
 
         System.setOut(
                 new PrintStream(
-                new FileOutputStream("logs/System.out/" + agora + ".txt", true)));
+                        new FileOutputStream("logs/System.out/" + agora + ".txt", true)));
 
         System.setErr(
                 new PrintStream(
-                new FileOutputStream("logs/System.err/" + agora + ".txt", true)));
+                        new FileOutputStream("logs/System.err/" + agora + ".txt", true)));
     }
-    
+
+    Boolean verificaBloqueo() {
+
+        Boolean retorno = null;
+        parametrosDAO = new ParametrosDAO();
+        Parametros parametros = (Parametros) parametrosDAO.buscarPorID(Parametros.class, 1);
+        Date hoy = new Date();
+        System.out.println(parametros.getFechaBloqueo().compareTo(hoy));
+
+        if (parametros.getBloqueado() == true) {
+            JOptionPane.showMessageDialog(this, "Ah finalizado su perído de prueba, contacte a Diego Noble", "Atención", JOptionPane.INFORMATION_MESSAGE);
+            retorno = true;
+        } else if (parametros.getBloqueado() == false) {
+            int dif = parametros.getFechaBloqueo().compareTo(hoy);
+            if (dif == -1) {
+                parametrosDAO = new ParametrosDAO(parametros);
+                parametros.setBloqueado(true);
+                parametrosDAO.actualiza();
+                JOptionPane.showMessageDialog(this, "Ah finalizado su perído de prueba, contacte a Diego Noble", "Atención", JOptionPane.INFORMATION_MESSAGE);
+                retorno = true;
+            } else {
+                retorno = false;
+            }
+
+        }
+        return retorno;
+
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -217,23 +246,28 @@ public class frameLogin extends javax.swing.JFrame {
 
             String pass = new String(ptxtPass.getPassword()).trim();
             String nombre = txtNombre.getText();
-            DAOGenerico dao = new DAOGenerico();
-            
-            List<Usuario> listaUsuarios  = dao.Login(nombre, pass);
-            if(listaUsuarios.isEmpty()){
-                JOptionPane.showMessageDialog(null, "Usuario o contraseña invalida!");
-            } else {
-                 
-                this.usuario = listaUsuarios.get(0);
-                
-                MenuPrincipal form = new MenuPrincipal();
-                
-                form.setVisible(true);
-                
+            if (verificaBloqueo() == true) {
                 this.dispose();
+            } else {
+
+                DAOGenerico dao = new DAOGenerico();
+
+                List<Usuario> listaUsuarios = dao.Login(nombre, pass);
+                if (listaUsuarios.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Usuario o contraseña invalida!");
+                } else {
+
+                    this.usuario = listaUsuarios.get(0);
+
+                    MenuPrincipal form = new MenuPrincipal();
+
+                    form.setVisible(true);
+
+                    this.dispose();
+                }
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Error: " +ex);
+            JOptionPane.showMessageDialog(null, "Error: " + ex);
         }
 
 
@@ -273,10 +307,10 @@ public class frameLogin extends javax.swing.JFrame {
         CambioPass cambioPass = new CambioPass();
         cambioPass.setVisible(true);
         cambioPass.toFront();
-        
+
     }//GEN-LAST:event_btnCambiarContraseñaActionPerformed
 
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCambiarContraseña;
     private javax.swing.JButton btnOk;

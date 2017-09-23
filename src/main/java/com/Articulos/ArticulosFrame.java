@@ -4,6 +4,7 @@ import com.Beans.Articulo;
 import com.DAO.DAOGenerico;
 import com.Beans.Categoria;
 import com.Beans.EquivalenciaUnidades;
+import com.Beans.SituacionArticuloEnum;
 import com.Beans.Unidad;
 import com.CategoriaArticulos.CategoriasDialog;
 import com.Compras.RegistraCompra;
@@ -166,6 +167,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     }
 
     private void defineModelo() {
+        cbACtivo.setModel(new DefaultComboBoxModel(SituacionArticuloEnum.values()));
         listArticulos = new ArrayList<>();
         articuloDAO = new ArticuloDAO();
         tableModelArticulos = new ArticulosTableModel(listArticulos);
@@ -211,6 +213,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 articulo.setId(txtCodigo.getText());
                 articulo.setNombre(txtNombre.getText());
                 articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
+                articulo.setActivo(cbACtivo.getSelectedItem().toString());
                 //articulo.setStock_mayor_unidad(Double.parseDouble(txtCantMayorUnidad.getText()));
 
                 articulo.setDescripcion(txtDescripcion.getText());
@@ -258,6 +261,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             articulo.setId(txtCodigo.getText());
             articulo.setNombre(txtNombre.getText());
             articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
+            articulo.setActivo(cbACtivo.getSelectedItem().toString());
             //articulo.setStock_mayor_unidad(Double.parseDouble(txtCantMayorUnidad.getText()));
 
             articulo.setDescripcion(txtDescripcion.getText());
@@ -299,8 +303,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
                 if (txtFiltro.getText().equals("")) {
                     listArticulos.clear();
-                    listArticulos.addAll(articuloDAO.BuscaTodos(Articulo.class));
+                    if(chActivos.isSelected()){
+                        listArticulos.addAll(articuloDAO.BuscaTodosPorSituacion("Inactivo"));
                     tableModelArticulos.fireTableDataChanged();
+                    }else{
+                        listArticulos.addAll(articuloDAO.BuscaTodosPorSituacion("Activo"));
+                    tableModelArticulos.fireTableDataChanged();
+                    }
+                    
                 } else {
                     listArticulos.clear();
                     listArticulos.addAll(articuloDAO.buscarPor(Articulo.class, "id", txtFiltro.getText()));
@@ -377,6 +387,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtDescripcion.setEnabled(true);
         btnSelecionaCategoria.setEnabled(true);
         btnEquivalencia.setEnabled(true);
+        cbACtivo.setEnabled(true);
 
         if (perfil.equals("Gerente")) {
             txtCantMenorUnidad.setEnabled(true);
@@ -401,6 +412,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         cbIva.setEditable(false);
         btnSelecionaCategoria.setEnabled(false);
         btnEquivalencia.setEnabled(false);
+        cbACtivo.setEnabled(false);
 
     }
 
@@ -467,6 +479,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnEquivalencia = new javax.swing.JButton();
         txtDescripcion = new javax.swing.JTextField();
         txtCodigo = new javax.swing.JTextField();
+        cbACtivo = new javax.swing.JComboBox();
         jPanel4 = new javax.swing.JPanel();
         btnNovo = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
@@ -482,6 +495,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         rbNombre = new javax.swing.JRadioButton();
         rbDescripcion = new javax.swing.JRadioButton();
         txtFiltro = new javax.swing.JTextField();
+        chActivos = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
         jToggleButton1 = new javax.swing.JToggleButton();
 
@@ -726,6 +740,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(txtCodigo, gridBagConstraints);
 
+        cbACtivo.setEnabled(false);
+        cbACtivo.setPreferredSize(new java.awt.Dimension(250, 20));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel8.add(cbACtivo, gridBagConstraints);
+
         jXCollapsiblePane1.getContentPane().add(jPanel8);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -883,13 +905,20 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.ipadx = 250;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(txtFiltro, gridBagConstraints);
+
+        chActivos.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        chActivos.setText("Ver inactivos");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        jPanel3.add(chActivos, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -1016,9 +1045,11 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnSeleccionaArticuloVenta;
     private javax.swing.JButton btnSelecionaCategoria;
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox cbACtivo;
     private javax.swing.JComboBox cbCategoria;
     private javax.swing.JComboBox cbIva;
     private javax.swing.JComboBox cbUnidad;
+    private javax.swing.JCheckBox chActivos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;

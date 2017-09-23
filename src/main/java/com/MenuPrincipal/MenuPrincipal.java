@@ -2,6 +2,7 @@ package com.MenuPrincipal;
 
 import Utilidades.DesktopPaneImagem;
 import Utilidades.DetectaCombinacionTeclas;
+import Utilidades.LeeProperties;
 import com.Articulos.ArticulosFrame;
 import com.Articulos.ConsultaMovStock;
 import com.CategoriaArticulos.CategoriasDialog;
@@ -9,6 +10,10 @@ import com.Ciudades.CiudadesDialog;
 import com.Clientes.ClienteFrame;
 import com.Compras.ConsultaCompras;
 import com.Compras.RegistraCompra;
+import com.Informes.InformeArticulosPorCiudad;
+import com.Informes.InformeArticulosPorCliente;
+import com.Informes.InformeArticulosPorVendedorEntreFechas;
+import com.Informes.InformeRemitosAgrupados;
 import com.Pedidos.ConsultaPedidos;
 import com.Pedidos.RegistraPedido;
 import com.Proveedores.ProveedoresFrame;
@@ -20,7 +25,17 @@ import com.Unidades.UnidadFrame;
 import com.usuarios.frameLogin;
 import com.usuarios.registroUsuarios;
 import com.vendedor.VendedorFrame;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
 
 public final class MenuPrincipal extends javax.swing.JFrame {
 
@@ -100,6 +115,12 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         mnuItemConsultarVendas1 = new javax.swing.JMenuItem();
         mnuAyuda1 = new javax.swing.JMenu();
         mnuItemConsultaCuentasProveedores2 = new javax.swing.JMenuItem();
+        mnuAyuda3 = new javax.swing.JMenu();
+        mnuItemConsultaCuentasProveedores5 = new javax.swing.JMenuItem();
+        mnuItemConsultaCuentasProveedores6 = new javax.swing.JMenuItem();
+        mnuItemConsultaCuentasProveedores7 = new javax.swing.JMenuItem();
+        mnuItemConsultaCuentasProveedores8 = new javax.swing.JMenuItem();
+        mnuItemConsultaCuentasProveedores9 = new javax.swing.JMenuItem();
         mnuAyuda = new javax.swing.JMenu();
         mnuItemConsultaCuentasProveedores1 = new javax.swing.JMenuItem();
 
@@ -410,6 +431,69 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
         jMenuBar1.add(mnuAyuda1);
 
+        mnuAyuda3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuAyuda3.setText(" Informes ");
+        mnuAyuda3.setBorderPainted(true);
+        mnuAyuda3.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        mnuAyuda3.setFont(new java.awt.Font("Verdana", 1, 14)); // NOI18N
+
+        mnuItemConsultaCuentasProveedores5.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemConsultaCuentasProveedores5.setText(" Articulos por preventista ");
+        mnuItemConsultaCuentasProveedores5.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuItemConsultaCuentasProveedores5.setBorderPainted(true);
+        mnuItemConsultaCuentasProveedores5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemConsultaCuentasProveedores5ActionPerformed(evt);
+            }
+        });
+        mnuAyuda3.add(mnuItemConsultaCuentasProveedores5);
+
+        mnuItemConsultaCuentasProveedores6.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemConsultaCuentasProveedores6.setText(" Articulos por ciudad");
+        mnuItemConsultaCuentasProveedores6.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuItemConsultaCuentasProveedores6.setBorderPainted(true);
+        mnuItemConsultaCuentasProveedores6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemConsultaCuentasProveedores6ActionPerformed(evt);
+            }
+        });
+        mnuAyuda3.add(mnuItemConsultaCuentasProveedores6);
+
+        mnuItemConsultaCuentasProveedores7.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemConsultaCuentasProveedores7.setText(" Articulos por clientes");
+        mnuItemConsultaCuentasProveedores7.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuItemConsultaCuentasProveedores7.setBorderPainted(true);
+        mnuItemConsultaCuentasProveedores7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemConsultaCuentasProveedores7ActionPerformed(evt);
+            }
+        });
+        mnuAyuda3.add(mnuItemConsultaCuentasProveedores7);
+
+        mnuItemConsultaCuentasProveedores8.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemConsultaCuentasProveedores8.setText(" Remitos agrupados");
+        mnuItemConsultaCuentasProveedores8.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuItemConsultaCuentasProveedores8.setBorderPainted(true);
+        mnuItemConsultaCuentasProveedores8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemConsultaCuentasProveedores8ActionPerformed(evt);
+            }
+        });
+        mnuAyuda3.add(mnuItemConsultaCuentasProveedores8);
+
+        mnuItemConsultaCuentasProveedores9.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemConsultaCuentasProveedores9.setText(" Inventario ");
+        mnuItemConsultaCuentasProveedores9.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuItemConsultaCuentasProveedores9.setBorderPainted(true);
+        mnuItemConsultaCuentasProveedores9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemConsultaCuentasProveedores9ActionPerformed(evt);
+            }
+        });
+        mnuAyuda3.add(mnuItemConsultaCuentasProveedores9);
+
+        jMenuBar1.add(mnuAyuda3);
+
         mnuAyuda.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         mnuAyuda.setText("  Ayuda  ");
         mnuAyuda.setBorderPainted(true);
@@ -616,6 +700,47 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         consultaRepartos.toFront();
     }//GEN-LAST:event_mnuItemConsultaCuentasProveedores4ActionPerformed
 
+    private void mnuItemConsultaCuentasProveedores5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaCuentasProveedores5ActionPerformed
+
+        InformeArticulosPorVendedorEntreFechas informe = new InformeArticulosPorVendedorEntreFechas(null, false);
+        informe.setVisible(true);
+        informe.toFront();
+    }//GEN-LAST:event_mnuItemConsultaCuentasProveedores5ActionPerformed
+
+    private void mnuItemConsultaCuentasProveedores6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaCuentasProveedores6ActionPerformed
+        InformeArticulosPorCiudad informe = new InformeArticulosPorCiudad(null, false);
+        informe.setVisible(true);
+        informe.toFront();
+    }//GEN-LAST:event_mnuItemConsultaCuentasProveedores6ActionPerformed
+
+    private void mnuItemConsultaCuentasProveedores7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaCuentasProveedores7ActionPerformed
+        InformeArticulosPorCliente informe = new InformeArticulosPorCliente(null, false);
+        informe.setVisible(true);
+        informe.toFront();
+    }//GEN-LAST:event_mnuItemConsultaCuentasProveedores7ActionPerformed
+
+    private void mnuItemConsultaCuentasProveedores8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaCuentasProveedores8ActionPerformed
+        InformeRemitosAgrupados informe = new InformeRemitosAgrupados(null, false);
+        informe.setVisible(true);
+        informe.toFront();
+    }//GEN-LAST:event_mnuItemConsultaCuentasProveedores8ActionPerformed
+
+    private void mnuItemConsultaCuentasProveedores9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaCuentasProveedores9ActionPerformed
+        try {
+            LeeProperties props = new LeeProperties();
+            Connection conexion = DriverManager.getConnection(props.getUrl(), props.getUsr(), props.getPsw());
+            
+            InputStream resource = getClass().getClassLoader().getResourceAsStream("informesJasperServer/inventario.jasper");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(resource, null, conexion);
+            JasperViewer reporte = new JasperViewer(jasperPrint, false);
+            reporte.setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JRException ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_mnuItemConsultaCuentasProveedores9ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -626,6 +751,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenu mnuAyuda;
     private javax.swing.JMenu mnuAyuda1;
     private javax.swing.JMenu mnuAyuda2;
+    private javax.swing.JMenu mnuAyuda3;
     private javax.swing.JMenu mnuCompras;
     private javax.swing.JMenuItem mnuItemCategorias;
     private javax.swing.JMenuItem mnuItemClientes;
@@ -635,6 +761,11 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores2;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores3;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores4;
+    private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores5;
+    private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores6;
+    private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores7;
+    private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores8;
+    private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores9;
     private javax.swing.JMenuItem mnuItemConsultarVendas1;
     private javax.swing.JMenuItem mnuItemProductos;
     private javax.swing.JMenuItem mnuItemProveedores;

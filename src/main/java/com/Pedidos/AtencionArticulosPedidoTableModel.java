@@ -108,9 +108,15 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
 
     Double calculaTotalAtendido(ArticulosPedido a) {
 
-        Double total = (a.getArticulo().getValor_venta() * a.getEquivalenciaUnidades().getFactor_conversion()) * a.getCantAtendida();
-        Double totalBonificado = total - (total * (a.getBonificacion() / 100));
-        return totalBonificado;
+        try {
+            Double total = (a.getArticulo().getValor_venta() * a.getEquivalenciaUnidades().getFactor_conversion()) * a.getCantAtendida();
+            Double totalBonificado = (total / (1 + (a.getBonificacion() / 100)));
+            return totalBonificado;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     @Override

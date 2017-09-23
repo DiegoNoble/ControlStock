@@ -116,7 +116,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
             articulosDAO = new ArticuloDAO();
 
             cbArticulos.removeAllItems();
-            listArticulos = articulosDAO.BuscaTodos(Articulo.class);
+            listArticulos = articulosDAO.BuscaTodosPorSituacion("Activo");
 
             for (Articulo articulo : listArticulos) {
 

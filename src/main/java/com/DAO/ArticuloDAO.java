@@ -6,6 +6,7 @@ package com.DAO;
 
 import com.Beans.Articulo;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.hibernate.Query;
 
 /**
@@ -56,6 +57,24 @@ public class ArticuloDAO extends DAOGenerico<Object> {
 
         return ids;
 
+    }
+    
+    public List BuscaTodosPorSituacion(String situacion) {
+
+        List objetos = null;
+
+        try {
+
+            transacion = seccion.beginTransaction();
+
+            Query query = seccion.createQuery("from Articulo a where a.activo = '"+situacion+"'");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al buscar todos" + e);
+        }
+        return objetos;
     }
 
 }

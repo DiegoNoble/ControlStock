@@ -31,5 +31,6 @@
     <mapping class="com.Beans.EquivalenciaUnidades"/>
     <mapping class="com.Beans.Transportista"/>
     <mapping class="com.Beans.Reparto"/>
+    <mapping class="com.Beans.Parametros"/>
   </session-factory>
 </hibernate-configuration>

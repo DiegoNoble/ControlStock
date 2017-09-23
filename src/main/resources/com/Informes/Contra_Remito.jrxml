@@ -373,17 +373,17 @@ where R.id = $P{idRemito}]]>
 	<summary>
 		<band height="64" splitType="Stretch">
 			<rectangle>
-				<reportElement x="333" y="17" width="218" height="34" backcolor="#CCCCCC" uuid="d3084b29-dafb-47fc-88de-684068d2fb03"/>
+				<reportElement x="302" y="17" width="249" height="34" backcolor="#CCCCCC" uuid="d3084b29-dafb-47fc-88de-684068d2fb03"/>
 			</rectangle>
 			<textField pattern="$ #,##0.00">
-				<reportElement x="446" y="22" width="104" height="27" uuid="a2413eba-ed93-4f94-a801-7b599841c9fd"/>
+				<reportElement x="416" y="22" width="134" height="27" uuid="a2413eba-ed93-4f94-a801-7b599841c9fd"/>
 				<textElement>
 					<font size="18"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{importeRemito}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="333" y="22" width="109" height="27" uuid="fe802998-735c-47ef-b4f1-9fc6070ea8b0"/>
+				<reportElement x="307" y="22" width="109" height="27" uuid="fe802998-735c-47ef-b4f1-9fc6070ea8b0"/>
 				<textElement>
 					<font size="18" isBold="true"/>
 				</textElement>

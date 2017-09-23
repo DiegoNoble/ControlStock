@@ -419,17 +419,17 @@ where R.id = $P{idRemito}]]>
 	<summary>
 		<band height="191" splitType="Stretch">
 			<rectangle>
-				<reportElement x="333" y="29" width="218" height="34" backcolor="#CCCCCC" uuid="d3084b29-dafb-47fc-88de-684068d2fb03"/>
+				<reportElement x="289" y="29" width="263" height="34" backcolor="#CCCCCC" uuid="d3084b29-dafb-47fc-88de-684068d2fb03"/>
 			</rectangle>
 			<textField pattern="$ #,##0.00">
-				<reportElement x="463" y="35" width="87" height="27" uuid="a2413eba-ed93-4f94-a801-7b599841c9fd"/>
+				<reportElement x="431" y="35" width="119" height="27" uuid="a2413eba-ed93-4f94-a801-7b599841c9fd"/>
 				<textElement>
 					<font size="18"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{suma}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="345" y="34" width="109" height="27" uuid="fe802998-735c-47ef-b4f1-9fc6070ea8b0"/>
+				<reportElement x="318" y="34" width="109" height="27" uuid="fe802998-735c-47ef-b4f1-9fc6070ea8b0"/>
 				<textElement>
 					<font size="18" isBold="true"/>
 				</textElement>

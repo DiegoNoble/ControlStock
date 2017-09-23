@@ -35,6 +35,7 @@ public class Articulo implements Serializable {
     private Double iva = 21.0;
     @OneToMany(mappedBy = "articulo")
     private List<EquivalenciaUnidades> listEquivalencias;
+    private String activo = "Activo";
 
     public Articulo() {
     }
@@ -78,6 +79,15 @@ public class Articulo implements Serializable {
         this.valor_venta = valor_venta;
     }
 
+    public String getActivo() {
+        return activo;
+    }
+
+    public void setActivo(String activo) {
+        this.activo = activo;
+    }
+
+    
     @XmlTransient
     public Double getCantidad() {
         return cantidad;

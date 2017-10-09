@@ -308,7 +308,7 @@ where R.id = $P{idRemito}]]>
 				<text><![CDATA[Cantidad]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="483" y="5" width="55" height="14" backcolor="#CCCCCC" uuid="af0ef0ba-da32-4360-ac9b-a564fea30b03"/>
+				<reportElement mode="Transparent" x="475" y="5" width="55" height="14" backcolor="#CCCCCC" uuid="af0ef0ba-da32-4360-ac9b-a564fea30b03"/>
 				<textElement>
 					<font size="11" isBold="true"/>
 				</textElement>
@@ -368,7 +368,7 @@ where R.id = $P{idRemito}]]>
 				<textFieldExpression><![CDATA[$F{idArticulo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$ #,##0.00">
-				<reportElement x="480" y="2" width="64" height="16" uuid="2ec7369a-988d-4119-963c-17588aa9b985"/>
+				<reportElement x="466" y="2" width="88" height="16" uuid="2ec7369a-988d-4119-963c-17588aa9b985"/>
 				<textElement>
 					<font size="11"/>
 				</textElement>

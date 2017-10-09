@@ -3,6 +3,7 @@ package com.MenuPrincipal;
 import Utilidades.DesktopPaneImagem;
 import Utilidades.DetectaCombinacionTeclas;
 import Utilidades.LeeProperties;
+import com.Articulos.AlertaStocks;
 import com.Articulos.ArticulosFrame;
 import com.Articulos.ConsultaMovStock;
 import com.CategoriaArticulos.CategoriasDialog;
@@ -44,6 +45,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
 
     public MenuPrincipal() {
         initComponents();
+
         setSize(1152, 864);
         add(desktopPane);
         //setLocationRelativeTo(null);
@@ -69,6 +71,12 @@ public final class MenuPrincipal extends javax.swing.JFrame {
          */
         DetectaCombinacionTeclas combinacionTeclas = new DetectaCombinacionTeclas();
         combinacionTeclas.init(this);
+
+        AlertaStocks AlertaStocks = new AlertaStocks();
+        desktopPane.add(AlertaStocks);
+        centralizaJanela(AlertaStocks);
+        AlertaStocks.setVisible(true);
+        AlertaStocks.toFront();
     }
 
     private void centralizaJanela(JInternalFrame internalFrame) {
@@ -99,6 +107,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         mnuItemClientes1 = new javax.swing.JMenuItem();
         mnuItemClientes2 = new javax.swing.JMenuItem();
         mnuItemProductos = new javax.swing.JMenuItem();
+        mnuItemClientes3 = new javax.swing.JMenuItem();
         mnuItemCategorias = new javax.swing.JMenuItem();
         mnuItemUnidades = new javax.swing.JMenuItem();
         mnuItemUnidades1 = new javax.swing.JMenuItem();
@@ -269,6 +278,17 @@ public final class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         mnuRegistros.add(mnuItemProductos);
+
+        mnuItemClientes3.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemClientes3.setText(" Articulos agotados");
+        mnuItemClientes3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        mnuItemClientes3.setBorderPainted(true);
+        mnuItemClientes3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemClientes3ActionPerformed(evt);
+            }
+        });
+        mnuRegistros.add(mnuItemClientes3);
 
         mnuItemCategorias.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         mnuItemCategorias.setText(" Categorías  ");
@@ -729,7 +749,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         try {
             LeeProperties props = new LeeProperties();
             Connection conexion = DriverManager.getConnection(props.getUrl(), props.getUsr(), props.getPsw());
-            
+
             InputStream resource = getClass().getClassLoader().getResourceAsStream("informesJasperServer/inventario.jasper");
             JasperPrint jasperPrint = JasperFillManager.fillReport(resource, null, conexion);
             JasperViewer reporte = new JasperViewer(jasperPrint, false);
@@ -740,6 +760,14 @@ public final class MenuPrincipal extends javax.swing.JFrame {
             Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_mnuItemConsultaCuentasProveedores9ActionPerformed
+
+    private void mnuItemClientes3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemClientes3ActionPerformed
+        AlertaStocks AlertaStocks = new AlertaStocks();
+        desktopPane.add(AlertaStocks);
+        centralizaJanela(AlertaStocks);
+        AlertaStocks.setVisible(true);
+        AlertaStocks.toFront();
+    }//GEN-LAST:event_mnuItemClientes3ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -757,6 +785,7 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem mnuItemClientes;
     private javax.swing.JMenuItem mnuItemClientes1;
     private javax.swing.JMenuItem mnuItemClientes2;
+    private javax.swing.JMenuItem mnuItemClientes3;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores1;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores2;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores3;

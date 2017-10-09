@@ -56,7 +56,7 @@ public final class ConsultaRemitos extends javax.swing.JInternalFrame {
             }
         } else if (rbCodPedido.isSelected()) {
             try {
-                tableModel.agregar(remitoDAO.buscarPor(Remito.class, "remito.id", txtFiltroCod.getText()));
+                tableModel.agregar(remitoDAO.buscarPor(Remito.class, "pedido.id", txtFiltroCod.getText()));
             } catch (Exception exception) {
                 JOptionPane.showMessageDialog(null, "Los codigos deben ser numéricos", "Error", JOptionPane.ERROR_MESSAGE);
                 exception.printStackTrace();

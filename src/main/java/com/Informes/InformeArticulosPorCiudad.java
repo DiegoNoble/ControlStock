@@ -237,6 +237,11 @@ public class InformeArticulosPorCiudad extends javax.swing.JDialog {
         jPanel6.add(btnVolver, gridBagConstraints);
 
         btnInforme.setText("Informe");
+        btnInforme.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInformeActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(btnInforme, gridBagConstraints);
@@ -249,6 +254,10 @@ public class InformeArticulosPorCiudad extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnInformeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInformeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnInformeActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

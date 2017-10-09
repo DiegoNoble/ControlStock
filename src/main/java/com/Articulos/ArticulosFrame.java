@@ -167,7 +167,6 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     }
 
     private void defineModelo() {
-        cbACtivo.setModel(new DefaultComboBoxModel(SituacionArticuloEnum.values()));
         listArticulos = new ArrayList<>();
         articuloDAO = new ArticuloDAO();
         tableModelArticulos = new ArticulosTableModel(listArticulos);
@@ -213,7 +212,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 articulo.setId(txtCodigo.getText());
                 articulo.setNombre(txtNombre.getText());
                 articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
-                articulo.setActivo(cbACtivo.getSelectedItem().toString());
+
+                if (chActivo.isSelected()) {
+                    articulo.setActivo("Activo");
+                } else {
+                    articulo.setActivo("Inactivo");
+                }
                 //articulo.setStock_mayor_unidad(Double.parseDouble(txtCantMayorUnidad.getText()));
 
                 articulo.setDescripcion(txtDescripcion.getText());
@@ -238,7 +242,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
                 JOptionPane.showMessageDialog(null, "Articulo registrado correctamente!");
 
-                buscarTodos();
+                filtros();
                 desabilitaBotoes();
                 desabilitaCampos();
 
@@ -261,7 +265,11 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             articulo.setId(txtCodigo.getText());
             articulo.setNombre(txtNombre.getText());
             articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
-            articulo.setActivo(cbACtivo.getSelectedItem().toString());
+            if (chActivo.isSelected()) {
+                articulo.setActivo("Activo");
+            } else {
+                articulo.setActivo("Inactivo");
+            }
             //articulo.setStock_mayor_unidad(Double.parseDouble(txtCantMayorUnidad.getText()));
 
             articulo.setDescripcion(txtDescripcion.getText());
@@ -278,7 +286,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             articuloDAO.actualiza();
 
             JOptionPane.showMessageDialog(null, "Articulo editado correctamente!");
-            buscarTodos();
+            filtros();
             desabilitaBotoes();
             desabilitaCampos();
 
@@ -303,14 +311,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
                 if (txtFiltro.getText().equals("")) {
                     listArticulos.clear();
-                    if(chActivos.isSelected()){
+                    if (chActivos.isSelected()) {
                         listArticulos.addAll(articuloDAO.BuscaTodosPorSituacion("Inactivo"));
-                    tableModelArticulos.fireTableDataChanged();
-                    }else{
+                        tableModelArticulos.fireTableDataChanged();
+                    } else {
                         listArticulos.addAll(articuloDAO.BuscaTodosPorSituacion("Activo"));
-                    tableModelArticulos.fireTableDataChanged();
+                        tableModelArticulos.fireTableDataChanged();
                     }
-                    
+
                 } else {
                     listArticulos.clear();
                     listArticulos.addAll(articuloDAO.buscarPor(Articulo.class, "id", txtFiltro.getText()));
@@ -359,6 +367,11 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                 txtNombre.setText(articuloSeleccionado.getNombre());
                 txtValorVenta.setText(articuloSeleccionado.getValor_venta().toString());
                 txtValor_CompraConImp.setText(articuloSeleccionado.getValor_compra().toString());
+                if (articuloSeleccionado.getActivo().equals("Activo")) {
+                    chActivo.setSelected(true);
+                } else {
+                    chActivo.setSelected(false);
+                }
 
                 cbUnidad.setSelectedItem(articuloSeleccionado.getUnidad());
 
@@ -387,7 +400,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtDescripcion.setEnabled(true);
         btnSelecionaCategoria.setEnabled(true);
         btnEquivalencia.setEnabled(true);
-        cbACtivo.setEnabled(true);
+        chActivo.setEnabled(true);
 
         if (perfil.equals("Gerente")) {
             txtCantMenorUnidad.setEnabled(true);
@@ -412,7 +425,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         cbIva.setEditable(false);
         btnSelecionaCategoria.setEnabled(false);
         btnEquivalencia.setEnabled(false);
-        cbACtivo.setEnabled(false);
+        chActivo.setEnabled(false);
 
     }
 
@@ -441,6 +454,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtValorVenta.setText("");
         txtCantMenorUnidad.setText("");
         txtDescripcion.setText("");
+
     }
 
     @SuppressWarnings("unchecked")
@@ -479,7 +493,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnEquivalencia = new javax.swing.JButton();
         txtDescripcion = new javax.swing.JTextField();
         txtCodigo = new javax.swing.JTextField();
-        cbACtivo = new javax.swing.JComboBox();
+        chActivo = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
         btnNovo = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
@@ -740,13 +754,14 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(txtCodigo, gridBagConstraints);
 
-        cbACtivo.setEnabled(false);
-        cbACtivo.setPreferredSize(new java.awt.Dimension(250, 20));
+        chActivo.setText("Activo");
+        chActivo.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel8.add(cbACtivo, gridBagConstraints);
+        jPanel8.add(chActivo, gridBagConstraints);
 
         jXCollapsiblePane1.getContentPane().add(jPanel8);
 
@@ -1045,10 +1060,10 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnSeleccionaArticuloVenta;
     private javax.swing.JButton btnSelecionaCategoria;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JComboBox cbACtivo;
     private javax.swing.JComboBox cbCategoria;
     private javax.swing.JComboBox cbIva;
     private javax.swing.JComboBox cbUnidad;
+    private javax.swing.JCheckBox chActivo;
     private javax.swing.JCheckBox chActivos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;

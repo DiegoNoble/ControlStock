@@ -165,7 +165,7 @@ public class frameLogin extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel3.add(txtNombre, gridBagConstraints);
 
-        ptxtPass.setText("dnoble");
+        ptxtPass.setText("06martin");
         ptxtPass.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 ptxtPassMouseClicked(evt);

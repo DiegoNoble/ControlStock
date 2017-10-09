@@ -103,7 +103,7 @@
         </Component>
         <Component class="javax.swing.JPasswordField" name="ptxtPass">
           <Properties>
-            <Property name="text" type="java.lang.String" value="dnoble"/>
+            <Property name="text" type="java.lang.String" value="06martin"/>
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ptxtPassMouseClicked"/>

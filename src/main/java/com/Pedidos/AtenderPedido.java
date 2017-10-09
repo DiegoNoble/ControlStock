@@ -50,11 +50,11 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
         initComponents();
         this.pedido = pedido;
         this.consultaPedido = consultaPedido;
+        cargaComboVendedor();
         listArticulosPedido = pedido.getArticulosPedido();
         dpFecha.setDate(pedido.getFecha());
         cbCliente.addItem(pedido.getCliente());
         cbCliente.setSelectedItem(pedido.getCliente());
-        cbVendedor.addItem(pedido.getVendedor());
         cbVendedor.setSelectedItem(pedido.getVendedor());
         defineModelo();
 
@@ -63,17 +63,38 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
     public AtenderPedido(Pedido pedido) {
         initComponents();
         this.pedido = pedido;
+        cargaComboVendedor();
         listArticulosPedido = pedido.getArticulosPedido();
         dpFecha.setDate(pedido.getFecha());
         cbCliente.addItem(pedido.getCliente());
         cbCliente.setSelectedItem(pedido.getCliente());
-        cbVendedor.addItem(pedido.getVendedor());
         cbVendedor.setSelectedItem(pedido.getVendedor());
         btnRegistraVenta.setVisible(false);
         jPanel13.setVisible(false);
         defineModelo();
         tableModel.CalculaTotalPedido();
         jLabel1.setText("Consulta pedido seleccionado");
+
+    }
+
+    void cargaComboVendedor() {
+
+        try {
+            listVendedores = new ArrayList();
+
+            vendedorDAO = new VendedorDAO();
+            listVendedores = vendedorDAO.BuscaTodos(Vendedor.class);
+
+            cbVendedor.removeAllItems();
+
+            for (Vendedor vendedor : listVendedores) {
+
+                cbVendedor.addItem(vendedor);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar vendedores" + e, "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
 
     }
 
@@ -123,7 +144,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                 for (ArticulosPedido articulosPedido : listArticulosPedido) {
 
                     if (articulosPedido.getCantPendiente() - articulosPedido.getCantPedida() != 0) {
-                        mov = articulosPedido.getCantAtendida()*articulosPedido.getEquivalenciaUnidades().getFactor_conversion();
+                        mov = articulosPedido.getCantAtendida() * articulosPedido.getEquivalenciaUnidades().getFactor_conversion();
 
                         importeRemito = importeRemito + articulosPedido.getImporteAtendido();
                         //articulosPedido.setCantp(articulosPedido.getCantPedida() - articulosPedido.getCantPendiente());
@@ -141,6 +162,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                         listMovStock.add(movStock);
                     }
                 }
+                pedido.setVendedor((Vendedor) cbVendedor.getSelectedItem());
                 pedido.setImportePendiente(pedido.getImporteTotal() - importeRemito);
                 //if (pedido.getImportePendiente() - pedido.getImporteTotal() != 0) {
                 pedido.setEstadoPedido(SituacionPedido.ATENDIDO);

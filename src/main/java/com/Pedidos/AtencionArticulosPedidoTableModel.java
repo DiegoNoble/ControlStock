@@ -115,7 +115,7 @@ public class AtencionArticulosPedidoTableModel extends AbstractTableModel {
            
             } else {
 
-                Double totalBonificado = (total / (1 + (a.getBonificacion() / 100)));
+                Double totalBonificado = (total - ((total *a.getBonificacion() / 100)));
                 return totalBonificado;
             }
 

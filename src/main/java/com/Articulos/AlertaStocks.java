@@ -27,7 +27,7 @@ public class AlertaStocks extends javax.swing.JInternalFrame {
 
     public AlertaStocks() {
         initComponents();
-
+        setLocation(1, 1);
         configuraTbl();
     }
 
@@ -38,6 +38,14 @@ public class AlertaStocks extends javax.swing.JInternalFrame {
             listArticulos = new ArrayList<>();
             tableModel = new ArticulosTableModel(listArticulos);
             tbl.setModel(tableModel);
+            int[] anchos = {5, 200, 50, 50, 50, 50};
+
+            for (int i = 0; i < tbl.getColumnCount(); i++) {
+
+                tbl.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+
+            }
+
             articuloDAO = new ArticuloDAO();
             listArticulos.addAll(articuloDAO.BuscarArticulosArtivosAgotados());
             tableModel.fireTableDataChanged();
@@ -61,6 +69,7 @@ public class AlertaStocks extends javax.swing.JInternalFrame {
 
         setClosable(true);
         setResizable(true);
+        setPreferredSize(new java.awt.Dimension(600, 450));
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jPanel4.setLayout(new java.awt.GridBagLayout());

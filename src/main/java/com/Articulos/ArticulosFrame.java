@@ -171,6 +171,15 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         articuloDAO = new ArticuloDAO();
         tableModelArticulos = new ArticulosTableModel(listArticulos);
         tblArticulos.setModel(tableModelArticulos);
+
+        int[] anchos = {5, 300, 20, 20, 20, 20};
+
+        for (int i = 0; i < tblArticulos.getColumnCount(); i++) {
+
+            tblArticulos.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+
+        }
+
         listArticulos.addAll(articuloDAO.BuscaTodos(Articulo.class));
         tableModelArticulos.fireTableDataChanged();
 

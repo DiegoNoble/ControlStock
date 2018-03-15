@@ -1,6 +1,8 @@
 package com.Beans;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -11,11 +13,11 @@ import javax.xml.bind.annotation.XmlTransient;
  */
 @Entity
 @Table(name = "articulo")
+
 public class Articulo implements Serializable {
 
-    @Id
-    @Column(name = "id")
-    private String id;
+    @EmbeddedId
+    private ArticuloId articuloId;
     @Column(name = "nombre")
     private String nombre;
     @Column(name = "valor_venta")
@@ -37,21 +39,10 @@ public class Articulo implements Serializable {
     private List<EquivalenciaUnidades> listEquivalencias;
     private String activo = "Activo";
 
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date vencimiento;
+
     public Articulo() {
-    }
-
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
     }
 
     /**
@@ -87,7 +78,6 @@ public class Articulo implements Serializable {
         this.activo = activo;
     }
 
-    
     @XmlTransient
     public Double getCantidad() {
         return cantidad;
@@ -172,6 +162,22 @@ public class Articulo implements Serializable {
         this.unidad = unidad;
     }
 
+    public Date getVencimiento() {
+        return vencimiento;
+    }
+
+    public void setVencimiento(Date vencimiento) {
+        this.vencimiento = vencimiento;
+    }
+
+    public ArticuloId getArticuloId() {
+        return articuloId;
+    }
+
+    public void setArticuloId(ArticuloId articuloId) {
+        this.articuloId = articuloId;
+    }
+
     @XmlTransient
     public List<EquivalenciaUnidades> getListEquivalencias() {
         return listEquivalencias;
@@ -183,7 +189,12 @@ public class Articulo implements Serializable {
 
     @Override
     public String toString() {
-        return id;
+        if (vencimiento != null) {
+            SimpleDateFormat formato = new SimpleDateFormat("dd/mm/yyyy");
+            return articuloId.getId() + " Lote:" + articuloId.getLote() + " Venc. " + formato.format(vencimiento);
+        } else {
+            return articuloId.getId() + " Lote:" + articuloId.getLote();
+        }
     }
 
 }

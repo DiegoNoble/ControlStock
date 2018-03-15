@@ -21,7 +21,7 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
     MaskFormatter formatoftxtFechaIngreso;
     private DefaultTableModel tableModelUsuarios;
     private ListSelectionModel listModelUsuarios;
-   
+
     public registroUsuarios() {
         initComponents();
 
@@ -58,12 +58,10 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
         TableColumn column2 = tblUsuarios.getColumnModel().getColumn(2);
         TableColumn column3 = tblUsuarios.getColumnModel().getColumn(3);
 
-
         column.setCellRenderer(centerRenderer);
         column1.setCellRenderer(centerRenderer);
         column2.setCellRenderer(centerRenderer);
         column3.setCellRenderer(centerRenderer);
-
 
         DefaultTableModel modelo = (DefaultTableModel) tblUsuarios.getModel();
         modelo.setNumRows(0);
@@ -72,8 +70,6 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
         tblUsuarios.getColumn("Usuario").setPreferredWidth(100);
         //tblUsuarios.getColumn("Pass").setPreferredWidth(20);
         tblUsuarios.getColumn("Perfil").setPreferredWidth(100);
-
-
 
     }
 
@@ -87,7 +83,7 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
             int tamano_lista = lista_clientes.size();
 
             tableModelUsuarios.setNumRows(0);
-            
+
             for (int i = 0; i < tamano_lista; i++) {
 
                 Usuario usuarios = lista_clientes.get(i);
@@ -98,7 +94,6 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
                 linea[2] = usuarios.getPass();
                 linea[3] = usuarios.getPerfil();
 
-
                 tableModelUsuarios.addRow(linea);
             }
 
@@ -106,10 +101,8 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(null, "Error" + error);
         }
 
-
     }
 
-      
     private void NuevoUsuario() {
 
         if (txtNombre.getText().trim().equals("")) {
@@ -119,7 +112,6 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
             try {
                 String pass = new String(ptxtPass.getPassword()).trim();
 
-                
                 Usuario usuarios = new Usuario();
                 usuarios.setNombre(txtNombre.getText());
                 usuarios.setPass(pass);
@@ -131,10 +123,8 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(null, "Usuario registrado correctamente!");
             } catch (Exception ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: "+ex);
+                JOptionPane.showMessageDialog(null, "Error al salvar en base de datos: " + ex);
             }
-
-
 
         }
     }
@@ -148,7 +138,7 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
         } else {
 
             String pass = new String(ptxtPass.getPassword()).trim();
-            
+
             Usuario usuarios = new Usuario();
             usuarios.setId(Integer.parseInt(jlbCodigo.getText()));
             usuarios.setNombre(txtNombre.getText());
@@ -160,20 +150,18 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
 
             JOptionPane.showMessageDialog(null, "Usuario editado correctamente!");
 
-
         }
 
     }
 
-    private void eliminaCliente() {
+    private void eliminaCliente() throws Exception {
 
-        
         Usuario usuarios = new Usuario();
         usuarios.setId(Integer.parseInt(jlbCodigo.getText()));
-        
+
         DAOGenerico dao = new DAOGenerico(usuarios);
         dao.elimina();
-           
+
         JOptionPane.showMessageDialog(null, "Usuario eliminado correctamente!");
 
     }
@@ -230,7 +218,6 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
         txtNombre.setText("");
         ptxtPass.setText("");
         jlbCodigo.setText("");
-
 
     }
 
@@ -507,15 +494,18 @@ public class registroUsuarios extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnAlterarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-
-        if (tblUsuarios.getSelectedRow() != -1) {
-            String Nombre = txtNombre.getText();
-            int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación del Cliente " + Nombre + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
-            if (resposta == JOptionPane.YES_OPTION) {
-                eliminaCliente();
+        try {
+            if (tblUsuarios.getSelectedRow() != -1) {
+                String Nombre = txtNombre.getText();
+                int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación del Cliente " + Nombre + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
+                if (resposta == JOptionPane.YES_OPTION) {
+                    eliminaCliente();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione un cliente de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "No es posible eliminar el articulo seleccionado", "Error", JOptionPane.ERROR_MESSAGE);
         }
         actualizaTable();
         limpiaCampos();

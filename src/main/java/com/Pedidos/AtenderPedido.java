@@ -143,7 +143,7 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                 List<MovStock> listMovStock = new ArrayList<>();
                 for (ArticulosPedido articulosPedido : listArticulosPedido) {
 
-                    if (articulosPedido.getCantPendiente() - articulosPedido.getCantPedida() != 0) {
+                   // if (articulosPedido.getCantPendiente() - articulosPedido.getCantPedida() != 0) {
                         mov = articulosPedido.getCantAtendida() * articulosPedido.getEquivalenciaUnidades().getFactor_conversion();
 
                         importeRemito = importeRemito + articulosPedido.getImporteAtendido();
@@ -153,14 +153,14 @@ public class AtenderPedido extends javax.swing.JInternalFrame {
                         //articulosPedido.setImporteAtendido(articulosPedido.getCantAtendida() * valorUnitario);
                         articulosPedidoDAO = new ArticulosPedidoDAO(articulosPedido);
                         articulosPedidoDAO.actualiza();
-
+                        
                         MovStock movStock = new MovStock();
                         movStock.setArticulo(articulosPedido.getArticulo());
                         movStock.setCantidadMov(mov * -1);
                         movStock.setSaldoStock(articulosPedido.getArticulo().getCantidad() + (mov * -1));
                         movStock.setFecha(new Date());
                         listMovStock.add(movStock);
-                    }
+                    
                 }
                 pedido.setVendedor((Vendedor) cbVendedor.getSelectedItem());
                 pedido.setImportePendiente(pedido.getImporteTotal() - importeRemito);

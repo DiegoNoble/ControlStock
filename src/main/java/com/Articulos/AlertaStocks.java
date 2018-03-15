@@ -38,7 +38,7 @@ public class AlertaStocks extends javax.swing.JInternalFrame {
             listArticulos = new ArrayList<>();
             tableModel = new ArticulosTableModel(listArticulos);
             tbl.setModel(tableModel);
-            int[] anchos = {5, 200, 50, 50, 50, 50};
+            int[] anchos = {5,20, 200, 50, 50, 50, 50};
 
             for (int i = 0; i < tbl.getColumnCount(); i++) {
 

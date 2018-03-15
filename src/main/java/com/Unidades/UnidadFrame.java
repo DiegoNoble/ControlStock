@@ -144,7 +144,7 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
 
     }
 
-    private void eliminaUnidad() {
+    private void eliminaUnidad() throws Exception {
 
         Unidad unidad = new Unidad();
         unidad.setId(Integer.parseInt(jlbCodigo.getText()));
@@ -455,14 +455,19 @@ public class UnidadFrame extends javax.swing.JInternalFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
 
-        if (tblUnidades.getSelectedRow() != -1) {
-            String Nombre = txtDescripcion.getText();
-            int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación de la Unidad " + Nombre + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
-            if (resposta == JOptionPane.YES_OPTION) {
-                eliminaUnidad();
+        try {
+
+            if (tblUnidades.getSelectedRow() != -1) {
+                String Nombre = txtDescripcion.getText();
+                int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación de la Unidad " + Nombre + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
+                if (resposta == JOptionPane.YES_OPTION) {
+                    eliminaUnidad();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione una Unidad de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione una Unidad de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "No es posible eliminar el articulo seleccionado", "Error", JOptionPane.ERROR_MESSAGE);
         }
         actualizaTable();
         limpiaCampos();

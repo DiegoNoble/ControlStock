@@ -20,9 +20,16 @@ public class MovStock implements Serializable {
     @JoinColumn(name = "id_remito")
     private Remito remito;
 
-    @ManyToOne(targetEntity = Articulo.class)
+    /*@ManyToOne(targetEntity = Articulo.class)
     @JoinColumn(name = "id_articulo")
     private Articulo articulo;
+    */
+     @ManyToOne
+	@JoinColumns({
+			@JoinColumn(name = "id_articulo", referencedColumnName = "id"),
+			@JoinColumn(name = "lote_articulo", referencedColumnName = "lote"),
+			})
+	private Articulo articulo;
 
     @ManyToOne(targetEntity = FacturaCompra.class)
     @JoinColumn(name = "id_factura_compra")

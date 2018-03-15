@@ -17,8 +17,16 @@ public class EquivalenciaUnidades implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
-    @ManyToOne()
+    /*@ManyToOne()
     private Articulo articulo;
+     */
+    @ManyToOne
+    @JoinColumns({
+        @JoinColumn(name = "articulo_id", referencedColumnName = "id")
+        ,
+			@JoinColumn(name = "lote_articulo", referencedColumnName = "lote"),})
+    private Articulo articulo;
+
     @ManyToOne()
     private Unidad unidad;
     private Double factor_conversion;
@@ -37,7 +45,8 @@ public class EquivalenciaUnidades implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
-@XmlTransient
+
+    @XmlTransient
     public Articulo getArticulo() {
         return articulo;
     }
@@ -46,7 +55,6 @@ public class EquivalenciaUnidades implements Serializable {
         this.articulo = articulo;
     }
 
-   
     public Unidad getUnidad() {
         return unidad;
     }
@@ -55,7 +63,6 @@ public class EquivalenciaUnidades implements Serializable {
         this.unidad = unidad;
     }
 
-    
     public Double getFactor_conversion() {
         return factor_conversion;
     }

@@ -19,9 +19,22 @@ public class ArticulosCompra implements Serializable {
     @Column(name = "cantidad")
     private Double cantidad;
 
-    @ManyToOne(targetEntity = Articulo.class)
+    /*@ManyToOne(targetEntity = Articulo.class)
     @JoinColumn(name = "id_articulo")
     private Articulo articulo;
+    
+    @ManyToOne(targetEntity = Articulo.class)
+    @JoinColumn(name = "lote_articulo")
+    private Articulo lote_articulo;
+    */
+    @ManyToOne
+	@JoinColumns({
+			@JoinColumn(name = "id_articulo", referencedColumnName = "id"),
+			@JoinColumn(name = "lote_articulo", referencedColumnName = "lote"),
+			})
+	private Articulo articulo;
+    
+    
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_factura_compra")

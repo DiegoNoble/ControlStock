@@ -31,13 +31,17 @@ public class MovStockDAO extends DAOGenerico<Object> {
         try {
             SimpleDateFormat formatoBD = new SimpleDateFormat("yyyy-MM-dd");
             transacion = seccion.beginTransaction();
-            Query query = seccion.createQuery("from MovStock where articulo = '" + articulo + "' and fecha between '" + formatoBD.format(fechaInicial) + "' "
-                    + "and '" + formatoBD.format(fechaFinal) + "'order by id desc,fecha desc" );
+            Query query = seccion.createQuery("from MovStock  where id_articulo = '" + articulo.getArticuloId().getId() + "' "
+                    + "and lote_articulo = '" + articulo.getArticuloId().getLote()+ "'"
+                    + "and fecha between '" + formatoBD.format(fechaInicial) + "' "
+                    + "and '" + formatoBD.format(fechaFinal) + "' order by id desc, fecha desc" );
             objetos = query.list();
             transacion.commit();
 
         } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al traer todos los registros" + e);
+            
         }
         return objetos;
 

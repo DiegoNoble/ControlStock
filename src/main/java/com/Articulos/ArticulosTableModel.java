@@ -7,6 +7,7 @@ package com.Articulos;
 
 import com.Beans.Articulo;
 import com.Beans.Unidad;
+import java.util.Date;
 import java.util.List;
 import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
@@ -18,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 public class ArticulosTableModel extends AbstractTableModel {
 
     //nome da coluna da table
-    private final String[] colunas = new String[]{"Código", "Nombre", "Valor compra", "Valor venta", "Unidad", "Cantidad"};
+    private final String[] colunas = new String[]{"Código", "Lote", "Nombre", "Vencimiento", "Valor venta", "Unidad", "Cantidad"};
     //lista para a manipulacao do objeto
     private List<Articulo> list;
     JTextField txtTotal;
@@ -47,16 +48,18 @@ public class ArticulosTableModel extends AbstractTableModel {
         switch (columnIndex) {
 
             case 0:
-                return c.getId();
+                return c.getArticuloId().getId();
             case 1:
-                return c.getNombre();
+                return c.getArticuloId().getLote();
             case 2:
-                return c.getValor_compra();
+                return c.getNombre();
             case 3:
-                return c.getValor_venta();
+                return c.getVencimiento();
             case 4:
-                return c.getUnidad();
+                return c.getValor_venta();
             case 5:
+                return c.getUnidad();
+            case 6:
                 return c.getCantidad();
             default:
                 return null;
@@ -78,12 +81,14 @@ public class ArticulosTableModel extends AbstractTableModel {
             case 1:
                 return String.class;
             case 2:
-                return Double.class;
+                return String.class;
             case 3:
-                return Double.class;
+                return Date.class;
             case 4:
-                return Unidad.class;
+                return Double.class;
             case 5:
+                return Unidad.class;
+            case 6:
                 return Double.class;
 
             default:

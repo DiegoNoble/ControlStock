@@ -1,10 +1,10 @@
 package com.Articulos;
 
 import com.Beans.Articulo;
+import com.Beans.ArticuloId;
 import com.DAO.DAOGenerico;
 import com.Beans.Categoria;
 import com.Beans.EquivalenciaUnidades;
-import com.Beans.SituacionArticuloEnum;
 import com.Beans.Unidad;
 import com.CategoriaArticulos.CategoriasDialog;
 import com.Compras.RegistraCompra;
@@ -13,6 +13,7 @@ import com.DAO.EquivalenciaUnidadesDAO;
 import com.Pedidos.RegistraPedido;
 import com.usuarios.frameLogin;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -42,6 +43,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnSeleccionaArticuloVenta.setVisible(false);
         defineModelo();
         filtros();
+        dpVencimiento.setEnabled(false);
         //btnExcluir.setVisible(false);
 
         if (frameLogin.getInstance().getPerfil().equals("Operador")) {
@@ -60,6 +62,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     public ArticulosFrame(RegistraCompra registraCompra) {
         initComponents();
+        dpVencimiento.setEnabled(false);
         this.registraCompra = registraCompra;
         btnSeleccionaArticuloVenta.setVisible(true);
         defineModelo();
@@ -81,6 +84,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     public ArticulosFrame(RegistraPedido registraPedido) {
         initComponents();
+        dpVencimiento.setEnabled(false);
         this.registraPedido = registraPedido;
         btnSeleccionaArticuloVenta.setVisible(true);
         defineModelo();
@@ -159,6 +163,18 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         }
     }
 
+    private void eliminaEquivalencias() throws Exception {
+
+        List<EquivalenciaUnidades> listEqui = articuloSeleccionado.getListEquivalencias();
+
+        for (EquivalenciaUnidades equivalenciaUnidades : listEqui) {
+            DAOGenerico dao = new DAOGenerico(equivalenciaUnidades);
+            dao.elimina();
+
+        }
+
+    }
+
     class CenterRenderer extends DefaultTableCellRenderer { //----> Classe utilizada para centralizar el contenido de las columnas de las tablas
 
         public CenterRenderer() {
@@ -172,7 +188,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         tableModelArticulos = new ArticulosTableModel(listArticulos);
         tblArticulos.setModel(tableModelArticulos);
 
-        int[] anchos = {5, 300, 20, 20, 20, 20};
+        int[] anchos = {5, 20, 300, 20, 20, 20, 20};
 
         for (int i = 0; i < tblArticulos.getColumnCount(); i++) {
 
@@ -191,6 +207,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                         articuloSeleccionado = listArticulos.get(tblArticulos.getSelectedRow());
                         btnSeleccionaArticuloVenta.setEnabled(true);
                         btnAlterar.setEnabled(true);
+                        btnInActivar.setEnabled(true);
                         btnExcluir.setEnabled(true);
                         detallesArticulos();
 
@@ -198,6 +215,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
                         articuloSeleccionado = null;
                         btnAlterar.setEnabled(false);
                         btnExcluir.setEnabled(false);
+                        btnInActivar.setEnabled(false);
 
                         btnSeleccionaArticuloVenta.setEnabled(true);
                     }
@@ -218,9 +236,15 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             try {
 
                 Articulo articulo = new Articulo();
-                articulo.setId(txtCodigo.getText());
+                
+                ArticuloId articuloId = new ArticuloId();
+                articuloId.setId(txtCodigo.getText());
+                articuloId.setLote(txtLote.getText());
+                articulo.setArticuloId(articuloId);
+
                 articulo.setNombre(txtNombre.getText());
                 articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
+                articulo.setVencimiento(dpVencimiento.getDate());
 
                 if (chActivo.isSelected()) {
                     articulo.setActivo("Activo");
@@ -271,7 +295,12 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         } else {
 
             Articulo articulo = new Articulo();
-            articulo.setId(txtCodigo.getText());
+
+            ArticuloId articuloId = new ArticuloId();
+            articuloId.setId(txtCodigo.getText());
+            articuloId.setLote(txtLote.getText());
+            articulo.setArticuloId(articuloId);
+
             articulo.setNombre(txtNombre.getText());
             articulo.setCantidad(Double.parseDouble(txtCantMenorUnidad.getText()));
             if (chActivo.isSelected()) {
@@ -279,6 +308,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             } else {
                 articulo.setActivo("Inactivo");
             }
+
+            articulo.setVencimiento(dpVencimiento.getDate());
             //articulo.setStock_mayor_unidad(Double.parseDouble(txtCantMayorUnidad.getText()));
 
             articulo.setDescripcion(txtDescripcion.getText());
@@ -351,15 +382,20 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         }
     }
 
-    private void eliminaProducto() {
+    private void eliminaProducto() throws Exception {
 
         Articulo articulo = new Articulo();
-        articulo.setId(txtCodigo.getText());
+        ArticuloId articuloId = new ArticuloId();
+        articuloId.setId(txtCodigo.getText());
+        articuloId.setLote(txtLote.getText());
+        articulo.setArticuloId(articuloId);
+
+        articulo.setArticuloId(articuloId);;
 
         DAOGenerico dao = new DAOGenerico(articulo);
         dao.elimina();
 
-        JOptionPane.showMessageDialog(null, "Cliente eliminado correctamente!");
+        JOptionPane.showMessageDialog(null, "Articulo eliminado correctamente!");
 
     }
 
@@ -371,7 +407,10 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             try {
                 txtCantMenorUnidad.setText(articuloSeleccionado.getCantidad().toString());
 
-                txtCodigo.setText(articuloSeleccionado.getId());
+                txtCodigo.setText(articuloSeleccionado.getArticuloId().getId());
+                txtLote.setText(articuloSeleccionado.getArticuloId().getLote());
+
+                dpVencimiento.setDate(articuloSeleccionado.getVencimiento());
                 txtDescripcion.setText(articuloSeleccionado.getDescripcion());
                 txtNombre.setText(articuloSeleccionado.getNombre());
                 txtValorVenta.setText(articuloSeleccionado.getValor_venta().toString());
@@ -398,6 +437,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtValor_CompraConImp.setEditable(true);
         txtValorVenta.setEditable(true);
         txtCantMenorUnidad.setEditable(false);
+        dpVencimiento.setEnabled(true);
+
         //txtCantMayorUnidad.setEditable(false);
         txtDescripcion.setEnabled(true);
         cbCategoria.setEnabled(true);
@@ -422,6 +463,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtNombre.setEditable(false);
         txtValor_CompraConImp.setEditable(false);
         txtValorVenta.setEditable(false);
+        dpVencimiento.setEnabled(false);
+        txtLote.setEnabled(false);
         txtCantMenorUnidad.setEditable(false);
         //txtCantMayorUnidad.setEditable(false);
         txtCodigo.setEditable(false);
@@ -459,6 +502,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         txtCodigo.setText("");
         txtNombre.setText("");
+        txtLote.setText("");
+        dpVencimiento.setDate(new Date());
         txtValor_CompraConImp.setText("");
         txtValorVenta.setText("");
         txtCantMenorUnidad.setText("");
@@ -503,6 +548,10 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         txtDescripcion = new javax.swing.JTextField();
         txtCodigo = new javax.swing.JTextField();
         chActivo = new javax.swing.JCheckBox();
+        jlbCodigo1 = new javax.swing.JLabel();
+        txtLote = new javax.swing.JTextField();
+        jlbCodigo2 = new javax.swing.JLabel();
+        dpVencimiento = new org.jdesktop.swingx.JXDatePicker();
         jPanel4 = new javax.swing.JPanel();
         btnNovo = new javax.swing.JButton();
         btnAlterar = new javax.swing.JButton();
@@ -510,6 +559,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         btnSeleccionaArticuloVenta = new javax.swing.JButton();
+        btnInActivar = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblArticulos = new javax.swing.JTable();
@@ -571,9 +621,9 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jPanel8.add(txtNombre, gridBagConstraints);
 
         jlbCodigo.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
-        jlbCodigo.setText("Código del Articulo");
+        jlbCodigo.setText("Lote");
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
@@ -650,7 +700,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         jTabbedPane3.addTab("Valores", jPanel7);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridheight = 4;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
@@ -772,6 +822,38 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel8.add(chActivo, gridBagConstraints);
 
+        jlbCodigo1.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jlbCodigo1.setText("Vencimiento");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel8.add(jlbCodigo1, gridBagConstraints);
+
+        txtLote.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel8.add(txtLote, gridBagConstraints);
+
+        jlbCodigo2.setFont(new java.awt.Font("Verdana", 1, 10)); // NOI18N
+        jlbCodigo2.setText("Código del Articulo");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel8.add(jlbCodigo2, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel8.add(dpVencimiento, gridBagConstraints);
+
         jXCollapsiblePane1.getContentPane().add(jPanel8);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -855,8 +937,24 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel4.add(btnSeleccionaArticuloVenta, gridBagConstraints);
+
+        btnInActivar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        btnInActivar.setText("Inactivar/Activar");
+        btnInActivar.setEnabled(false);
+        btnInActivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInActivarActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 5;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel4.add(btnInActivar, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -939,6 +1037,11 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
         chActivos.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         chActivos.setText("Ver inactivos");
+        chActivos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chActivosActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
@@ -1001,15 +1104,21 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
 
-        if (tblArticulos.getSelectedRow() != -1) {
-            String Nombre = txtNombre.getText();
-            int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación del Cliente " + Nombre + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
-            if (resposta == JOptionPane.YES_OPTION) {
-                eliminaProducto();
+        try {
+            if (tblArticulos.getSelectedRow() != -1) {
+                String Nombre = txtNombre.getText();
+                int resposta = JOptionPane.showConfirmDialog(this, "Confirma la eliminación del Articulo " + Nombre + "?", "Confirmación", JOptionPane.YES_NO_OPTION);
+                if (resposta == JOptionPane.YES_OPTION) {
+                    eliminaEquivalencias();
+                    eliminaProducto();
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Seleccione un cliente de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "Seleccione un cliente de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "No es posible eliminar el articulo seleccionado", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
         txtCodigo.setText("");
         filtros();
         limpiaCampos();
@@ -1021,7 +1130,10 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         //  jPanel2.setVisible(true);
         txtCodigo.setEnabled(true);
         txtCodigo.setEditable(true);
+        txtLote.setEnabled(true);
+        txtLote.setEditable(true);
         txtCodigo.requestFocus();
+        chActivo.setSelected(true);
         limpiaCampos();
         txtCantMenorUnidad.setText("0");
         habilitaCampos();
@@ -1059,11 +1171,34 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
         equivalenciasDialog.toFront();
     }//GEN-LAST:event_btnEquivalenciaActionPerformed
 
+    private void chActivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chActivosActionPerformed
+        filtros();
+    }//GEN-LAST:event_chActivosActionPerformed
+
+    private void btnInActivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInActivarActionPerformed
+
+        if (articuloSeleccionado.getActivo().equals("Activo")) {
+            articuloSeleccionado.setActivo("Inactivo");
+            DAOGenerico DAO = new DAOGenerico(articuloSeleccionado);
+            DAO.actualiza();
+            filtros();
+            JOptionPane.showMessageDialog(this, "Inactivado correctamente", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        } else if (articuloSeleccionado.getActivo().equals("Inactivo")) {
+            articuloSeleccionado.setActivo("Activo");
+            DAOGenerico DAO = new DAOGenerico(articuloSeleccionado);
+            DAO.actualiza();
+            filtros();
+            JOptionPane.showMessageDialog(this, "Activado correctamente", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }//GEN-LAST:event_btnInActivarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEquivalencia;
     private javax.swing.JButton btnExcluir;
+    private javax.swing.JButton btnInActivar;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSeleccionaArticuloVenta;
@@ -1074,6 +1209,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox cbUnidad;
     private javax.swing.JCheckBox chActivo;
     private javax.swing.JCheckBox chActivos;
+    private org.jdesktop.swingx.JXDatePicker dpVencimiento;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
@@ -1099,6 +1235,8 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JToggleButton jToggleButton1;
     private org.jdesktop.swingx.JXCollapsiblePane jXCollapsiblePane1;
     private javax.swing.JLabel jlbCodigo;
+    private javax.swing.JLabel jlbCodigo1;
+    private javax.swing.JLabel jlbCodigo2;
     private javax.swing.JRadioButton rbCodigo;
     private javax.swing.JRadioButton rbDescripcion;
     private javax.swing.JRadioButton rbNombre;
@@ -1107,6 +1245,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JTextField txtDescripcion;
     private javax.swing.JTextField txtFiltro;
+    private javax.swing.JTextField txtLote;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JFormattedTextField txtValorVenta;
     private javax.swing.JFormattedTextField txtValor_CompraConImp;

@@ -4,11 +4,11 @@
   <session-factory>
     <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/control_stock</property>
+    <property name="hibernate.connection.url">jdbc:mysql://claudio:3306/control_stock</property>
     <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password">dieguito</property>
-    <property name="hibernate.show_sql">true</property>
-    <property name="hibernate.format_sql">true</property>
+    <property name="hibernate.connection.password">06martin</property>
+    <property name="hibernate.show_sql">false</property>
+    <property name="hibernate.format_sql">false</property>
     <property name="hibernate.hbm2ddl.auto">update</property>
     <property name="hibernate.jdbc.batch_size">20</property>
     <mapping class="com.Beans.Cliente"/>

@@ -236,7 +236,7 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
             try {
 
                 Articulo articulo = new Articulo();
-                
+
                 ArticuloId articuloId = new ArticuloId();
                 articuloId.setId(txtCodigo.getText());
                 articuloId.setLote(txtLote.getText());
@@ -347,30 +347,23 @@ public class ArticulosFrame extends javax.swing.JInternalFrame {
 
             tblArticulos.clearSelection();
             articuloDAO = new ArticuloDAO();
+            String situacion;
+            if (chActivos.isSelected()) {
+                situacion = ("Inactivo");
+            } else {
+                situacion = ("Activo");
+            }
             if (rbCodigo.isSelected()) {
-
-                if (txtFiltro.getText().equals("")) {
-                    listArticulos.clear();
-                    if (chActivos.isSelected()) {
-                        listArticulos.addAll(articuloDAO.BuscaTodosPorSituacion("Inactivo"));
-                        tableModelArticulos.fireTableDataChanged();
-                    } else {
-                        listArticulos.addAll(articuloDAO.BuscaTodosPorSituacion("Activo"));
-                        tableModelArticulos.fireTableDataChanged();
-                    }
-
-                } else {
-                    listArticulos.clear();
-                    listArticulos.addAll(articuloDAO.buscarPor(Articulo.class, "id", txtFiltro.getText()));
-                    tableModelArticulos.fireTableDataChanged();
-                }
-
+                listArticulos.clear();
+                listArticulos.addAll(articuloDAO.BuscaPorCodigo(txtFiltro.getText(), situacion));
+                tableModelArticulos.fireTableDataChanged();
             } else if (rbNombre.isSelected()) {
                 listArticulos.clear();
                 listArticulos.addAll(articuloDAO.buscarPor(Articulo.class, "nombre", txtFiltro.getText()));
                 tableModelArticulos.fireTableDataChanged();
 
-            } else if (rbDescripcion.isSelected() == true) {
+            } else if (rbDescripcion.isSelected()
+                    == true) {
                 listArticulos.clear();
                 listArticulos.addAll(articuloDAO.buscarPor(Articulo.class, "descripcion", txtFiltro.getText()));
                 tableModelArticulos.fireTableDataChanged();

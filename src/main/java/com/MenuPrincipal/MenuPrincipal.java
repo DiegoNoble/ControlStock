@@ -14,6 +14,7 @@ import com.Compras.RegistraCompra;
 import com.Informes.InformeArticulosPorCiudad;
 import com.Informes.InformeArticulosPorCliente;
 import com.Informes.InformeArticulosPorVendedorEntreFechas;
+import com.Informes.InformeClientesPorCiudad;
 import com.Informes.InformeRemitosAgrupados;
 import com.Pedidos.ConsultaPedidos;
 import com.Pedidos.RegistraPedido;
@@ -128,8 +129,10 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         mnuItemConsultaCuentasProveedores5 = new javax.swing.JMenuItem();
         mnuItemConsultaCuentasProveedores6 = new javax.swing.JMenuItem();
         mnuItemConsultaCuentasProveedores7 = new javax.swing.JMenuItem();
+        mnuItemConsultaCuentasProveedores10 = new javax.swing.JMenuItem();
         mnuItemConsultaCuentasProveedores8 = new javax.swing.JMenuItem();
         mnuItemConsultaCuentasProveedores9 = new javax.swing.JMenuItem();
+        mnuItemConsultaCuentasProveedores11 = new javax.swing.JMenuItem();
         mnuAyuda = new javax.swing.JMenu();
         mnuItemConsultaCuentasProveedores1 = new javax.swing.JMenuItem();
 
@@ -490,6 +493,17 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         });
         mnuAyuda3.add(mnuItemConsultaCuentasProveedores7);
 
+        mnuItemConsultaCuentasProveedores10.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemConsultaCuentasProveedores10.setText(" Clientes por ciudad");
+        mnuItemConsultaCuentasProveedores10.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuItemConsultaCuentasProveedores10.setBorderPainted(true);
+        mnuItemConsultaCuentasProveedores10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemConsultaCuentasProveedores10ActionPerformed(evt);
+            }
+        });
+        mnuAyuda3.add(mnuItemConsultaCuentasProveedores10);
+
         mnuItemConsultaCuentasProveedores8.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         mnuItemConsultaCuentasProveedores8.setText(" Remitos agrupados");
         mnuItemConsultaCuentasProveedores8.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -511,6 +525,17 @@ public final class MenuPrincipal extends javax.swing.JFrame {
             }
         });
         mnuAyuda3.add(mnuItemConsultaCuentasProveedores9);
+
+        mnuItemConsultaCuentasProveedores11.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        mnuItemConsultaCuentasProveedores11.setText(" Últimos pedidos por Cliente");
+        mnuItemConsultaCuentasProveedores11.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        mnuItemConsultaCuentasProveedores11.setBorderPainted(true);
+        mnuItemConsultaCuentasProveedores11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuItemConsultaCuentasProveedores11ActionPerformed(evt);
+            }
+        });
+        mnuAyuda3.add(mnuItemConsultaCuentasProveedores11);
 
         jMenuBar1.add(mnuAyuda3);
 
@@ -769,6 +794,30 @@ public final class MenuPrincipal extends javax.swing.JFrame {
         AlertaStocks.toFront();
     }//GEN-LAST:event_mnuItemClientes3ActionPerformed
 
+    private void mnuItemConsultaCuentasProveedores10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaCuentasProveedores10ActionPerformed
+        InformeClientesPorCiudad informe = new InformeClientesPorCiudad(null, false);
+        informe.setVisible(true);
+        informe.toFront();
+    }//GEN-LAST:event_mnuItemConsultaCuentasProveedores10ActionPerformed
+
+    private void mnuItemConsultaCuentasProveedores11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuItemConsultaCuentasProveedores11ActionPerformed
+
+        try {
+            LeeProperties props = new LeeProperties();
+            Connection conexion = DriverManager.getConnection(props.getUrl(), props.getUsr(), props.getPsw());
+
+            InputStream resource = getClass().getClassLoader().getResourceAsStream("informesJasperServer/ultimo_pedido_cliente.jasper");
+            JasperPrint jasperPrint = JasperFillManager.fillReport(resource, null, conexion);
+            JasperViewer reporte = new JasperViewer(jasperPrint, false);
+            reporte.setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JRException ex) {
+            Logger.getLogger(MenuPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_mnuItemConsultaCuentasProveedores11ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -787,6 +836,8 @@ public final class MenuPrincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem mnuItemClientes2;
     private javax.swing.JMenuItem mnuItemClientes3;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores1;
+    private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores10;
+    private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores11;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores2;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores3;
     private javax.swing.JMenuItem mnuItemConsultaCuentasProveedores4;

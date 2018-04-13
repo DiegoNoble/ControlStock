@@ -12,10 +12,10 @@ R.id as idRemito,
 AP.posicion,A.id as idArticulo, A.nombre as nombreArticulo, U.descripcion,AP.cantAtendida,(A.valor_venta*EU.factor_conversion)
 as unitario,AP.bonificacion, AP.importeAtendido
 FROM articulos_pedido as AP
-inner join articulo as A on A.id = AP.id_articulo
+inner join articulo as A on A.id = AP.id_articulo and A.lote = AP.lote_articulo
 inner join pedido as P on P.id = AP.id_pedido
 inner join remito as R on R.id_pedido = P.id
-inner join equivalencia_unidades as EU on EU.id = AP.equivalenciaUnidades_id
+inner join equivalencia_unidades as EU on EU.id = AP.equivalenciaUnidades_id and EU.lote_articulo = AP.lote_articulo
 inner join unidad as U on U.id = EU.unidad_id
 inner join cliente as C on C.id_cliente = P.id_cliente
 inner join vendedor as V on V.id = P.id_vendedor

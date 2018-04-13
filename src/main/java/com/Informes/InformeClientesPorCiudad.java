@@ -6,8 +6,8 @@
 package com.Informes;
 
 import Utilidades.LeeProperties;
-import com.Beans.Vendedor;
-import com.DAO.VendedorDAO;
+import com.Beans.Ciudad;
+import com.DAO.CiudadDAO;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.InputStream;
@@ -26,12 +26,12 @@ import net.sf.jasperreports.view.JasperViewer;
  *
  * @author Diego Noble
  */
-public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog {
+public class InformeClientesPorCiudad extends javax.swing.JDialog {
 
-    VendedorDAO vendedorDAO;
-    LeeProperties props= new LeeProperties();
+    CiudadDAO ciudadDAO;
+    LeeProperties props = new LeeProperties();
 
-    public InformeArticulosPorVendedorEntreFechas(java.awt.Frame parent, boolean modal) {
+    public InformeClientesPorCiudad(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         inicia();
@@ -43,14 +43,14 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
         setLocationRelativeTo(null);
         accionesBotones();
 
-        vendedorDAO = new VendedorDAO();
+        ciudadDAO = new CiudadDAO();
 
-        List<Vendedor> vendedores = vendedorDAO.BuscaTodos(Vendedor.class);
+        List<Ciudad> ciudades = ciudadDAO.BuscaTodos(Ciudad.class);
         DefaultListModel listaTransp = new DefaultListModel();
-        for (Vendedor vendedor : vendedores) {
-            listaTransp.addElement(vendedor);
+        for (Ciudad ciudad : ciudades) {
+            listaTransp.addElement(ciudad);
         }
-        listVendedores.setModel(listaTransp);
+        listCiudades.setModel(listaTransp);
     }
 
     public void go() {
@@ -80,25 +80,24 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
     }
 
     public void reporte() {
-        List<Integer> vendedoresSeleccionados = new ArrayList<>();
+        List<Integer> ciudadesSeleccionadas = new ArrayList<>();
 
         try {
 
-            Object[] ps = listVendedores.getSelectedValues();
+            Object[] ps = listCiudades.getSelectedValues();
             for (Object p : ps) {
-                Vendedor p1 = (Vendedor) p;
-                vendedoresSeleccionados.add(p1.getId());
+                Ciudad p1 = (Ciudad) p;
+                ciudadesSeleccionadas.add(p1.getId());
             }
 
             HashMap parametros = new HashMap();
             parametros.clear();
-            parametros.put("vendedores", vendedoresSeleccionados);
-            parametros.put("desde", dpDesde.getDate());
-            parametros.put("hasta", dpHasta.getDate());
+            parametros.put("ciudades", ciudadesSeleccionadas);
+       
 
             Connection conexion = DriverManager.getConnection(props.getUrl(), props.getUsr(), props.getPsw());
 
-            InputStream resource = getClass().getClassLoader().getResourceAsStream("informesJasperServer/articulosPorVendedorEntreFechas.jasper");
+            InputStream resource = getClass().getClassLoader().getResourceAsStream("informesJasperServer/clientesPorCiudad.jasper");
             JasperPrint jasperPrint = JasperFillManager.fillReport(resource, parametros, conexion);
             JasperViewer reporte = new JasperViewer(jasperPrint, false);
             reporte.setVisible(true);
@@ -117,16 +116,12 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
         java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel3 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        dpDesde = new org.jdesktop.swingx.JXDatePicker();
-        jLabel2 = new javax.swing.JLabel();
-        dpHasta = new org.jdesktop.swingx.JXDatePicker();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        listVendedores = new javax.swing.JList<>();
+        listCiudades = new javax.swing.JList<>();
         jLabel10 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         btnVolver = new javax.swing.JButton();
@@ -136,33 +131,6 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
-
-        jLabel1.setText("Desde");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jLabel1, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(dpDesde, gridBagConstraints);
-
-        jLabel2.setText("hasta");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(jLabel2, gridBagConstraints);
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(dpHasta, gridBagConstraints);
-
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -174,7 +142,7 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
         jPanel2.setBackground(new java.awt.Color(204, 0, 0));
 
         jLabel3.setFont(new java.awt.Font("Arial", 3, 48)); // NOI18N
-        jLabel3.setText("Articulos por preventista");
+        jLabel3.setText("Clientes por ciudad");
         jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         jPanel2.add(jLabel3);
 
@@ -188,7 +156,7 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
 
         jPanel4.setLayout(new java.awt.GridBagLayout());
 
-        jScrollPane1.setViewportView(listVendedores);
+        jScrollPane1.setViewportView(listCiudades);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -203,7 +171,7 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
         jPanel4.add(jScrollPane1, gridBagConstraints);
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel10.setText("Preventistas  ");
+        jLabel10.setText("Ciudades");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -237,6 +205,11 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
         jPanel6.add(btnVolver, gridBagConstraints);
 
         btnInforme.setText("Informe");
+        btnInforme.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInformeActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel6.add(btnInforme, gridBagConstraints);
@@ -250,15 +223,15 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnInformeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInformeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnInformeActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnInforme;
     private javax.swing.JButton btnVolver;
-    private org.jdesktop.swingx.JXDatePicker dpDesde;
-    private org.jdesktop.swingx.JXDatePicker dpHasta;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -266,6 +239,6 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JList<String> listVendedores;
+    private javax.swing.JList<String> listCiudades;
     // End of variables declaration//GEN-END:variables
 }

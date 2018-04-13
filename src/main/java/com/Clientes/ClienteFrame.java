@@ -1,12 +1,15 @@
 package com.Clientes;
 
+import com.Beans.Articulo;
 import com.Beans.Ciudad;
 import com.Beans.Cliente;
 import javax.swing.JOptionPane;
 import com.Beans.CondicionImpositiva;
 import com.Ciudades.CiudadesDialog;
+import com.DAO.ArticuloDAO;
 import com.DAO.CiudadDAO;
 import com.DAO.ClienteDAO;
+import com.DAO.DAOGenerico;
 import com.Pedidos.RegistraPedido;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,7 +37,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         listClientes = new ArrayList<>();
         cargaComboCiudad();
         defineModelo();
-        buscaTodos();
+        filtro();
         btnSeleccionaCliente.setVisible(false);
 
         btnExcluir.setVisible(false);
@@ -54,11 +57,6 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
     public void setClie(Cliente clie) {
         this.clienteSeleccionado = clie;
-    }
-
-    void buscaTodos() {
-        clienteDAO = new ClienteDAO();
-        tableModel.agregar(clienteDAO.BuscaTodos(Cliente.class));
     }
 
     public final void cargaComboCiudad() {
@@ -100,10 +98,14 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
                         clienteSeleccionado = listClientes.get(tblCliente.getSelectedRow());
                         btnExcluir.setEnabled(true);
                         btnAlterar.setEnabled(true);
+                        btnInActivar.setEnabled(true);
+                        clienteDAO = new ClienteDAO();
+                        clienteSeleccionado = (Cliente) clienteDAO.buscarPorID(Cliente.class, clienteSeleccionado.getId_cliente());
                         muestraDetalle();
 
                     } else {
                         clienteSeleccionado = null;
+                        btnInActivar.setEnabled(false);
                         btnExcluir.setEnabled(false);
                         btnAlterar.setEnabled(false);
                     }
@@ -119,7 +121,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     }
 
     private void muestraDetalle() {
-
+        chActivo.setSelected(clienteSeleccionado.getActivo());
         txtCel.setText(clienteSeleccionado.getCel());
         cbCiudad.setSelectedItem(clienteSeleccionado.getCiudad());
         txtDireccion.setText(clienteSeleccionado.getDireccion());
@@ -134,22 +136,23 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     }
 
     void filtro() {
-        clienteDAO = new ClienteDAO();
-        if (rbCod.isSelected()) {
-            try {
-                tableModel.agregar(clienteDAO.buscarPor(Cliente.class, "id_cliente", Integer.parseInt(txtFiltroNombre.getText())));
-            } catch (Exception exception) {
-                JOptionPane.showMessageDialog(null, "Los codigos deben ser numéricos", "Error", JOptionPane.ERROR_MESSAGE);
-                exception.printStackTrace();
-            }
-        } else if (rbNombre.isSelected()) {
-            tableModel.agregar(clienteDAO.buscarCliente(txtFiltroNombre.getText()));
+        try {
+
+            tblCliente.clearSelection();
+            clienteDAO = new ClienteDAO();
+            listClientes.clear();
+            listClientes.addAll(clienteDAO.filtroInteligenteClientes2(chInaActivos.isSelected(), txtFiltro.getText()));
+            tableModel.fireTableDataChanged();
+
+        } catch (Exception error) {
+            JOptionPane.showMessageDialog(null, "Error" + error);
+            error.printStackTrace();
         }
 
     }
 
     private void NuevoCliente() {
-
+        chActivo.setSelected(true);
         if (txtNombre.getText().trim().equals("")) {
             JOptionPane.showMessageDialog(this, "Informe el nombre del cliente!", "Error", JOptionPane.ERROR_MESSAGE);
             txtNombre.requestFocus();
@@ -158,6 +161,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             try {
                 cliente = new Cliente();
 
+                cliente.setActivo(chActivo.isSelected());
                 cliente.setNombre(txtNombre.getText());
                 cliente.setCel(txtCel.getText());
                 cliente.setCiudad((Ciudad) cbCiudad.getSelectedItem());
@@ -189,6 +193,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
         } else {
             try {
+                clienteSeleccionado.setActivo(chActivo.isSelected());
                 clienteSeleccionado.setNombre(txtNombre.getText());
                 clienteSeleccionado.setCel(txtCel.getText());
                 clienteSeleccionado.setCiudad((Ciudad) cbCiudad.getSelectedItem());
@@ -226,6 +231,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     }
 
     private void habilitaCampos() {
+        chActivo.setEnabled(true);
         txtNombre.setEditable(true);
         txtDireccion.setEditable(true);
         cbCiudad.setEditable(true);
@@ -248,6 +254,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     }
 
     private void desabilitaCampos() {
+        chActivo.setEnabled(false);
         txtNombre.setEditable(false);
         txtDireccion.setEditable(false);
         cbCiudad.setEditable(false);
@@ -285,7 +292,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     }
 
     private void limpiaCampos() {
-
+        chActivo.setSelected(true);
         txtNombre.setText("");
         txtDireccion.setText("");
         //cbCiudad.setText("");
@@ -330,13 +337,13 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         dpFecha = new org.jdesktop.swingx.JXDatePicker();
         cbCiudad = new javax.swing.JComboBox();
         btnCiudad = new javax.swing.JButton();
+        chActivo = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
-        txtFiltroNombre = new javax.swing.JTextField();
+        txtFiltro = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblCliente = new javax.swing.JTable();
-        rbCod = new javax.swing.JRadioButton();
-        rbNombre = new javax.swing.JRadioButton();
         jLabel14 = new javax.swing.JLabel();
+        chInaActivos = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
         btnSeleccionaCliente = new javax.swing.JButton();
         btnNovo = new javax.swing.JButton();
@@ -344,6 +351,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         btnExcluir = new javax.swing.JButton();
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        btnInActivar = new javax.swing.JButton();
 
         jTextField1.setText("jTextField1");
 
@@ -573,6 +581,15 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 10);
         jPanel2.add(btnCiudad, gridBagConstraints);
 
+        chActivo.setText("Activo");
+        chActivo.setEnabled(false);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel2.add(chActivo, gridBagConstraints);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -582,19 +599,19 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        txtFiltroNombre.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
-        txtFiltroNombre.addActionListener(new java.awt.event.ActionListener() {
+        txtFiltro.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        txtFiltro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtFiltroNombreActionPerformed(evt);
+                txtFiltroActionPerformed(evt);
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel3.add(txtFiltroNombre, gridBagConstraints);
+        jPanel3.add(txtFiltro, gridBagConstraints);
 
         tblCliente.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
         tblCliente.setModel(new javax.swing.table.DefaultTableModel(
@@ -613,31 +630,29 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 4;
+        gridBagConstraints.gridwidth = 5;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weighty = 1.0;
         jPanel3.add(jScrollPane1, gridBagConstraints);
-
-        buttonGroup1.add(rbCod);
-        rbCod.setText("Cód.");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        jPanel3.add(rbCod, gridBagConstraints);
-
-        buttonGroup1.add(rbNombre);
-        rbNombre.setSelected(true);
-        rbNombre.setText("Nombre o Razón Social");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        jPanel3.add(rbNombre, gridBagConstraints);
 
         jLabel14.setText("Filtrar por:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
         jPanel3.add(jLabel14, gridBagConstraints);
+
+        chInaActivos.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        chInaActivos.setSelected(true);
+        chInaActivos.setText("Ver Activos");
+        chInaActivos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chInaActivosActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        jPanel3.add(chInaActivos, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -709,6 +724,16 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         });
         jPanel4.add(btnCancelar);
 
+        btnInActivar.setFont(new java.awt.Font("Verdana", 0, 10)); // NOI18N
+        btnInActivar.setText("Inactivar/Activar");
+        btnInActivar.setEnabled(false);
+        btnInActivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInActivarActionPerformed(evt);
+            }
+        });
+        jPanel4.add(btnInActivar);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
@@ -735,7 +760,7 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
             EditarCliente();
         }
 
-        buscaTodos();
+        filtro();
         desabilitaBotoes();
         desabilitaCampos();
 
@@ -767,15 +792,15 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un cliente de la lista!", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        buscaTodos();
+        filtro();
         limpiaCampos();
 
     }//GEN-LAST:event_btnExcluirActionPerformed
 
-    private void txtFiltroNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFiltroNombreActionPerformed
+    private void txtFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFiltroActionPerformed
 
         filtro();
-    }//GEN-LAST:event_txtFiltroNombreActionPerformed
+    }//GEN-LAST:event_txtFiltroActionPerformed
 
     private void btnSeleccionaClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionaClienteActionPerformed
 
@@ -806,17 +831,41 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_btnCiudadActionPerformed
 
+    private void btnInActivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInActivarActionPerformed
+
+        if (clienteSeleccionado.getActivo() == true) {
+            clienteSeleccionado.setActivo(false);
+            DAOGenerico DAO = new DAOGenerico(clienteSeleccionado);
+            DAO.actualiza();
+            filtro();
+            JOptionPane.showMessageDialog(this, "Inactivado correctamente", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        } else if (clienteSeleccionado.getActivo() == false) {
+            clienteSeleccionado.setActivo(true);
+            DAOGenerico DAO = new DAOGenerico(clienteSeleccionado);
+            DAO.actualiza();
+            filtro();
+            JOptionPane.showMessageDialog(this, "Activado correctamente", "Atención", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_btnInActivarActionPerformed
+
+    private void chInaActivosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chInaActivosActionPerformed
+        filtro();
+    }//GEN-LAST:event_chInaActivosActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCiudad;
     private javax.swing.JButton btnExcluir;
+    private javax.swing.JButton btnInActivar;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSeleccionaCliente;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox cbCiudad;
     private javax.swing.JComboBox cbCondicionImpo;
+    private javax.swing.JCheckBox chActivo;
+    private javax.swing.JCheckBox chInaActivos;
     private org.jdesktop.swingx.JXDatePicker dpFecha;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -837,14 +886,12 @@ public class ClienteFrame extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JRadioButton rbCod;
-    private javax.swing.JRadioButton rbNombre;
     private javax.swing.JTable tblCliente;
     private javax.swing.JTextField txtCel;
     private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtDocumento;
     private javax.swing.JTextField txtEmail;
-    private javax.swing.JTextField txtFiltroNombre;
+    private javax.swing.JTextField txtFiltro;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtRazonSocial;
     private javax.swing.JTextField txtTelefono;

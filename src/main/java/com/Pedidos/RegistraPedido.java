@@ -74,7 +74,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
             listClientes = new ArrayList();
 
             clienteDAO = new ClienteDAO();
-            listClientes = clienteDAO.BuscaTodos(Cliente.class);
+            listClientes = clienteDAO.buscaIdNombreClientes();
 
             cbCliente.removeAllItems();
 
@@ -140,7 +140,7 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
         tblArticulosPedido.setModel(tableModel);
 
-        int[] anchos = {5, 100, 200, 20, 20, 50,30};
+        int[] anchos = {5, 100, 200, 20, 20, 50, 30};
 
         for (int i = 0; i < tblArticulosPedido.getColumnCount(); i++) {
 
@@ -237,7 +237,6 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
             cbCliente.setSelectedItem(cliente);
         }
     }
-   
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -806,7 +805,8 @@ public class RegistraPedido extends javax.swing.JInternalFrame {
 
     private void cbClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbClienteActionPerformed
 
-        clienteSeleccionado = (Cliente) cbCliente.getSelectedItem();
+        clienteDAO = new ClienteDAO();
+        clienteSeleccionado = (Cliente) clienteDAO.buscarPorID(Cliente.class, ((Cliente) cbCliente.getSelectedItem()).getId_cliente());
         txtDocumento.setText(clienteSeleccionado.getDocumento());
         txtCiudad.setText(clienteSeleccionado.getCiudad().toString());
         txtRazonSocial.setText(clienteSeleccionado.getRazon_social());

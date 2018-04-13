@@ -42,4 +42,43 @@ public class ClienteDAO extends DAOGenerico<Object> {
         return objetos;
 
     }
+
+    public List filtroInteligenteClientes2(Boolean situacion, String filtro) {
+
+        List objetos = null;
+
+        try {
+
+            transacion = seccion.beginTransaction();
+
+            Query query = seccion.createQuery("select new Cliente(c.id,c.nombre, c.documento, c.condicionImpositiva, c.direccion, c.activo) "
+                    + "from Cliente c where (c.razon_social like '%" + filtro + "%' "
+                    + "or c.nombre like '%" + filtro + "%' or c.id like '%" + filtro + "%') and c.activo = " + situacion + " ");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al buscar todos" + e);
+        }
+        return objetos;
+    }
+
+    public List buscaIdNombreClientes() {
+
+        List objetos = null;
+
+        try {
+
+            transacion = seccion.beginTransaction();
+
+            Query query = seccion.createQuery("select new Cliente(c.id,c.nombre,c.activo)  from Cliente c where c.activo = true");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al buscar todos" + e);
+        }
+        return objetos;
+    }
+
 }

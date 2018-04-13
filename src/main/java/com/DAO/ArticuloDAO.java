@@ -77,6 +77,24 @@ public class ArticuloDAO extends DAOGenerico<Object> {
         return objetos;
     }
 
+    public List BuscaPorCodigo(String codigo, String situacion) {
+
+        List objetos = null;
+
+        try {
+
+            transacion = seccion.beginTransaction();
+
+            Query query = seccion.createQuery("from Articulo a where a.activo = '" + situacion + "' and a.articuloId.id like '%" + codigo + "%'");
+            objetos = query.list();
+            transacion.commit();
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al buscar todos" + e);
+        }
+        return objetos;
+    }
+
     public List<Articulo> BuscarArticulosArtivosAgotados() {
 
         List objetos = null;

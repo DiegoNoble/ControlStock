@@ -48,8 +48,24 @@ public class Cliente implements Serializable {
     private Date Fecha_ingreso;
     @Enumerated(EnumType.STRING)
     private CondicionImpositiva condicionImpositiva;
+    private Boolean activo = true;
 
     public Cliente() {
+    }
+
+    public Cliente(Integer Id_cliente, String nombre, Boolean activo) {
+        this.Id_cliente = Id_cliente;
+        this.nombre = nombre;
+        this.activo = activo;
+    }
+
+    public Cliente(Integer Id_cliente, String nombre, String documento, CondicionImpositiva condicionImpositiva, String direccion, Boolean activo) {
+        this.Id_cliente = Id_cliente;
+        this.nombre = nombre;
+        this.direccion = direccion;
+        this.documento = documento;
+        this.condicionImpositiva = condicionImpositiva;
+        this.activo = activo;
     }
 
     /**
@@ -192,6 +208,14 @@ public class Cliente implements Serializable {
     public String toString() {
         return nombre;
 
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 
     @XmlTransient

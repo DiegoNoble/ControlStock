@@ -1,6 +1,5 @@
 package com.Pedidos;
 
-import Utilidades.ControlarEntradaTexto;
 import com.Beans.Pedido;
 import com.Beans.ArticulosPedido;
 import com.Beans.Articulo;
@@ -17,7 +16,6 @@ import com.DAO.MovStockDAO;
 import com.DAO.PedidoDAO;
 import com.DAO.RemitoDAO;
 import com.DAO.VendedorDAO;
-import com.Renderers.MeDateCellRenderer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

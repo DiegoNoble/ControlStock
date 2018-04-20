@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="605a6178-594c-44f5-ba47-0c4fe287951f">
-	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<style name="style1" mode="Transparent">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[$F{bonificacion}.doubleValue()>0.0]]></conditionExpression>
+			<style mode="Opaque" backcolor="#FFCCCC"/>
+		</conditionalStyle>
+	</style>
 	<parameter name="idRemito" class="java.lang.Integer"/>
 	<parameter name="logo" class="java.lang.Object"/>
 	<queryString>
@@ -20,7 +26,7 @@ inner join unidad as U on U.id = EU.unidad_id
 inner join cliente as C on C.id_cliente = P.id_cliente
 inner join vendedor as V on V.id = P.id_vendedor
 inner join ciudad as CI on c.ciudad_id = CI.id
-where R.id = $P{idRemito}]]>
+where R.id = $P{idRemito} order by posicion]]>
 	</queryString>
 	<field name="equivalencia" class="java.lang.Double"/>
 	<field name="razon_social" class="java.lang.String">
@@ -345,68 +351,68 @@ where R.id = $P{idRemito}]]>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="23" splitType="Stretch">
+		<band height="17" splitType="Stretch">
 			<textField>
-				<reportElement x="2" y="3" width="15" height="16" uuid="301a91d4-3602-4674-99af-da211370f1db"/>
+				<reportElement style="style1" x="1" y="0" width="28" height="16" uuid="301a91d4-3602-4674-99af-da211370f1db"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{posicion}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="64" y="3" width="177" height="16" uuid="9102da4f-c8b4-4ed0-a641-8e7ade801af1"/>
+				<reportElement style="style1" x="64" y="0" width="180" height="16" uuid="9102da4f-c8b4-4ed0-a641-8e7ade801af1"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombreArticulo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="29" y="3" width="33" height="16" uuid="e63592d6-fab9-4cfa-8151-aeb6e39e90bc"/>
+				<reportElement style="style1" x="29" y="0" width="35" height="16" uuid="e63592d6-fab9-4cfa-8151-aeb6e39e90bc"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{idArticulo}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$ #,##0.00">
-				<reportElement x="494" y="3" width="60" height="16" uuid="2ec7369a-988d-4119-963c-17588aa9b985"/>
+				<reportElement style="style1" x="494" y="0" width="60" height="16" uuid="2ec7369a-988d-4119-963c-17588aa9b985"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{importeAtendido}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="1" y="20" width="551" height="1" uuid="32f9330f-db21-45e4-a5a5-acbd1509399c"/>
+				<reportElement x="1" y="16" width="551" height="1" uuid="32f9330f-db21-45e4-a5a5-acbd1509399c"/>
 			</line>
 			<textField>
-				<reportElement x="244" y="3" width="38" height="16" uuid="d2c9e4a0-9f1a-4b16-af60-a86d84ee29b7"/>
+				<reportElement style="style1" x="244" y="0" width="45" height="16" uuid="d2c9e4a0-9f1a-4b16-af60-a86d84ee29b7"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{cantAtendida}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$ #,##0.00">
-				<reportElement x="289" y="3" width="45" height="16" uuid="359b1985-cd95-4ceb-91d5-e0a5b0ba4069"/>
+				<reportElement style="style1" x="289" y="0" width="51" height="16" uuid="359b1985-cd95-4ceb-91d5-e0a5b0ba4069"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descripcion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
-				<reportElement x="456" y="3" width="38" height="16" uuid="5c24bf4a-a957-47f9-ae09-2a81a21a5fef"/>
+				<reportElement style="style1" x="456" y="0" width="38" height="16" uuid="5c24bf4a-a957-47f9-ae09-2a81a21a5fef"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{bonificacion}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$ #,##0.00">
-				<reportElement x="392" y="3" width="49" height="16" uuid="4b283aa3-8afa-434f-95fe-6aabbc791547"/>
+				<reportElement style="style1" x="392" y="0" width="64" height="16" uuid="4b283aa3-8afa-434f-95fe-6aabbc791547"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unitario}]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0">
-				<reportElement x="340" y="3" width="30" height="16" uuid="04464dfe-d0ab-4e60-a759-a50b97eaa794">
+				<reportElement style="style1" x="340" y="0" width="52" height="16" uuid="04464dfe-d0ab-4e60-a759-a50b97eaa794">
 					<printWhenExpression><![CDATA[new Boolean($F{equivalencia}!= 1.0)]]></printWhenExpression>
 				</reportElement>
 				<textElement>

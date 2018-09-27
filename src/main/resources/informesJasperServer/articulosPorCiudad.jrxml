@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.1.final using JasperReports Library version 6.2.1  -->
-<!-- 2016-06-28T16:17:51 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c84274e-bc7c-488d-8786-d0b3e4770a1a">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -10,16 +8,16 @@
 	<parameter name="ciudades" class="java.util.List">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
-	<parameter name="desde" class="java.sql.Date"/>
-	<parameter name="hasta" class="java.sql.Date"/>
+	<parameter name="desde" class="java.util.Date"/>
+	<parameter name="hasta" class="java.util.Date"/>
 	<queryString>
 		<![CDATA[select ci.nombre,A.id as id, A.nombre as nombreArticulo, 'CAJAS' as unidad,
 sum(AP.cantAtendida*EU.factor_conversion)/ (select EEUU.factor_conversion from equivalencia_unidades as EEUU
-where EEUU.unidad_id = 3 and A.id = EEUU.articulo_id)
+where EEUU.unidad_id = 3 and A.id = EEUU.articulo_id and A.lote = EEUU.lote_articulo)
 as cantidad, sum(AP.ImporteAtendido)as total
 from articulos_pedido as AP
 inner join remito as R on AP.id_pedido = R.id_pedido
-inner join articulo as A on A.id = AP.id_articulo
+inner join articulo as A on A.id = AP.id_articulo and A.lote = AP.lote_articulo
 inner join equivalencia_unidades as EU on EU.id = AP.equivalenciaUnidades_id
 inner join pedido as P on P.id = AP.id_pedido
 inner join cliente as C on C.id_cliente = P.id_cliente
@@ -27,12 +25,27 @@ inner join ciudad as CI on CI.id = c.ciudad_id
  where 	 $X{IN,ci.id,ciudades} and R.fecha between $P{desde}  and  $P{hasta} 
 GROUP BY  ci.id,a.id]]>
 	</queryString>
-	<field name="nombre" class="java.lang.String"/>
-	<field name="id" class="java.lang.String"/>
-	<field name="nombreArticulo" class="java.lang.String"/>
-	<field name="unidad" class="java.lang.String"/>
-	<field name="cantidad" class="java.lang.Double"/>
-	<field name="total" class="java.lang.Double"/>
+	<field name="nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nombre"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ciudad"/>
+	</field>
+	<field name="id" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="id"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+	</field>
+	<field name="nombreArticulo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nombreArticulo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="articulo"/>
+	</field>
+	<field name="unidad" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="unidad"/>
+	</field>
+	<field name="cantidad" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="cantidad"/>
+	</field>
+	<field name="total" class="java.lang.Double">
+		<property name="com.jaspersoft.studio.field.label" value="total"/>
+	</field>
 	<variable name="total" class="java.lang.Double" resetType="Group" resetGroup="Cliente" calculation="Sum">
 		<variableExpression><![CDATA[$F{total}]]></variableExpression>
 	</variable>
@@ -100,7 +113,7 @@ GROUP BY  ci.id,a.id]]>
 		<groupFooter>
 			<band height="29">
 				<staticText>
-					<reportElement mode="Opaque" x="370" y="0" width="79" height="23" forecolor="#006699" backcolor="#E6E6E6" uuid="ce34c7df-e32d-4234-a6c3-3a4dda221896"/>
+					<reportElement mode="Opaque" x="369" y="0" width="79" height="23" forecolor="#006699" backcolor="#E6E6E6" uuid="ce34c7df-e32d-4234-a6c3-3a4dda221896"/>
 					<textElement textAlignment="Center">
 						<font size="14" isBold="true" isItalic="false"/>
 					</textElement>

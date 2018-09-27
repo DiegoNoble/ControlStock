@@ -7,9 +7,9 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="ControlStock.xml"/>
 	<queryString>
 		<![CDATA[select A.id as id, A.nombre as nombreArticulo, 'CAJAS' as unidad,
-round((A.cantidad)/(select EU.factor_conversion from equivalencia_unidades as EU where EU.unidad_id = 3 and A.id = EU.articulo_id),2)as cantidad,
-round(A.valor_compra*(select EU.factor_conversion from equivalencia_unidades as EU where EU.unidad_id = 3 and A.id = EU.articulo_id)* ((A.cantidad)/(select EU.factor_conversion from equivalencia_unidades as EU
-where EU.unidad_id = 3 and A.id = EU.articulo_id)),2) as total
+round((A.cantidad)/(select EU.factor_conversion from equivalencia_unidades as EU where EU.unidad_id = 3 and A.id = EU.articulo_id and A.lote = EU.lote_articulo),2)as cantidad,
+round(A.valor_compra*(select EU.factor_conversion from equivalencia_unidades as EU where EU.unidad_id = 3 and A.id = EU.articulo_id and A.lote=EU.lote_articulo)* ((A.cantidad)/(select EU.factor_conversion from equivalencia_unidades as EU
+where EU.unidad_id = 3 and A.id = EU.articulo_id and A.lote=EU.lote_articulo)),2) as total
 from articulo as A where activo = 'Activo';]]>
 	</queryString>
 	<field name="id" class="java.lang.String">

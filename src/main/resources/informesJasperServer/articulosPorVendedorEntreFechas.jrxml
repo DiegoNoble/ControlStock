@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-09-20T17:28:55 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c84274e-bc7c-488d-8786-d0b3e4770a1a">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -15,11 +13,11 @@
 	<queryString>
 		<![CDATA[select v.nombre as vendedor, A.id as id, A.nombre as nombreArticulo, 'CAJAS' as unidad,
 sum(AP.cantAtendida*EU.factor_conversion)/ (select EEUU.factor_conversion from equivalencia_unidades as EEUU
-where EEUU.unidad_id = 3 and A.id = EEUU.articulo_id)
+where EEUU.unidad_id = 3 and A.id = EEUU.articulo_id and A.lote=EEUU.lote_articulo)
 as cantidad, sum(AP.ImporteAtendido)as total
 from articulos_pedido as AP
 inner join remito as R on AP.id_pedido = R.id_pedido
-inner join articulo as A on A.id = AP.id_articulo
+inner join articulo as A on A.id = AP.id_articulo and A.lote = AP.lote_articulo
 inner join unidad as U on U.id= A.unidad
 inner join pedido as P on P.id= AP.id_pedido
 inner join equivalencia_unidades as EU on EU.id = AP.equivalenciaUnidades_id
@@ -29,11 +27,19 @@ WHERE
 GROUP BY vendedor,A.id]]>
 	</queryString>
 	<field name="vendedor" class="java.lang.String"/>
-	<field name="id" class="java.lang.String"/>
+	<field name="id" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="nombreArticulo" class="java.lang.String"/>
-	<field name="unidad" class="java.lang.String"/>
-	<field name="cantidad" class="java.lang.Double"/>
-	<field name="total" class="java.lang.Double"/>
+	<field name="unidad" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cantidad" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="total" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<variable name="total" class="java.lang.Double" resetType="Group" resetGroup="Preventista" calculation="Sum">
 		<variableExpression><![CDATA[$F{total}]]></variableExpression>
 	</variable>

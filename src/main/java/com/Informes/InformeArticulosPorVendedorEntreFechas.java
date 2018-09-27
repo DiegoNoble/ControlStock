@@ -104,6 +104,8 @@ public class InformeArticulosPorVendedorEntreFechas extends javax.swing.JDialog 
             reporte.setVisible(true);
 
             reporte.toFront();
+            
+
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Error! " + e, "Error", JOptionPane.ERROR_MESSAGE);
